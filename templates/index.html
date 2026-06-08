@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyHub - Learn Without Limits</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#333;
+}
+
+/* Navbar */
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 8%;
+    background:white;
+    position:sticky;
+    top:0;
+    z-index:1000;
+    box-shadow:0 2px 15px rgba(0,0,0,.08);
+}
+
+.logo{
+    font-size:30px;
+    font-weight:bold;
+    color:#6c63ff;
+}
+
+.nav-links{
+    display:flex;
+    gap:15px;
+}
+
+.nav-links a{
+    text-decoration:none;
+    padding:10px 20px;
+    border-radius:8px;
+    transition:.3s;
+}
+
+.login-btn{
+    color:#6c63ff;
+    border:2px solid #6c63ff;
+}
+
+.signup-btn{
+    background:#6c63ff;
+    color:white;
+}
+
+.signup-btn:hover,
+.login-btn:hover{
+    background:#6c63ff;
+    color:white;
+}
+
+/* Hero */
+
+.hero{
+    min-height:90vh;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:80px 8%;
+    gap:50px;
+    background:linear-gradient(135deg,#6c63ff,#8b5cf6);
+}
+
+.hero-content{
+    flex:1;
+    color:white;
+}
+
+.hero-content h1{
+    font-size:60px;
+    margin-bottom:20px;
+}
+
+.hero-content p{
+    font-size:20px;
+    line-height:1.8;
+    margin-bottom:30px;
+}
+
+.hero-btns{
+    display:flex;
+    gap:15px;
+}
+
+.btn{
+    text-decoration:none;
+    padding:14px 28px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.btn-primary{
+    background:white;
+    color:#6c63ff;
+}
+
+.btn-secondary{
+    border:2px solid white;
+    color:white;
+}
+
+.hero-image{
+    flex:1;
+    text-align:center;
+}
+
+.hero-image img{
+    width:100%;
+    max-width:550px;
+}
+
+/* Stats */
+
+.stats{
+    padding:70px 8%;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:25px;
+}
+
+.stat-box{
+    background:white;
+    text-align:center;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.stat-box h2{
+    color:#6c63ff;
+    font-size:40px;
+}
+
+/* Features */
+
+.features{
+    padding:80px 8%;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:50px;
+    font-size:40px;
+}
+
+.feature-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card h3{
+    color:#6c63ff;
+    margin-bottom:15px;
+}
+
+/* Courses */
+
+.courses{
+    padding:80px 8%;
+    background:white;
+}
+
+.course-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+.course-card{
+    background:#f8f9ff;
+    padding:25px;
+    border-radius:15px;
+}
+
+.course-card h3{
+    color:#6c63ff;
+    margin-bottom:10px;
+}
+
+.course-card a{
+    display:inline-block;
+    margin-top:15px;
+    text-decoration:none;
+    background:#6c63ff;
+    color:white;
+    padding:10px 18px;
+    border-radius:8px;
+}
+
+/* Why Us */
+
+.why{
+    padding:80px 8%;
+}
+
+.why-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+/* CTA */
+
+.cta{
+    text-align:center;
+    padding:100px 8%;
+    background:#6c63ff;
+    color:white;
+}
+
+.cta h2{
+    font-size:45px;
+    margin-bottom:20px;
+}
+
+.cta p{
+    margin-bottom:30px;
+    font-size:18px;
+}
+
+/* Footer */
+
+footer{
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+/* Mobile */
+
+@media(max-width:900px){
+
+.hero{
+    flex-direction:column;
+    text-align:center;
+}
+
+.hero-content h1{
+    font-size:42px;
+}
+
+.hero-btns{
+    justify-content:center;
+}
+
+nav{
+    flex-direction:column;
+    gap:15px;
+}
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+    <div class="logo">StudyHub</div>
+
+
+<div class="nav-links">
+    <a href="/login" class="login-btn">Login</a>
+    <a href="/signup" class="signup-btn">Signup</a>
+</div>
+
+</nav>
+
+<section class="hero">
+
+<div class="hero-content">
+
+    <h1>India's Modern Learning Platform</h1>
+
+    <p>
+        Learn Programming, Web Development, DBMS,
+        Python, PHP and more with free notes,
+        video lectures and practice materials.
+    </p>
+
+    <div class="hero-btns">
+
+        <a href="/signup" class="btn btn-primary">
+            Get Started
+        </a>
+
+        <a href="/login" class="btn btn-secondary">
+            Login
+        </a>
+
+    </div>
+
+</div>
+
+<div class="hero-image">
+    <img src="static\images\website-development-concept_1223-568.avif" alt="Hero">
+</div>
+
+</section>
+
+<section class="stats">
+
+
+    <div class="stats-grid">
+
+    <div class="stat-box">
+        <h2>10K+</h2>
+        <p>Students</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>500+</h2>
+        <p>Notes</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>200+</h2>
+        <p>Lectures</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>24/7</h2>
+        <p>Support</p>
+    </div>
+
+</div>
+
+
+</section>
+
+<section class="features">
+
+<h2 class="section-title">Why Students Love StudyHub</h2>
+
+<div class="feature-grid">
+
+    <div class="card">
+        <h3>📚 Free Notes</h3>
+        <p>High quality notes for every subject.</p>
+    </div>
+
+    <div class="card">
+        <h3>🎥 Video Lectures</h3>
+        <p>Watch and learn at your own pace.</p>
+    </div>
+
+    <div class="card">
+        <h3>📝 Practice Tests</h3>
+        <p>Improve skills with mock tests.</p>
+    </div>
+
+    <div class="card">
+        <h3>💬 Doubt Support</h3>
+        <p>Get help whenever you need it.</p>
+    </div>
+
+</div>
+
+</section>
+
+<section class="courses">
+
+<h2 class="section-title">Popular Notes</h2>
+
+<div class="course-grid">
+
+    <div class="course-card">
+        <h3>Python</h3>
+        <p>Learn Python from basics to advanced.</p>
+        <a href="/signup">Explore</a>
+    </div>
+
+    <div class="course-card">
+        <h3>PHP</h3>
+        <p>Web Development using PHP.</p>
+        <a href="/signup">Explore</a>
+    </div>
+
+    <div class="course-card">
+        <h3>SQL</h3>
+        <p>Master Database Management.</p>
+        <a href="/signup">Explore</a>
+    </div>
+
+</div>
+
+</section>
+
+<section class="why">
+
+<h2 class="section-title">Learning Made Easy</h2>
+
+<div class="why-grid">
+
+    <div class="card">
+        <h3>🚀 Fast Learning</h3>
+        <p>Structured content for quick understanding.</p>
+    </div>
+
+    <div class="card">
+        <h3>📱 Mobile Friendly</h3>
+        <p>Learn from any device anytime.</p>
+    </div>
+
+    <div class="card">
+        <h3>🏆 Career Focused</h3>
+        <p>Build skills that matter in the real world.</p>
+    </div>
+
+</div>
+
+</section>
+
+<section class="cta">
+
+<h2>Start Learning Today</h2>
+
+<p>
+    Join thousands of students already learning with StudyHub.
+</p>
+
+<a href="/signup" class="btn btn-primary">
+    Create Free Account
+</a>
+
+</section>
+
+<footer>
+    <p>© 2026 StudyHub | Flask + TiDB Project</p>
+</footer>
+
+</body>
+</html>

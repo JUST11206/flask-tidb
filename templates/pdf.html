@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Notes</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6f9;
+    padding:30px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    color:#6c63ff;
+    margin-bottom:30px;
+}
+
+.pdf-card{
+    background:white;
+    padding:20px;
+    margin-bottom:15px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.btn{
+    text-decoration:none;
+    background:#6c63ff;
+    color:white;
+    padding:10px 15px;
+    border-radius:5px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>📄 PDF Notes</h1>
+
+<div class="pdf-card">
+    <h3>Python Complete Notes</h3>
+
+    <a href="{{ url_for('static', filename='pdfs/python.pdf') }}"
+       target="_blank"
+       class="btn">
+       Open PDF
+    </a>
+</div>
+
+<div class="pdf-card">
+    <h3>PHP Notes</h3>
+
+    <a href="{{ url_for('static', filename='pdfs/php.pdf') }}"
+       target="_blank"
+       class="btn">
+       Open PDF
+    </a>
+</div>
+
+<div class="pdf-card">
+    <h3>DBMS Notes</h3>
+
+    <a href="{{ url_for('static', filename='pdfs/dbms.pdf') }}"
+       target="_blank"
+       class="btn">
+       Open PDF
+    </a>
+</div>
+
+<br>
+
+<a href="/dashboard" class="btn">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ subject.upper() }} Notes</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    padding:40px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+.header{
+    background:#6c63ff;
+    color:white;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.topic-card{
+    background:white;
+    padding:20px;
+    margin-bottom:15px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.topic-card h3{
+    color:#6c63ff;
+    margin-bottom:10px;
+}
+
+.topic-card p{
+    color:#666;
+}
+
+.back-btn{
+    display:inline-block;
+    text-decoration:none;
+    background:#333;
+    color:white;
+    padding:12px 20px;
+    border-radius:8px;
+    margin-top:20px;
+}
+
+.back-btn:hover{
+    background:#000;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>{{ subject.upper() }} Notes</h1>
+        <p>Complete study material and topics</p>
+    </div>
+
+    {% if subject == "python" %}
+
+        <div class="topic-card">
+            <h3>Introduction to Python</h3>
+            <p>Basics of Python programming language.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>Variables & Data Types</h3>
+            <p>Learn integers, strings, lists and dictionaries.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>Loops & Functions</h3>
+            <p>for loop, while loop and user-defined functions.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>Object Oriented Programming</h3>
+            <p>Classes, Objects, Inheritance and Polymorphism.</p>
+        </div>
+
+    {% elif subject == "php" %}
+
+        <div class="topic-card">
+            <h3>Introduction to PHP</h3>
+            <p>Server-side scripting basics.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>Variables & Arrays</h3>
+            <p>Working with data in PHP.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>Forms Handling</h3>
+            <p>GET and POST methods.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>PHP & MySQL</h3>
+            <p>Database connectivity and CRUD operations.</p>
+        </div>
+
+    {% elif subject == "sql" %}
+
+        <div class="topic-card">
+            <h3>Introduction to SQL</h3>
+            <p>Database fundamentals.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>SELECT Query</h3>
+            <p>Retrieve data from tables.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>INSERT, UPDATE, DELETE</h3>
+            <p>Modify records in database.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>JOIN Operations</h3>
+            <p>Combine data from multiple tables.</p>
+        </div>
+
+    {% else %}
+
+        <div class="topic-card">
+            <h3>No Notes Available</h3>
+            <p>This subject does not exist.</p>
+        </div>
+
+    {% endif %}
+
+    <a href="/notes" class="back-btn">⬅ Back to Notes</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   <style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+/* Navbar */
+.navbar{
+    height:70px;
+    background:#6c63ff;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 30px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.search-box input{
+    width:350px;
+    padding:10px;
+    border:none;
+    border-radius:5px;
+}
+
+.user{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.logout{
+    text-decoration:none;
+    color:white;
+    background:red;
+    padding:8px 15px;
+    border-radius:5px;
+}
+
+/* Main Layout */
+.container{
+    display:flex;
+}
+
+/* Sidebar */
+.sidebar{
+    width:230px;
+    height:calc(100vh - 70px);
+    background:white;
+    padding-top:20px;
+    box-shadow:2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar a{
+    display:block;
+    padding:15px 25px;
+    text-decoration:none;
+    color:#333;
+    font-weight:bold;
+}
+
+.sidebar a:hover{
+    background:#6c63ff;
+    color:white;
+}
+
+/* Content */
+.content{
+    flex:1;
+    padding:30px;
+}
+
+.heading{
+    margin-bottom:25px;
+}
+
+/* Notes Cards */
+.notes-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card h3{
+    margin-bottom:10px;
+}
+
+.card p{
+    color:#666;
+    margin-bottom:15px;
+}
+
+.btn{
+    display:inline-block;
+    text-decoration:none;
+    background:#6c63ff;
+    color:white;
+    padding:10px 15px;
+    border-radius:5px;
+}
+
+/* Recent Notes */
+.recent{
+    margin-top:40px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+table th,table td{
+    padding:15px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+table th{
+    background:#6c63ff;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">StudyHub</div>
+
+    <div class="search-box">
+        <input type="text" placeholder="Search Notes...">
+    </div>
+
+    <div class="user">
+        <span>Welcome, {{ username }}</span>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="sidebar">
+        <a href="/dashboard">🏠 Dashboard</a>
+        <a href="/notes">📚 Notes</a>
+        <a href="/lectures">🎥 Lectures</a>
+        <a href="/pdf">📄 PDFs</a>
+        <a href="/profile">👤 Profile</a>
+    </div>
+
+    <div class="content">
+
+        <h2 class="heading">Free Study Notes</h2>
+
+        <div class="notes-grid">
+
+            <div class="card">
+                <h3>Python Notes</h3>
+                <p>Complete Python notes for beginners.</p>
+                <a href="#" class="btn">View Notes</a>
+            </div>
+
+            <div class="card">
+                <h3>Web Development</h3>
+                <p>HTML, CSS, JavaScript notes.</p>
+                <a href="/notes/phython" class="btn">View Notes</a>
+            </div>
+
+            <div class="card">
+                <h3>DBMS Notes</h3>
+                <p>Database Management System PDF.</p>
+                <a href="#" class="btn">View Notes</a>
+            </div>
+
+            <div class="card">
+                <h3>DSA Notes</h3>
+                <p>Data Structures & Algorithms.</p>
+                <a href="#" class="btn">View Notes</a>
+            </div>
+
+        </div>
+
+        <div class="recent">
+
+            <h2>Recently Added Notes</h2>
+
+            <br>
+
+            <table>
+                <tr>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+
+                <tr>
+                    <td>Python</td>
+                    <td>08 Jun 2026</td>
+                    <td>Available</td>
+                </tr>
+
+                <tr>
+                    <td>DBMS</td>
+                    <td>08 Jun 2026</td>
+                    <td>Available</td>
+                </tr>
+
+                <tr>
+                    <td>Web Development</td>
+                    <td>08 Jun 2026</td>
+                    <td>Available</td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

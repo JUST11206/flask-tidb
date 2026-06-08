@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Lectures</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6f9;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    color:#6c63ff;
+    margin-bottom:30px;
+}
+
+.lecture-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+video{
+    width:100%;
+    border-radius:10px;
+}
+
+.btn{
+    display:inline-block;
+    margin-top:15px;
+    text-decoration:none;
+    background:#6c63ff;
+    color:white;
+    padding:10px 15px;
+    border-radius:5px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>🎥 Video Lectures</h1>
+
+<div class="lecture-grid">
+
+<div class="card">
+    <h3>Python Basics</h3>
+
+    <video controls>
+        <source src="static\images\videos\145487-787039552_medium.mp4" type="video/mp4">
+    </video>
+</div>
+
+<div class="card">
+    <h3>HTML & CSS</h3>
+
+    <video controls>
+        <source src="{{ url_for('static', filename='videos/htmlcss.mp4') }}" type="video/mp4">
+    </video>
+</div>
+
+<div class="card">
+    <h3>DBMS Lecture</h3>
+
+    <video controls>
+        <source src="{{ url_for('static', filename='videos/dbms.mp4') }}" type="video/mp4">
+    </video>
+</div>
+
+</div>
+
+<br>
+
+<a href="/dashboard" class="btn">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

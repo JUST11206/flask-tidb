@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    padding:40px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    color:#6c63ff;
+    margin-bottom:40px;
+}
+
+.notes-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.note-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    text-align:center;
+    transition:0.3s;
+}
+
+.note-card:hover{
+    transform:translateY(-8px);
+}
+
+.note-card h3{
+    margin-bottom:15px;
+    color:#333;
+}
+
+.note-card p{
+    color:#666;
+    margin-bottom:20px;
+}
+
+.btn{
+    display:inline-block;
+    text-decoration:none;
+    background:#6c63ff;
+    color:white;
+    padding:10px 20px;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.btn:hover{
+    background:#564fd8;
+}
+
+.back-btn{
+    display:inline-block;
+    margin-top:40px;
+    text-decoration:none;
+    background:#333;
+    color:white;
+    padding:12px 25px;
+    border-radius:8px;
+}
+
+.back-container{
+    text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📚 All Notes</h1>
+
+    <div class="notes-grid">
+
+        <div class="note-card">
+            <h3>🐍 Python Notes</h3>
+            <p>Complete Python Notes for Beginners.</p>
+            <a href="/notes/python" class="btn">View Notes</a>
+        </div>
+
+        <div class="note-card">
+            <h3>🌐 PHP Notes</h3>
+            <p>Learn PHP and Web Development.</p>
+            <a href="/notes/php" class="btn">View Notes</a>
+        </div>
+
+        <div class="note-card">
+            <h3>🗄 SQL Notes</h3>
+            <p>Database and SQL Complete Notes.</p>
+            <a href="/notes/sql" class="btn">View Notes</a>
+        </div>
+
+    </div>
+
+    <div class="back-container">
+        <a href="/dashboard" class="back-btn">⬅ Back to Dashboard</a>
+    </div>
+
+</div>
+
+</body>
+</html>
