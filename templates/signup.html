@@ -111,6 +111,35 @@ input:focus{
 .home-btn:hover{
     background:#111;
 }
+.loader-container{
+    display:none;
+    text-align:center;
+    margin-top:20px;
+}
+
+.loader{
+    width:40px;
+    height:40px;
+    border:4px solid #ddd;
+    border-top:4px solid #6c63ff;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:auto;
+}
+
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
+    }
+}
+.alert{
+    background:#ffebee;
+    color:#d32f2f;
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:10px;
+    text-align:center;
+}
 </style>
 </head>
 
@@ -122,7 +151,13 @@ input:focus{
         <h1>StudyHub</h1>
         <p>Create Your Account</p>
     </div>
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
     <form method="POST">
 
         <h2>Signup</h2>
@@ -150,7 +185,6 @@ input:focus{
         </button>
 
     </form>
-
     <div class="link">
 
         <p>
@@ -165,6 +199,5 @@ input:focus{
     </div>
 
 </div>
-
 </body>
 </html>

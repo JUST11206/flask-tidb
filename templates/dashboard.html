@@ -231,18 +231,110 @@ table th{
         font-size:22px;
     }
 }
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    max-width:500px;
+}
 
+#searchInput{
+    flex:1;
+    padding:12px 15px;
+    border:2px solid #6c63ff;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+}
+
+#searchInput:focus{
+    border-color:#4f46e5;
+    box-shadow:0 0 10px rgba(108,99,255,0.25);
+}
+
+.search-btn{
+    padding:12px 18px;
+    border:none;
+    border-radius:10px;
+    background:#6c63ff;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.search-btn:hover{
+    background:#4f46e5;
+    transform:translateY(-2px);
+}
+
+/* Mobile */
+@media(max-width:768px){
+
+    .search-box{
+        max-width:100%;
+    }
+
+    #searchInput{
+        font-size:14px;
+    }
+
+    .search-btn{
+        padding:12px 15px;
+        font-size:14px;
+    }
+}
+.search-btn{
+    background: linear-gradient(135deg,#4f46e5,#06b6d4);
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    box-shadow:0 4px 12px rgba(79,70,229,0.25);
+}
+
+.search-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(79,70,229,0.35);
+}
+
+.search-btn:active{
+    transform:scale(0.98);
+}
+
+.search-btn:focus{
+    outline:none;
+}
+
+/* Mobile */
+@media(max-width:768px){
+    .search-btn{
+        padding:10px 16px;
+        font-size:14px;
+    }
+}
 </style>
 </head>
 <body>
 
 <div class="navbar">
     <div class="logo">🎓StudyHub</div>
+<div class="search-box">
 
-    <div class="search-box">
-        <input type="text" placeholder="Search Notes...">
-    </div>
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Search Notes..."
+        onkeyup="searchNotes()">
 
+    <button onclick="searchNotes()" class="search-btn">➡️</button>
+
+</div>
     <div class="user">
         <span>Welcome, {{ username }}</span>
         <a href="/logout" class="logout">Logout</a>
@@ -396,6 +488,25 @@ table th{
     </a>
 
 </div>
+<script>
+    function searchNotes() {
 
+    let input = document.getElementById("searchInput").value.toLowerCase();
+
+    let cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+
+        let text = card.querySelector("h3").innerText.toLowerCase();
+
+        if(text.includes(input)){
+            card.style.display = "block";
+        }else{
+            card.style.display = "none";
+        }
+
+    });
+}
+</script>
 </body>
 </html>

@@ -1,15 +1,27 @@
 #pip install sqlalchemy pymysql cryptography
-from flask import Flask , render_template,request,redirect,session
+from flask import Flask , render_template,request,redirect,session ,flash
 from sqlalchemy import create_engine, text
 from datetime import timedelta
 import os
 from werkzeug.utils import secure_filename
+from email_validator import validate_email, EmailNotValidError
+from flask import flash
+from flask_mail import Mail, Message
+import random
+
 
 
 app = Flask(__name__)
 app.secret_key = "secret@123"
 app.permanent_session_lifetime = timedelta(days=7)
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'u5976421@gmail.com'
+app.config['MAIL_PASSWORD'] = 'tgde nrwr wqxc cqeg'
+
+mail = Mail(app)
 
 DATABASE_URL = "mysql+pymysql://3FtQQGViQkjLout.root:yQrM14kdizk6648t@gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/flask_auth"
 
@@ -53,11 +65,49 @@ def login():
             session["user"] = user.username
             session["email"] = user.email
             return redirect("/dashboard")
-        return "Invalid Login"
+        flash("You enter Wrong Password! or Email", "error")
+        return redirect("/login")
 
     return render_template("login.html")
 
 #signup 
+
+
+# @app.route("/signup", methods=["GET", "POST"])
+# def signup():
+
+#     if request.method == "POST":
+
+#         username = request.form["username"]
+#         email = request.form["email"]
+
+#         password = request.form["password"]
+
+#         with engine.connect() as conn:
+
+#             conn.execute(
+#                 text("""
+#                 INSERT INTO users(username,email,password)
+#                 VALUES(:username,:email,:password)
+#                 """),
+#                 {
+#                     "username": username,
+#                     "email": email,
+#                     "password": password
+#                 }
+#             )
+
+#             conn.commit()
+
+#          # User ko automatically login kara do
+#         session.permanent = True
+#         session["user"] = username
+#         session["email"] = email
+
+#         # Direct dashboard par bhejo
+#         return redirect("/dashboard")
+
+#     return render_template("signup.html")
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -68,31 +118,82 @@ def signup():
         email = request.form["email"]
         password = request.form["password"]
 
+        try:
+            valid = validate_email(email)
+            email = valid.email
+        except EmailNotValidError:
+            flash("Please enter a valid email address!", "error")
+            return redirect("/signup")
+
         with engine.connect() as conn:
 
-            conn.execute(
+            existing_user = conn.execute(
                 text("""
-                INSERT INTO users(username,email,password)
-                VALUES(:username,:email,:password)
+                SELECT email FROM users
+                WHERE email=:email
                 """),
-                {
-                    "username": username,
-                    "email": email,
-                    "password": password
-                }
-            )
+                {"email": email}
+            ).fetchone()
 
-            conn.commit()
+            if existing_user:
+                flash("Email already registered!", "error")
+                return redirect("/signup")
 
-         # User ko automatically login kara do
-        session.permanent = True
-        session["user"] = username
+        otp = random.randint(100000, 999999)
+
+        session["otp"] = str(otp)
+        session["username"] = username
         session["email"] = email
+        session["password"] = password
 
-        # Direct dashboard par bhejo
-        return redirect("/dashboard")
+        msg = Message(
+            "OTP Verification",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
+
+        msg.body = f"Your OTP is: {otp}"
+
+        mail.send(msg)
+
+        return redirect("/verify-otp")
 
     return render_template("signup.html")
+
+@app.route("/verify-otp", methods=["GET", "POST"])
+def verify_otp():
+
+    if request.method == "POST":
+
+        user_otp = request.form["otp"]
+
+        if user_otp == session.get("otp"):
+
+            with engine.connect() as conn:
+
+                conn.execute(
+                    text("""
+                    INSERT INTO users(username,email,password)
+                    VALUES(:username,:email,:password)
+                    """),
+                    {
+                        "username": session["username"],
+                        "email": session["email"],
+                        "password": session["password"]
+                    }
+                )
+
+                conn.commit()
+
+            session["user"] = session["username"]
+
+            flash("Account created successfully!", "success")
+
+            return redirect("/dashboard")
+
+        flash("Invalid OTP!", "error")
+
+    return render_template("verify-otp.html")
 
 # Dashboard
 @app.route("/dashboard")
