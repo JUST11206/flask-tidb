@@ -3,3 +3,4 @@ SQLAlchemy
 PyMySQL
 cryptography
 gunicorn
+email-validator
