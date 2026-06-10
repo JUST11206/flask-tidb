@@ -74,6 +74,7 @@ body{
         <p>Complete study material and topics</p>
     </div>
 
+    
     {% if subject == "python" %}
 
         <div class="topic-card">
@@ -95,6 +96,32 @@ body{
             <h3>Object Oriented Programming</h3>
             <p>Classes, Objects, Inheritance and Polymorphism.</p>
         </div>
+
+
+
+
+    {% elif subject == "web" %}
+
+        <div class="topic-card">
+            <h3>Html , CSS, Developmenet</h3>
+            <p>Basics of Frontend.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>Variables & Data Types</h3>
+            <p>Learn integers, strings, lists and dictionaries.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>Loops & Functions</h3>
+            <p>for loop, while loop and user-defined functions.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>Object Oriented Programming</h3>
+            <p>Classes, Objects, Inheritance and Polymorphism.</p>
+        </div>
+
 
     {% elif subject == "php" %}
 
@@ -139,6 +166,30 @@ body{
             <h3>JOIN Operations</h3>
             <p>Combine data from multiple tables.</p>
         </div>
+
+        
+    {% elif subject == "dsa" %}
+
+        <div class="topic-card">
+            <h3>Introduction to DSA</h3>
+            <p>Data Structure and Algorithm.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>SELECT Query</h3>
+            <p>Retrieve data from tables.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>INSERT, UPDATE, DELETE</h3>
+            <p>Modify records in database.</p>
+        </div>
+
+        <div class="topic-card">
+            <h3>JOIN Operations</h3>
+            <p>Combine data from multiple tables.</p>
+        </div>
+
 
     {% else %}
 

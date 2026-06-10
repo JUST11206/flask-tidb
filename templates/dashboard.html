@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>StudyHub Dashboard</title>
+
    <style>
 *{
     margin:0;
@@ -14,9 +15,11 @@
 
 body{
     background:#f4f6f9;
+    overflow-x:hidden;
 }
 
-/* Navbar */
+/* NAVBAR */
+
 .navbar{
     height:70px;
     background:#6c63ff;
@@ -24,16 +27,17 @@ body{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:0 30px;
+    padding:0 20px;
 }
 
 .logo{
-    font-size:24px;
+    font-size:28px;
     font-weight:bold;
 }
 
 .search-box input{
-    width:350px;
+    width:300px;
+    max-width:100%;
     padding:10px;
     border:none;
     border-radius:5px;
@@ -41,8 +45,8 @@ body{
 
 .user{
     display:flex;
-    gap:15px;
     align-items:center;
+    gap:15px;
 }
 
 .logout{
@@ -53,23 +57,24 @@ body{
     border-radius:5px;
 }
 
-/* Main Layout */
+/* LAYOUT */
+
 .container{
     display:flex;
 }
 
-/* Sidebar */
+/* DESKTOP SIDEBAR */
+
 .sidebar{
     width:230px;
-    height:calc(100vh - 70px);
+    min-height:calc(100vh - 70px);
     background:white;
-    padding-top:20px;
     box-shadow:2px 0 10px rgba(0,0,0,0.1);
 }
 
 .sidebar a{
     display:block;
-    padding:15px 25px;
+    padding:18px 25px;
     text-decoration:none;
     color:#333;
     font-weight:bold;
@@ -80,7 +85,8 @@ body{
     color:white;
 }
 
-/* Content */
+/* CONTENT */
+
 .content{
     flex:1;
     padding:30px;
@@ -90,7 +96,6 @@ body{
     margin-bottom:25px;
 }
 
-/* Notes Cards */
 .notes-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
@@ -115,16 +120,21 @@ body{
 
 .btn{
     display:inline-block;
-    text-decoration:none;
     background:#6c63ff;
     color:white;
+    text-decoration:none;
     padding:10px 15px;
     border-radius:5px;
 }
 
-/* Recent Notes */
+/* TABLE */
+
 .recent{
     margin-top:40px;
+}
+
+.table-wrapper{
+    overflow-x:auto;
 }
 
 table{
@@ -133,7 +143,8 @@ table{
     background:white;
 }
 
-table th,table td{
+table th,
+table td{
     padding:15px;
     border-bottom:1px solid #ddd;
     text-align:left;
@@ -143,13 +154,90 @@ table th{
     background:#6c63ff;
     color:white;
 }
+
+/* MOBILE BOTTOM NAV */
+
+.bottom-nav{
+    display:none;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .navbar{
+        flex-wrap:wrap;
+        height:auto;
+        padding:15px;
+        gap:10px;
+    }
+
+    .search-box{
+        width:100%;
+    }
+
+    .search-box input{
+        width:100%;
+    }
+
+    .user{
+        width:100%;
+        justify-content:center;
+    }
+
+    .sidebar{
+        display:none;
+    }
+
+    .content{
+        width:100%;
+        padding:15px;
+        padding-bottom:90px;
+    }
+
+    .notes-grid{
+        grid-template-columns:1fr;
+    }
+
+    .bottom-nav{
+        display:flex;
+        justify-content:space-around;
+        align-items:center;
+
+        position:fixed;
+        bottom:0;
+        left:0;
+
+        width:100%;
+        height:65px;
+
+        background:white;
+
+        box-shadow:0 -3px 10px rgba(0,0,0,0.1);
+        z-index:1000;
+    }
+
+    .bottom-nav a{
+        text-decoration:none;
+        color:#555;
+
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        font-size:12px;
+    }
+
+    .bottom-nav span{
+        font-size:22px;
+    }
+}
+
 </style>
 </head>
-
 <body>
 
 <div class="navbar">
-    <div class="logo">StudyHub</div>
+    <div class="logo">🎓StudyHub</div>
 
     <div class="search-box">
         <input type="text" placeholder="Search Notes...">
@@ -163,6 +251,7 @@ table th{
 
 <div class="container">
 
+    <!-- Desktop Sidebar -->
     <div class="sidebar">
         <a href="/dashboard">🏠 Dashboard</a>
         <a href="/notes">📚 Notes</a>
@@ -173,32 +262,32 @@ table th{
 
     <div class="content">
 
-        <h2 class="heading">Free Study Notes</h2>
+        <h2 class="heading">Free Popular Notes 📖</h2>
 
         <div class="notes-grid">
 
             <div class="card">
                 <h3>Python Notes</h3>
                 <p>Complete Python notes for beginners.</p>
-                <a href="#" class="btn">View Notes</a>
+                <a href="/notes/python" class="btn">View Notes</a>
             </div>
 
             <div class="card">
                 <h3>Web Development</h3>
                 <p>HTML, CSS, JavaScript notes.</p>
-                <a href="/notes/phython" class="btn">View Notes</a>
+                <a href="/notes/web" class="btn">View Notes</a>
             </div>
 
             <div class="card">
                 <h3>DBMS Notes</h3>
                 <p>Database Management System PDF.</p>
-                <a href="#" class="btn">View Notes</a>
+                <a href="/notes/sql" class="btn">View Notes</a>
             </div>
 
             <div class="card">
                 <h3>DSA Notes</h3>
                 <p>Data Structures & Algorithms.</p>
-                <a href="#" class="btn">View Notes</a>
+                <a href="/notes/dsa" class="btn">View Notes</a>
             </div>
 
         </div>
@@ -207,38 +296,106 @@ table th{
 
             <h2>Recently Added Notes</h2>
 
-            <br>
+            <div class="table-wrapper">
 
-            <table>
-                <tr>
-                    <th>Subject</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                </tr>
+                <table>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
 
-                <tr>
-                    <td>Python</td>
-                    <td>08 Jun 2026</td>
-                    <td>Available</td>
-                </tr>
+                    <tr>
+                        <td>Python</td>
+                        <td>10 Jun 2026</td>
+                        <td>Available  <a href="/notes/python">View</a></td>
+                    </tr>
 
-                <tr>
-                    <td>DBMS</td>
-                    <td>08 Jun 2026</td>
-                    <td>Available</td>
-                </tr>
+                    <tr>
+                        <td>Web Development</td>
+                        <td>08 Jun 2026</td>
+                        <td>Available  <a href="/notes/web">View</a></td>
+                    </tr>
+                    <tr>
+                        <td>DBMS</td>
+                        <td>10 Jun 2026</td>
+                        <td>Available  <a href="/notes/sql">View</a></td>
+                    </tr>
+                    <tr>
+                        <td>DSA</td>
+                        <td>10 Jun 2026</td>
+                        <td>Available  <a href="/notes/dsa">View</a></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>PHP</td>
+                        <td>08 Jun 2026</td>
+                        <td>Available   <a href="/notes/php">View</a></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Java</td>
+                        <td>18 Jun 2026</td>
+                        <td>Coming Soon</td>
+                    </tr>
+                    <tr>
+                        <td>HTML</td>
+                        <td>11 Jun 2026</td>
+                        <td>Coming Soon</td>
+                    </tr>
 
-                <tr>
-                    <td>Web Development</td>
-                    <td>08 Jun 2026</td>
-                    <td>Available</td>
-                </tr>
-            </table>
+                    
+                    <tr>
+                        <td>CSS</td>
+                        <td>11 Jun 2026</td>
+                        <td>Coming Soon</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>JavaScript</td>
+                        <td>12 Jun 2026</td>
+                        <td>Coming Soon</td>
+                    </tr>
+                </table>
+
+            </div>
 
         </div>
 
     </div>
 
 </div>
+
+<!-- Mobile Bottom Navigation -->
+
+<div class="bottom-nav">
+
+    <a href="/dashboard">
+        <span>🏠</span>
+        <small>Home</small>
+    </a>
+
+    <a href="/notes">
+        <span>📚</span>
+        <small>Notes</small>
+    </a>
+
+    <a href="/lectures">
+        <span>🎥</span>
+        <small>Lectures</small>
+    </a>
+
+    <a href="/pdf">
+        <span>📄</span>
+        <small>PDFs</small>
+    </a>
+
+    <a href="/profile">
+        <span>👤</span>
+        <small>Profile</small>
+    </a>
+
+</div>
+
 </body>
 </html>

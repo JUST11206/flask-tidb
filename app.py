@@ -2,10 +2,14 @@
 from flask import Flask , render_template,request,redirect,session
 from sqlalchemy import create_engine, text
 from datetime import timedelta
+import os
+from werkzeug.utils import secure_filename
+
 
 app = Flask(__name__)
 app.secret_key = "secret@123"
 app.permanent_session_lifetime = timedelta(days=7)
+
 
 DATABASE_URL = "mysql+pymysql://3FtQQGViQkjLout.root:yQrM14kdizk6648t@gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/flask_auth"
 
@@ -14,12 +18,14 @@ engine = create_engine(
     pool_recycle=3600
 )
 
+UPLOAD_FOLDER = "static/profile_images"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 @app.route("/")
 def home():
     return render_template("index.html")
-
-
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -45,8 +51,8 @@ def login():
 
         if user:
             session["user"] = user.username
+            session["email"] = user.email
             return redirect("/dashboard")
-
         return "Invalid Login"
 
     return render_template("login.html")
@@ -78,10 +84,15 @@ def signup():
 
             conn.commit()
 
-        return redirect("/login")
+         # User ko automatically login kara do
+        session.permanent = True
+        session["user"] = username
+        session["email"] = email
+
+        # Direct dashboard par bhejo
+        return redirect("/dashboard")
 
     return render_template("signup.html")
-
 
 # Dashboard
 @app.route("/dashboard")
@@ -120,15 +131,43 @@ def lectures():
 def pdfs():
     return render_template("pdf.html")
 
-@app.route("/profile")
-def profile():
-    return render_template("profile.html",
-        username="Malik",
-        email="malik@gmail.com")
-
 @app.route("/notes/<subject>")
 def subject(subject):
     return render_template("subject.html", subject=subject)
+
+
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    if request.method == "POST":
+
+        image = request.files.get("profile_image")
+
+        if image and image.filename:
+
+            filename = secure_filename(image.filename)
+
+            image.save(
+                os.path.join(
+                    app.config["UPLOAD_FOLDER"],
+                    filename
+                )
+            )
+
+            session["profile_image"] = filename
+
+        return redirect("/profile")
+
+    return render_template(
+        "profile.html",
+        username=session["user"],
+        email=session.get("email"),
+        profile_image=session.get("profile_image")
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
