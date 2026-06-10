@@ -1,6 +1,7 @@
 Flask
+gunicorn
 SQLAlchemy
 PyMySQL
-cryptography
-gunicorn
 email-validator
+Flask-Mail
+Werkzeug
