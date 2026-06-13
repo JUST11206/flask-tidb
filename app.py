@@ -124,7 +124,6 @@ def login():
 
 #This is 10 june 2026 
 
-
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
 
@@ -139,17 +138,19 @@ def signup():
             try:
                 valid = validate_email(email)
                 email = valid.email
+
             except EmailNotValidError:
                 flash("Please enter a valid email address!", "error")
                 return redirect("/signup")
 
-            # DB CHECK
+            # CHECK IF EMAIL ALREADY EXISTS
             try:
                 with engine.connect() as conn:
 
                     existing_user = conn.execute(
                         text("""
-                        SELECT email FROM users
+                        SELECT email
+                        FROM users
                         WHERE email=:email
                         """),
                         {"email": email}
@@ -160,8 +161,8 @@ def signup():
                         return redirect("/signup")
 
             except Exception as e:
-                print("DB CHECK ERROR:", e)
-                flash("Database error. Try again!", "error")
+                print("DB CHECK ERROR:", repr(e))
+                flash("Database error!", "error")
                 return redirect("/signup")
 
             # OTP GENERATION
@@ -172,31 +173,55 @@ def signup():
             session["email"] = email
             session["password"] = password
 
-            # EMAIL SENDING
+            # SEND EMAIL
             try:
+
                 msg = Message(
-                    "OTP Verification",
-                    sender=app.config.get('MAIL_USERNAME'),
+                    subject="OTP Verification",
+                    sender=app.config.get("MAIL_USERNAME"),
                     recipients=[email]
                 )
 
-                msg.body = f"Your OTP is: {otp}"
+                msg.body = f"""
+Hello {username},
+
+Your OTP for StudyHub account verification is:
+
+{otp}
+
+This OTP is valid for a short time.
+
+Thanks,
+StudyHub Team
+"""
+
                 mail.send(msg)
 
+                print("EMAIL SENT SUCCESSFULLY")
+
             except Exception as e:
-                print("EMAIL ERROR:", repr(e))
+
+                print("=" * 50)
+                print("SMTP ERROR:", repr(e))
+                print("=" * 50)
+
                 flash("OTP email failed!", "error")
                 return redirect("/signup")
 
-            # ✅ THIS RETURN IS IMPORTANT (SUCCESS FLOW)
+            # SUCCESS
             return redirect("/verify-otp")
 
         except Exception as e:
-            print("SIGNUP ERROR:", e)
+
+            print("=" * 50)
+            print("SIGNUP ERROR:", repr(e))
+            print("=" * 50)
+
             flash("Something went wrong!", "error")
             return redirect("/signup")
 
     return render_template("signup.html")
+
 
 
     #         try:
