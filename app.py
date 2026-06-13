@@ -25,17 +25,32 @@ app.permanent_session_lifetime = timedelta(days=7)
 #     MAIL_DEFAULT_SENDER=os.environ.get("MAIL_USERNAME")
 # )
 # mail = Mail(app)
+
+#Work on local proper
+    # app.config.update(
+    # MAIL_SERVER='smtp.gmail.com',
+    # MAIL_PORT=587,
+    # MAIL_USE_TLS=True,
+    # MAIL_USE_SSL=False ,
+    # MAIL_USERNAME="u5976421@gmail.com",
+    # MAIL_PASSWORD="tgde nrwr wqxc cqeg",
+    # MAIL_DEFAULT_SENDER="u5976421@gmail.com"
+    #)
+    #mail = Mail(app)
+#new 
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=587,
     MAIL_USE_TLS=True,
-    MAIL_USERNAME="u5976421@gmail.com",
-    MAIL_PASSWORD="tgde nrwr wqxc cqeg",
-    MAIL_DEFAULT_SENDER="u5976421@gmail.com" ,
-    MAIL_USE_SSL=False ,
-    
+    MAIL_USE_SSL=False,
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+    MAIL_DEFAULT_SENDER=os.getenv("MAIL_USERNAME")
 )
+
 mail = Mail(app)
+
+
 DATABASE_URL = "mysql+pymysql://3FtQQGViQkjLout.root:yQrM14kdizk6648t@gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/flask_auth"
 
 engine = create_engine(
@@ -194,7 +209,8 @@ This OTP is valid for a short time.
 Thanks,
 StudyHub Team
 """
-
+                
+                print("STARTING EMAIL SEND")
                 mail.send(msg)
 
                 print("EMAIL SENT SUCCESSFULLY")
