@@ -347,53 +347,69 @@ body {
   color: #475569;
 }
 
-/* ========== VIDEO LECTURES SECTION (playlists w/ thumbnails) ========== */
+/* VIDEO SECTION */
 .video-section {
-  background: #0f172a;
-  color: white;
-}
-.playlist-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
-  gap: 1.5rem;
-}
-.video-card {
-  background: #1e293b;
-  border-radius: 1rem;
-  overflow: hidden;
-  transition: 0.2s;
-}
-.thumbnail {
-  height: 140px;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-.play-icon {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: white;
-  opacity: 0;
-  transition: 0.2s;
-}
-.video-card:hover .play-icon {
-  opacity: 1;
-}
-.video-card h4 {
-  padding: 0.8rem 1rem 0.2rem;
-  font-size: 1rem;
-}
-.video-card p {
-  padding: 0 1rem 1rem;
-  font-size: 0.7rem;
-  color: #94a3b8;
+    background: #0f172a;
+    padding: 50px 20px;
 }
 
+.video-container {
+    max-width: 900px;   /* Desktop width limit */
+    margin: 0 auto;
+}
+
+.video-box {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.video-box video {
+    width: 100%;
+    max-width: 850px;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 15px;
+    display: block;
+    margin: 0 auto;
+}
+
+.video-box h3 {
+    color: white;
+    margin-top: 15px;
+}
+
+.video-box p {
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+    .video-container {
+        max-width: 700px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .video-section {
+        padding: 30px 15px;
+    }
+
+    .video-box {
+        padding: 15px;
+    }
+
+    .video-box video {
+        max-width: 100%;
+    }
+
+    .video-box p {
+        font-size: 13px;
+    }
+}
 /* footer */
 .footer {
   background: #020617;
@@ -428,16 +444,18 @@ body {
     height: 160px;
     object-fit: cover;
 }
+
 </style>
 </head>
 <body>
 <nav class="navbar">
   <div class="nav-container">
-    <div class="logo"><i class="fas fa-brain"></i> StudyHub </div>
+    <div class="logo">🎓StudyHub </div>
     <ul class="nav-menu" id="nav-menu">
-      <li><a href="#home">Home</a></li><li><a href="#courses">Courses</a></li>
-      <li><a href="/login">Notes</a></li><li><a href="#features">Features</a></li>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#features">Features</a></li>
       <li><a href="#videos">Videos</a></li><li><a href="#join">Join</a></li>
+      <li><a href="/login">Login</a></li>
     </ul>
     <div class="menu-toggle" id="menu-toggle">☰</div>
   </div>
@@ -480,106 +498,68 @@ body {
   </div>
 </section>
 
-<div class="course-img">
-  <img src="{{ url_for('static', filename='images/python-programming.jpg') }}" alt="Python">
-</div>
+<!-- 
+<div class="section-title video-title">🎥 Featured Introduction Video</div>
 
+<div class="video-box">
+  <video controls>
+    <source src="static/videos/fb0e67daa41808f662b528981ea32b30.mp4">
+  </video>
+  <h3>StudyHub</h3>
+  <p>Learn Web development in easy way.</p>
+</div> -->
 
+<section id="videos" class="video-section">
+    <div class="video-container">
 
-<section id="videos" class="video-section section">
-  <div class="container">
+        <div class="section-title video-title">
+           Python Introduction Video
+        </div>
 
-    <div class="section-title" style="color:white;">
-      🎥 Featured Introduction Video
-    </div>
+        <div class="video-box">
+            <video controls>
+                <source src="static/videos/fb0e67daa41808f662b528981ea32b30.mp4">
+            </video>
 
-    <div style="
-      max-width:900px;
-      margin:auto;
-      background:#1e293b;
-      padding:20px;
-      border-radius:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.3);
-    ">
-
-      <video controls style="
-        width:100%;
-        border-radius:15px;
-      ">
-        <source src="static\videos\fb0e67daa41808f662b528981ea32b30.mp4" type="video/mp4">
-      </video>
-
-      <h3 style="margin-top:15px;color:white;">
-        StudyHub 
-      </h3>
-
-      <p style="color:#cbd5e1;">
-        Learn Web development, in easy way to eexplore everything and get free notes.
-      </p>
-
-    </div>
-    <div class="section-title" style="color:white;">
-      Python Introduction Video
-    </div>
-
-    <div style="
-      max-width:900px;
-      margin:auto;
-      background:#1e293b;
-      padding:20px;
-      border-radius:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.3);
-    ">
-
-      <video controls style="
-        width:100%;
-        border-radius:15px;
-      ">
-        <source src="static\videos\9a64103d6aa37bc9232b65f15e9e747a_720w.mp4" type="video/mp4">
-      </video>
-
-      <h3 style="margin-top:15px;color:white;">
-        StudyHub 
-      </h3>
-
-      <p style="color:#cbd5e1;">
-        Learn Web development, in easy way to eexplore everything and get free notes.
-      </p>
+            <h3>StudyHub</h3>
+            <p>Learn Web Development in easy way.</p>
+        </div>
 
     </div>
 
-    <div class="section-title" style="color:white;">
-      Backend Introduction
-    </div>
+    <div class="video-container">
 
+        <div class="section-title video-title">
+            🎥 Web Development 
+        </div>
 
-    <div style="
-      max-width:900px;
-      margin:auto;
-      background:#1e293b;
-      padding:20px;
-      border-radius:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.3);
-    ">
+        <div class="video-box">
+            <video controls>
+                <source src="static\videos\9a64103d6aa37bc9232b65f15e9e747a_720w.mp4">
+            </video>
 
-      <video controls style="
-        width:100%;
-        border-radius:15px;
-      ">
-        <source src="static\videos\b54832827b80d897cc2c22e5716f19a8.mp4" type="video/mp4">
-      </video>
-
-      <h3 style="margin-top:15px;color:white;">
-        StudyHub 
-      </h3>
-
-      <p style="color:#cbd5e1;">
-        Learn Web development, and Full stack programming and get free notes.
-      </p>
+            <h3>StudyHub</h3>
+            <p>Learn Web Development in easy way.</p>
+        </div>
 
     </div>
 
-  </div>
+    <div class="video-container">
+
+        <div class="section-title video-title">
+            🎥 Full Stack Using Python
+        </div>
+
+        <div class="video-box">
+            <video controls>
+                <source src="static\videos\b54832827b80d897cc2c22e5716f19a8.mp4">
+            </video>
+
+            <h3>StudyHub</h3>
+            <p>Learn Web Development in easy way.</p>
+        </div>
+
+    </div>
 </section>
 
 <!-- STATS SECTION (10k+, 500+ notes etc) -->
@@ -596,10 +576,19 @@ body {
 <section id="join" class="join" style="background: linear-gradient(125deg,#4f46e5,#0f172a); text-align:center; padding:4rem 1.5rem; color:white;">
   <h2 style="font-size:2rem;">Start your coding journey today</h2>
   <p style="margin:1rem auto; max-width:500px;">Get free access to 500+ notes, AI tutor and exclusive courses.</p>
-  <a href="#" class="btn-primary" style="background:white; color:#4f46e5; margin-top:0.5rem;">Create Free Account →</a>
+  <a href="/signup" class="btn-primary" style="background:white; color:#4f46e5; margin-top:0.5rem;">Create Free Account →</a>
 </section>
 
 <footer class="footer"><p>© 2026 StudyHub AI — next-gen programming ecosystem | All features simulated for learning</p></footer>
+<script>
+
+const toggle = document.getElementById("menu-toggle");
+const menu = document.getElementById("nav-menu");
+
+toggle.addEventListener("click", () => {
+  menu.classList.toggle("active");
+});
+</script>
 
 </body>
 </html>
