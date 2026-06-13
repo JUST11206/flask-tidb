@@ -27,17 +27,18 @@ app.permanent_session_lifetime = timedelta(days=7)
 # mail = Mail(app)
 
 #Work on local proper
-    # app.config.update(
-    # MAIL_SERVER='smtp.gmail.com',
-    # MAIL_PORT=587,
-    # MAIL_USE_TLS=True,
-    # MAIL_USE_SSL=False ,
-    # MAIL_USERNAME="u5976421@gmail.com",
-    # MAIL_PASSWORD="tgde nrwr wqxc cqeg",
-    # MAIL_DEFAULT_SENDER="u5976421@gmail.com"
-    #)
-    #mail = Mail(app)
-#new 
+
+# app.config.update(
+#     MAIL_SERVER='smtp.gmail.com',
+#     MAIL_PORT=587,
+#     MAIL_USE_TLS=True,
+#     MAIL_USE_SSL=False ,
+#     MAIL_USERNAME="u5976421@gmail.com",
+#     MAIL_PASSWORD="tgde nrwr wqxc cqeg",
+#     MAIL_DEFAULT_SENDER="u5976421@gmail.com"
+#     )
+# mail = Mail(app)
+# #new 
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=587,
@@ -49,7 +50,8 @@ app.config.update(
 )
 
 mail = Mail(app)
-
+print("MAIL_USERNAME =", repr(os.getenv("MAIL_USERNAME")))
+print("MAIL_PASSWORD EXISTS =", bool(os.getenv("MAIL_PASSWORD")))
 
 DATABASE_URL = "mysql+pymysql://3FtQQGViQkjLout.root:yQrM14kdizk6648t@gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/flask_auth"
 
@@ -419,6 +421,7 @@ def profile():
         email=session.get("email"),
         profile_image=session.get("profile_image")
     )
+
 
 
 if __name__ == "__main__":
