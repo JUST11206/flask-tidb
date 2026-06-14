@@ -39,20 +39,21 @@ app.permanent_session_lifetime = timedelta(days=7)
 #     )
 # mail = Mail(app)
 # #new 
+
 app.config.update(
     MAIL_SERVER='smtp.sendgrid.net',
     MAIL_PORT=587,
     MAIL_USE_TLS=True,
     MAIL_USE_SSL=False,
     MAIL_USERNAME='apikey',
-    MAIL_PASSWORD=os.getenv("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"),
+    MAIL_PASSWORD=os.getenv("SENDGRID_API_KEY"),
     MAIL_DEFAULT_SENDER=os.getenv("MAIL_USERNAME")
 )
 
 mail = Mail(app)
 
-print("MAIL_USERNAME =", repr(os.getenv("MAIL_USERNAME")))
-print("MAIL_PASSWORD EXISTS =", bool(os.getenv("MAIL_PASSWORD")))
+print("MAIL_USERNAME =", os.getenv("MAIL_USERNAME"))
+print("SENDGRID_API_KEY EXISTS =", bool(os.getenv("SENDGRID_API_KEY")))
 
 DATABASE_URL = "mysql+pymysql://3FtQQGViQkjLout.root:yQrM14kdizk6648t@gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/flask_auth"
 
