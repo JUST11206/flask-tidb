@@ -164,6 +164,22 @@ def login():
 
 #     return render_template("signup.html")
 
+#this is a temorary guest button for signup 
+@app.route('/guest_login')
+def guest_login():
+    session['user'] = "Guest"
+    session['role'] = "guest"
+    return redirect('/dashboard')
+
+@app.route("/dashboard")
+def dashboard():
+
+    user = session.get("user")
+
+    if not user:
+        return redirect("/login")
+
+    return render_template("dashboard.html", username=user)
 #This is 10 june 2026 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -415,6 +431,7 @@ def search():
         results=results
     )
 # Dashboard
+
 @app.route("/dashboard")
 def dash():
 
@@ -435,9 +452,10 @@ def logout():
     return redirect("/login")
 
 #sidebar section
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
+
+# @app.route("/dashboard")
+# def dashboard():
+#     return render_template("dashboard.html")
 
 @app.route("/notes")
 def note():

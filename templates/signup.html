@@ -140,6 +140,27 @@ input:focus{
     margin-bottom:10px;
     text-align:center;
 }
+.guest-btn{
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.guest-btn button{
+    padding:10px 20px;
+    background:#28a745;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+@media (max-width: 600px){
+    .guest-btn{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
 </style>
 </head>
 
@@ -185,6 +206,15 @@ input:focus{
         </button>
 
     </form>
+    
+<div class="guest-btn">
+    <a href="/guest_login">
+        <button>
+            Continue as Guest
+        </button>
+    </a>
+</div>
+
     <div class="link">
 
         <p>
