@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+    
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6f9;
+    padding:20px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+h2{
+    color:#6c63ff;
+    margin-bottom:25px;
+    text-align:center;
+}
+
+.results-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+}
+
+.card h3{
+    font-size:20px;
+    margin-bottom:10px;
+}
+
+.card p{
+    color:#666;
+    margin-bottom:15px;
+}
+
+.btn{
+    display:inline-block;
+    background:#6c63ff;
+    color:white;
+    text-decoration:none;
+    padding:10px 15px;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.btn:hover{
+    background:#5548e8;
+}
+
+.back-btn{
+    margin-top:25px;
+}
+
+/* Mobile */
+@media screen and (max-width:768px){
+
+    body{
+        padding:15px;
+    }
+
+    .results-grid{
+        grid-template-columns:1fr;
+        gap:15px;
+    }
+
+    .card{
+        width:100%;
+        padding:18px;
+    }
+
+    .card h3{
+        font-size:18px;
+    }
+
+    .btn{
+        width:100%;
+        text-align:center;
+    }
+
+    h2{
+        font-size:22px;
+    }
+}
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h2>🔍 Search Results for "{{ query }}"</h2>
+
+    <div class="results-grid">
+
+        {% for item in results %}
+        <div class="card">
+
+            <h3>{{ item.title }}</h3>
+
+            <p>{{ item.type }}</p>
+
+            <a href="{{ item.url }}" class="btn">
+                Open
+            </a>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <br>
+
+    <a href="/dashboard" class="btn back-btn">
+        Back to Dashboard
+    </a>
+
+</div>
+</body>
+</html>

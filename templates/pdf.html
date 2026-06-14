@@ -93,7 +93,7 @@ h1{
 
 </head>
 <body>
-
+<!-- 
 <div class="container">
 
 <h1>📄 PDF Notes</h1>
@@ -140,13 +140,47 @@ h1{
     <h3>SQL Notes</h3>
 
     <a href="static\pdfs\DBMS_Basic_to_Advanced_Notes.pdf" download class="pdf-btn">📥Download</a>
+</div> -->
+<!-- 
+<div class="container">
+
+<h1>📄 PDF Notes</h1>
+
+{% for pdf in pdfs %}
+
+<div class="pdf-card">
+    <h3>{{ pdf.title }}</h3>
+
+    <a href="{{ url_for('static', filename='pdfs/' + pdf.pdf_file) }}"
+       download
+       class="pdf-btn">
+       📥 Download
+    </a>
 </div>
+
+{% endfor %} -->
+<div class="container">
+
+<h1>📄 PDF Notes</h1>
+
+{% for pdf in pdfs %}
+
+<div class="pdf-card">
+    <h3>{{ pdf.title }}</h3>
+
+    <a href="{{ url_for('static', filename='pdfs/' + pdf.pdf_file) }}"
+       download
+       class="pdf-btn">
+       📥 Download
+    </a>
+</div>
+
+{% endfor %}
 
 <br>
 
 <a href="/dashboard" class="btn">Back to Dashboard</a>
 
 </div>
-
 </body>
 </html>

@@ -117,7 +117,12 @@ body{
     color:#666;
     margin-bottom:15px;
 }
-
+iframe{
+    width:100%;
+    height:180px;
+    border:none;
+    border-radius:10px;
+}
 .btn{
     display:inline-block;
     background:#6c63ff;
@@ -329,8 +334,8 @@ table th{
     <input
         type="text"
         id="searchInput"
-        placeholder="🔍 Search Notes..."
-        onkeyup="searchNotes()">
+        placeholder="🔍 Search Notes...">
+        
 
     <button onclick="searchNotes()" class="search-btn">➡️</button>
 
@@ -375,15 +380,56 @@ table th{
                 <p>Database Management System PDF.</p>
                 <a href="/notes/sql" class="btn">View Notes</a>
             </div>
-
+<!-- 
             <div class="card">
                 <h3>DSA Notes</h3>
                 <p>Data Structures & Algorithms.</p>
                 <a href="/notes/dsa" class="btn">View Notes</a>
-            </div>
+            </div> -->
 
         </div>
 
+        <h2 class="heading" style="margin-top:40px;">🎥 Popular Video Lectures</h2>
+
+<div class="notes-grid">
+
+    <div class="card">
+        <h3>Python Full Course</h3>
+
+        <iframe
+            src="https://www.youtube.com/embed/kqtD5dpn9C8"
+            allowfullscreen>
+        </iframe>
+
+        <br><br>
+        <a href="/lectures" class="btn">More Lectures</a>
+    </div>
+
+    <div class="card">
+        <h3> Database with Query</h3>
+
+        <iframe
+            src="https://www.youtube.com/embed/ztHopE5Wnpc"
+            allowfullscreen>
+        </iframe>
+
+        <br><br>
+        <a href="/lectures" class="btn">More Lectures</a>
+    </div>
+
+    <div class="card">
+        <h3>Web Development</h3>
+
+        <iframe
+            src="https://www.youtube.com/embed/zysUIv0-xak"
+            allowfullscreen>
+        </iframe>
+
+        <br><br>
+        <a href="/lectures" class="btn">More Lectures</a>
+    </div>
+
+</div>
         <div class="recent">
 
             <h2>Recently Added Notes</h2>
@@ -426,23 +472,23 @@ table th{
                     </tr>
                     
                     <tr>
-                        <td>Java</td>
-                        <td>18 Jun 2026</td>
-                        <td>Coming Soon</td>
-                    </tr>
-                    <tr>
                         <td>HTML</td>
                         <td>11 Jun 2026</td>
-                        <td>Coming Soon</td>
+                        <td>Available <a href="/notes/web">View</a></td>
                     </tr>
 
                     
                     <tr>
                         <td>CSS</td>
                         <td>11 Jun 2026</td>
-                        <td>Coming Soon</td>
+                        <td>Available <a href="/notes/web">View</a></td>
                     </tr>
                     
+                    <tr>
+                        <td>Java</td>
+                        <td>18 Jun 2026</td>
+                        <td>Coming Soon</td>
+                    </tr>
                     <tr>
                         <td>JavaScript</td>
                         <td>12 Jun 2026</td>
@@ -489,24 +535,24 @@ table th{
 
 </div>
 <script>
-    function searchNotes() {
+    function searchNotes(){
 
-    let input = document.getElementById("searchInput").value.toLowerCase();
+    let q = document.getElementById("searchInput").value;
 
-    let cards = document.querySelectorAll(".card");
-
-    cards.forEach(card => {
-
-        let text = card.querySelector("h3").innerText.toLowerCase();
-
-        if(text.includes(input)){
-            card.style.display = "block";
-        }else{
-            card.style.display = "none";
-        }
-
-    });
+    if(q.trim() !== ""){
+        window.location.href =
+            "/search?q=" + encodeURIComponent(q);
+    }
 }
+
+document.getElementById("searchInput")
+.addEventListener("keypress", function(e){
+
+    if(e.key === "Enter"){
+        searchNotes();
+    }
+
+});
 </script>
 </body>
 </html>

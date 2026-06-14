@@ -40,17 +40,17 @@ app.permanent_session_lifetime = timedelta(days=7)
 # mail = Mail(app)
 # #new 
 app.config.update(
-    MAIL_SERVER='smtp.gmail.com',
+    MAIL_SERVER='smtp.sendgrid.net',
     MAIL_PORT=587,
     MAIL_USE_TLS=True,
     MAIL_USE_SSL=False,
-    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
-    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
-    MAIL_DEFAULT_SENDER=os.getenv("MAIL_USERNAME"),
-     MAIL_TIMEOUT=20
+    MAIL_USERNAME='apikey',
+    MAIL_PASSWORD=os.getenv("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"),
+    MAIL_DEFAULT_SENDER=os.getenv("MAIL_USERNAME")
 )
 
 mail = Mail(app)
+
 print("MAIL_USERNAME =", repr(os.getenv("MAIL_USERNAME")))
 print("MAIL_PASSWORD EXISTS =", bool(os.getenv("MAIL_PASSWORD")))
 
@@ -65,6 +65,29 @@ UPLOAD_FOLDER = "static/profile_images"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route("/mail-test")
+def mail_test():
+    try:
+
+        print("MAIL_USERNAME =", repr(app.config.get("MAIL_USERNAME")))
+        print("MAIL_DEFAULT_SENDER =", repr(app.config.get("MAIL_DEFAULT_SENDER")))
+
+        msg = Message(
+            subject="Render Test",
+            sender=app.config.get("MAIL_USERNAME"),
+            recipients=["saifmalik7217@gmail.com"]
+        )
+
+        msg.body = "Testing Render SMTP"
+
+        mail.send(msg)
+
+        return "SUCCESS"
+
+    except Exception as e:
+        print("MAIL TEST ERROR:", repr(e))
+        return f"ERROR: {repr(e)}"
 
 @app.route("/")
 def home():
@@ -349,6 +372,47 @@ def verify_otp():
 
 #     return render_template("verify-otp.html")
 
+
+#this is a search bar 
+@app.route("/search")
+def search():
+
+    query = request.args.get("q", "").lower()
+
+    data = [
+        {"title":"Python Notes", "url":"/notes/python", "type":"📚 Notes"},
+        {"title":"Python PDF", "url":"/pdf", "type":"📄 PDF"},
+        {"title":"Python Full Course", "url":"/lectures", "type":"🎥 Lecture"},
+
+        {"title":"Web Development Notes", "url":"/notes/web", "type":"📚 Notes"},
+        {"title":"Web Development Lecture", "url":"/lectures", "type":"🎥 Lecture"},
+        {"title":"Web Development PDF", "url":"/pdf", "type":"📄 PDF"},
+
+        {"title":"DBMS Notes", "url":"/notes/sql", "type":"📚 Notes"},
+        {"title":"DBMS Lecture", "url":"/lectures", "type":"🎥 Lecture"},
+
+        {"title":"PHP Notes", "url":"/notes/php", "type":"📚 Notes"},
+
+        {"title":"DSA Notes", "url":"/notes/dsa", "type":"📚 Notes"},
+
+        {"title":"C Language Course", "url":"/lectures", "type":"🎥 Lecture"},
+        {"title":"Java Tutorial", "url":"/lectures", "type":"🎥 Lecture"},
+        {"title":"C++", "url":"/lectures", "type":"🎥 Lecture"}
+    ]
+
+    results = []
+
+    for item in data:
+        words = query.split()
+
+        if any(word in item["title"].lower() for word in words):
+            results.append(item)
+
+    return render_template(
+        "search_result.html",
+        query=query,
+        results=results
+    )
 # Dashboard
 @app.route("/dashboard")
 def dash():
@@ -378,12 +442,13 @@ def dashboard():
 def note():
     return render_template("notes.html")
 
-@app.route("/lectures")
-def lectures():
-    return render_template("lectures.html")
+# @app.route("/lectures")
+# def lectures():
+#     return render_template("lectures.html")
+
 
 @app.route("/pdf")
-def pdfs():
+def pdf():
     return render_template("pdf.html")
 
 @app.route("/notes/<subject>")
@@ -422,6 +487,127 @@ def profile():
         email=session.get("email"),
         profile_image=session.get("profile_image")
     )
+
+@app.route("/admin")
+def admin():
+
+    if not session.get("admin"):
+        return redirect("/admin_login")
+
+    return render_template("admin.html")
+
+
+
+@app.route("/admin_login", methods=["GET", "POST"])
+def admin_login():
+
+    if request.method == "POST":
+
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username == "admin" and password == "studyhub123":
+            session["admin"] = True
+
+            return redirect("/admin")
+
+        else:
+            return "Wrong Username or Password"
+
+    return render_template("admin_login.html")
+
+@app.route("/admin_logout")
+def admin_logout():
+
+    session.pop("admin", None)
+
+    return redirect("/")
+
+@app.route("/add_lecture", methods=["GET", "POST"])
+def add_lecture():
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        youtube_url = request.form["youtube_url"]
+
+        with engine.connect() as conn:
+
+            conn.execute(
+                text("""
+                INSERT INTO lectures
+                (title, youtube_url)
+                VALUES
+                (:title, :youtube_url)
+                """),
+                {
+                    "title": title,
+                    "youtube_url": youtube_url
+                }
+            )
+
+            conn.commit()
+
+        return redirect("/admin")
+
+    return render_template("add_lecture.html")
+
+@app.route("/lectures")
+def lect():
+
+    with engine.connect() as conn:
+        lectures = conn.execute(
+            text("SELECT * FROM lectures")
+        ).fetchall()
+
+    print(lectures)   # <-- add this
+
+    return render_template(
+        "lectures.html",
+        lectures=lectures
+    )
+
+PDF_FOLDER = "static/pdfs"
+app.config["PDF_FOLDER"] = PDF_FOLDER
+
+os.makedirs(PDF_FOLDER, exist_ok=True)
+
+@app.route("/add_pdf", methods=["GET", "POST"])
+def add_pdf():
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        pdf = request.files["pdf"]
+
+        filename = secure_filename(pdf.filename)
+
+        path = os.path.join(app.config["PDF_FOLDER"], filename)
+        pdf.save(path)
+
+        with engine.connect() as conn:
+            conn.execute(
+                text("INSERT INTO pdfs (title, pdf_file) VALUES (:title, :pdf_file)"),
+                {"title": title, "pdf_file": filename}
+            )
+            conn.commit()
+
+        return redirect("/pdfs")   # 👈 MUST BE THIS
+
+    return render_template("add_pdf.html")
+
+@app.route("/pdfs")
+def pdfs():
+
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM pdfs"))
+        pdf_list = result.fetchall()
+
+    print(pdf_list)   # 👈 ADD THIS LINE (IMPORTANT DEBUG)
+
+    return render_template("pdf.html", pdfs=pdf_list)
+
+
 
 
 
