@@ -6,25 +6,15 @@ import os
 from werkzeug.utils import secure_filename
 from email_validator import validate_email, EmailNotValidError
 from flask import flash
-from flask_mail import Mail, Message
 import random
-
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 
 app = Flask(__name__)
 app.secret_key = "secret@123"
 app.permanent_session_lifetime = timedelta(days=7)
 
-# app.config.update(
-#     MAIL_SERVER='smtp.gmail.com',
-#     MAIL_PORT=587,
-#     MAIL_USE_TLS=True,
-#     MAIL_USE_SSL=False,
-#     MAIL_USERNAME=os.environ.get("MAIL_USERNAME"),
-#     MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD"),
-#     MAIL_DEFAULT_SENDER=os.environ.get("MAIL_USERNAME")
-# )
-# mail = Mail(app)
 
 #Work on local proper
 
@@ -40,19 +30,7 @@ app.permanent_session_lifetime = timedelta(days=7)
 # mail = Mail(app)
 # #new 
 
-app.config.update(
-    MAIL_SERVER='smtp.sendgrid.net',
-    MAIL_PORT=587,
-    MAIL_USE_TLS=True,
-    MAIL_USE_SSL=False,
-    MAIL_USERNAME='apikey',
-    MAIL_PASSWORD=os.getenv("SENDGRID_API_KEY"),
-    MAIL_DEFAULT_SENDER=os.getenv("MAIL_USERNAME")
-)
-
-mail = Mail(app)
-
-print("MAIL_USERNAME =", os.getenv("MAIL_USERNAME"))
+print("SENDER_EMAIL =", os.getenv("SENDER_EMAIL"))
 print("SENDGRID_API_KEY EXISTS =", bool(os.getenv("SENDGRID_API_KEY")))
 
 DATABASE_URL = "mysql+pymysql://3FtQQGViQkjLout.root:yQrM14kdizk6648t@gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/flask_auth"
@@ -67,28 +45,35 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@app.route("/mail-test")
-def mail_test():
+def send_otp_email(email, username, otp):
+
+    message = Mail(
+        from_email=os.getenv("SENDER_EMAIL"),
+        to_emails=email,
+        subject="StudyHub OTP Verification",
+        html_content=f"""
+        <h2>Hello {username}</h2>
+
+        <p>Your OTP is:</p>
+
+        <h1>{otp}</h1>
+
+        <p>This OTP is valid for a short time.</p>
+
+        <p>StudyHub Team</p>
+        """
+    )
+
     try:
+        sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
+        sg.send(message)
 
-        print("MAIL_USERNAME =", repr(app.config.get("MAIL_USERNAME")))
-        print("MAIL_DEFAULT_SENDER =", repr(app.config.get("MAIL_DEFAULT_SENDER")))
-
-        msg = Message(
-            subject="Render Test",
-            sender=app.config.get("MAIL_USERNAME"),
-            recipients=["saifmalik7217@gmail.com"]
-        )
-
-        msg.body = "Testing Render SMTP"
-
-        mail.send(msg)
-
-        return "SUCCESS"
+        print("EMAIL SENT SUCCESSFULLY")
+        return True
 
     except Exception as e:
-        print("MAIL TEST ERROR:", repr(e))
-        return f"ERROR: {repr(e)}"
+        print("SENDGRID ERROR:", e)
+        return False
 
 @app.route("/")
 def home():
@@ -192,7 +177,6 @@ def signup():
             email = request.form["email"]
             password = request.form["password"]
 
-            # EMAIL VALIDATION
             try:
                 valid = validate_email(email)
                 email = valid.email
@@ -201,7 +185,6 @@ def signup():
                 flash("Please enter a valid email address!", "error")
                 return redirect("/signup")
 
-            # CHECK IF EMAIL ALREADY EXISTS
             try:
                 with engine.connect() as conn:
 
@@ -223,7 +206,6 @@ def signup():
                 flash("Database error!", "error")
                 return redirect("/signup")
 
-            # OTP GENERATION
             otp = random.randint(100000, 999999)
 
             session["otp"] = str(otp)
@@ -231,43 +213,10 @@ def signup():
             session["email"] = email
             session["password"] = password
 
-            # SEND EMAIL
-            try:
-
-                msg = Message(
-                    subject="OTP Verification",
-                    sender=app.config.get("MAIL_USERNAME"),
-                    recipients=[email]
-                )
-
-                msg.body = f"""
-Hello {username},
-
-Your OTP for StudyHub account verification is:
-
-{otp}
-
-This OTP is valid for a short time.
-
-Thanks,
-StudyHub Team
-"""
-                
-                print("STARTING EMAIL SEND")
-                mail.send(msg)
-
-                print("EMAIL SENT SUCCESSFULLY")
-
-            except Exception as e:
-
-                print("=" * 50)
-                print("SMTP ERROR:", repr(e))
-                print("=" * 50)
-
+            if not send_otp_email(email, username, otp):
                 flash("OTP email failed!", "error")
                 return redirect("/signup")
 
-            # SUCCESS
             return redirect("/verify-otp")
 
         except Exception as e:
@@ -280,114 +229,6 @@ StudyHub Team
             return redirect("/signup")
 
     return render_template("signup.html")
-
-
-
-    #         try:
-    #             msg = Message(
-    #                 "OTP Verification",
-    #                 sender=app.config.get('MAIL_USERNAME'),
-    #                 recipients=[email]
-    #             )
-
-    #             msg.body = f"Your OTP is: {otp}"
-    #             mail.send(msg)
-
-    #         except Exception as e:
-    #             print("EMAIL ERROR:", e)
-    #             flash("OTP email failed. Try again!", "error")
-    #             return redirect("/signup")
-
-    #         return redirect("/verify-otp")
-
-    #     except Exception as e:
-    #         print("SIGNUP ERROR:", e)
-    #         flash("Something went wrong!", "error")
-    #         return redirect("/signup")
-
-    # return render_template("signup.html")
-
-
-@app.route("/verify-otp", methods=["GET", "POST"])
-def verify_otp():
-
-    if request.method == "POST":
-
-        try:
-            user_otp = request.form["otp"]
-
-            # ---------------- OTP CHECK ----------------
-            if user_otp == session.get("otp"):
-
-                try:
-                    with engine.connect() as conn:
-
-                        conn.execute(
-                            text("""
-                            INSERT INTO users(username,email,password)
-                            VALUES(:username,:email,:password)
-                            """),
-                            {
-                                "username": session["username"],
-                                "email": session["email"],
-                                "password": session["password"]
-                            }
-                        )
-
-                        conn.commit()
-
-                except Exception as e:
-                    print("DB INSERT ERROR:", e)
-                    flash("Database error while creating account!", "error")
-                    return redirect("/signup")
-
-                session["user"] = session["username"]
-
-                flash("Account created successfully!", "success")
-                return redirect("/dashboard")
-
-            flash("Invalid OTP!", "error")
-
-        except Exception as e:
-            print("OTP VERIFY ERROR:", e)
-            flash("Something went wrong!", "error")
-            return redirect("/signup")
-
-    return render_template("verify-otp.html")
-# @app.route("/verify-otp", methods=["GET", "POST"])
-# def verify_otp():
-
-#     if request.method == "POST":
-
-#         user_otp = request.form["otp"]
-
-#         if user_otp == session.get("otp"):
-
-#             with engine.connect() as conn:
-
-#                 conn.execute(
-#                     text("""
-#                     INSERT INTO users(username,email,password)
-#                     VALUES(:username,:email,:password)
-#                     """),
-#                     {
-#                         "username": session["username"],
-#                         "email": session["email"],
-#                         "password": session["password"]
-#                     }
-#                 )
-
-#                 conn.commit()
-
-#             session["user"] = session["username"]
-
-#             flash("Account created successfully!", "success")
-
-#             return redirect("/dashboard")
-
-#         flash("Invalid OTP!", "error")
-
-#     return render_template("verify-otp.html")
 
 
 #this is a search bar 
