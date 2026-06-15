@@ -298,9 +298,9 @@ def logout():
 def note():
     return render_template("notes.html")
 
-@app.route("/pdf")
-def pdf():
-    return render_template("pdf.html")
+# @app.route("/pdf")
+# def pdf():
+#     return render_template("pdf.html")
 
 @app.route("/notes/<subject>")
 def subject(subject):
