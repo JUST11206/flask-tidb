@@ -16,20 +16,6 @@ app.secret_key = "secret@123"
 app.permanent_session_lifetime = timedelta(days=7)
 
 
-#Work on local proper
-
-# app.config.update(
-#     MAIL_SERVER='smtp.gmail.com',
-#     MAIL_PORT=587,
-#     MAIL_USE_TLS=True,
-#     MAIL_USE_SSL=False ,
-#     MAIL_USERNAME="u5976421@gmail.com",
-#     MAIL_PASSWORD="tgde nrwr wqxc cqeg",
-#     MAIL_DEFAULT_SENDER="u5976421@gmail.com"
-#     )
-# mail = Mail(app)
-# #new 
-
 print("SENDER_EMAIL =", os.getenv("SENDER_EMAIL"))
 print("SENDGRID_API_KEY EXISTS =", bool(os.getenv("SENDGRID_API_KEY")))
 
@@ -162,44 +148,6 @@ def login():
 
     return render_template("login.html")
 
-#signup 
-
-
-# @app.route("/signup", methods=["GET", "POST"])
-# def signup():
-
-#     if request.method == "POST":
-
-#         username = request.form["username"]
-#         email = request.form["email"]
-
-#         password = request.form["password"]
-
-#         with engine.connect() as conn:
-
-#             conn.execute(
-#                 text("""
-#                 INSERT INTO users(username,email,password)
-#                 VALUES(:username,:email,:password)
-#                 """),
-#                 {
-#                     "username": username,
-#                     "email": email,
-#                     "password": password
-#                 }
-#             )
-
-#             conn.commit()
-
-#          # User ko automatically login kara do
-#         session.permanent = True
-#         session["user"] = username
-#         session["email"] = email
-
-#         # Direct dashboard par bhejo
-#         return redirect("/dashboard")
-
-#     return render_template("signup.html")
 
 #this is a temorary guest button for signup 
 @app.route('/guest_login')
@@ -346,18 +294,9 @@ def logout():
 
 #sidebar section
 
-# @app.route("/dashboard")
-# def dashboard():
-#     return render_template("dashboard.html")
-
 @app.route("/notes")
 def note():
     return render_template("notes.html")
-
-# @app.route("/lectures")
-# def lectures():
-#     return render_template("lectures.html")
-
 
 @app.route("/pdf")
 def pdf():
@@ -518,9 +457,6 @@ def pdfs():
     print(pdf_list)   # 👈 ADD THIS LINE (IMPORTANT DEBUG)
 
     return render_template("pdf.html", pdfs=pdf_list)
-
-
-
 
 
 if __name__ == "__main__":

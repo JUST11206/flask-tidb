@@ -1,21 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Lecture</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.form-container{
+    background:white;
+    width:100%;
+    max-width:450px;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#333;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+}
+
+input:focus{
+    outline:none;
+    border-color:#4CAF50;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#4CAF50;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#45a049;
+}
+
+@media(max-width:500px){
+
+    .form-container{
+        margin:15px;
+        padding:20px;
+    }
+
+    h2{
+        font-size:22px;
+    }
+
+}
+
+</style>
 </head>
 <body>
+
+<div class="form-container">
+
+    <h2>Add Lecture</h2>
+
     <form method="POST">
-    <input type="text" name="title" placeholder="Lecture Title" required>
 
-    <br><br>
+        <input
+            type="text"
+            name="title"
+            placeholder="Lecture Title"
+            required
+        >
 
-    <input type="text" name="youtube_url" placeholder="YouTube URL" required>
+        <input
+            type="text"
+            name="youtube_url"
+            placeholder="YouTube URL"
+            required
+        >
 
-    <br><br>
+        <button type="submit">
+            Add Lecture
+        </button>
 
-    <button type="submit">Add Lecture</button>
-</form>
+    </form>
+
+</div>
+
 </body>
 </html>
