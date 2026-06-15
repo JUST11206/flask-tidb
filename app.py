@@ -75,6 +75,58 @@ def send_otp_email(email, username, otp):
         print("SENDGRID ERROR:", e)
         return False
 
+@app.route("/verify-otp", methods=["GET", "POST"])
+def verify_otp():
+
+    if request.method == "POST":
+
+        entered_otp = request.form["otp"]
+
+        if entered_otp == session.get("otp"):
+
+            try:
+                with engine.connect() as conn:
+
+                    conn.execute(
+                        text("""
+                        INSERT INTO users(username,email,password)
+                        VALUES(:username,:email,:password)
+                        """),
+                        {
+                            "username": session["username"],
+                            "email": session["email"],
+                            "password": session["password"]
+                        }
+                    )
+
+                    conn.commit()
+
+                # Auto login after verification
+                session["user"] = session["username"]
+                session["email"] = session["email"]
+
+                # Remove OTP from session
+                session.pop("otp", None)
+
+                flash("Account created successfully!", "success")
+
+                return redirect("/dashboard")
+
+            except Exception as e:
+
+                print("VERIFY OTP ERROR:", repr(e))
+                flash("Database error!", "error")
+
+                return redirect("/signup")
+
+        else:
+
+            flash("Invalid OTP!", "error")
+
+            return redirect("/verify-otp")
+
+    return render_template("verify-otp.html")
+
 @app.route("/")
 def home():
     return render_template("index.html")
