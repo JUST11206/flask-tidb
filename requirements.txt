@@ -3,5 +3,5 @@ gunicorn
 SQLAlchemy
 PyMySQL
 email-validator
-Flask-Mail
+sendgrid
 Werkzeug
