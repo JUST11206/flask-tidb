@@ -1,5 +1,5 @@
 #pip install sqlalchemy pymysql cryptography
-from flask import Flask , render_template,request,redirect,session ,flash
+from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
 from sqlalchemy import create_engine, text
 from datetime import timedelta
 import os
@@ -9,7 +9,20 @@ from flask import flash
 import random
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from functools import wraps
 
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+
+        if not session.get("admin"):
+            return redirect("/admin_login")
+
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 app = Flask(__name__)
 app.secret_key = "secret@123"
@@ -148,23 +161,38 @@ def login():
 
     return render_template("login.html")
 
-
-#this is a temorary guest button for signup 
-@app.route('/guest_login')
-def guest_login():
-    session['user'] = "Guest"
-    session['role'] = "guest"
-    return redirect('/dashboard')
-
 @app.route("/dashboard")
 def dashboard():
 
-    user = session.get("user")
-
-    if not user:
+    if "user" not in session:
         return redirect("/login")
 
-    return render_template("dashboard.html", username=user)
+    with engine.connect() as conn:
+
+        popular_notes = conn.execute(
+            text("""
+                SELECT *
+                FROM notes
+                ORDER BY views DESC
+                LIMIT 3
+            """)
+        ).fetchall()
+
+        recent_notes = conn.execute(
+            text("""
+                SELECT *
+                FROM notes
+                ORDER BY created_at DESC
+                LIMIT 3
+            """)
+        ).fetchall()
+
+    return render_template(
+        "dashboard.html",
+        username=session["user"],
+        popular_notes=popular_notes,
+        recent_notes=recent_notes
+    )
 #This is 10 june 2026 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -271,18 +299,6 @@ def search():
         query=query,
         results=results
     )
-# Dashboard
-
-@app.route("/dashboard")
-def dash():
-
-    if "user" not in session:
-        return redirect("/login")
-
-    return render_template(
-        "dashboard.html",
-        username=session["user"]
-    )
 
 
 # Logout
@@ -293,18 +309,97 @@ def logout():
     return redirect("/login")
 
 #sidebar section
-
 @app.route("/notes")
 def note():
-    return render_template("notes.html")
 
-# @app.route("/pdf")
-# def pdf():
-#     return render_template("pdf.html")
+    if "user" not in session:
+        return redirect("/login")
 
-@app.route("/notes/<subject>")
-def subject(subject):
-    return render_template("subject.html", subject=subject)
+    query = request.args.get("q", "").strip()
+    subject = request.args.get("subject", "").strip()
+
+    with engine.connect() as conn:
+
+        sql = """
+            SELECT *
+            FROM notes
+            WHERE 1=1
+        """
+
+        params = {}
+
+        if query:
+            sql += """
+                AND (
+                    title LIKE :query
+                    OR subject LIKE :query
+                    OR content LIKE :query
+                )
+            """
+            params["query"] = f"%{query}%"
+
+        if subject:
+            sql += " AND subject = :subject"
+            params["subject"] = subject
+
+        sql += " ORDER BY id DESC"
+
+        notes = conn.execute(
+            text(sql),
+            params
+        ).fetchall()
+
+        subjects = conn.execute(
+            text("""
+                SELECT DISTINCT subject
+                FROM notes
+                ORDER BY subject
+            """)
+        ).fetchall()
+
+    return render_template(
+        "notes.html",
+        notes=notes,
+        subjects=subjects,
+        query=query,
+        selected_subject=subject
+    )
+
+@app.route("/notes/<int:note_id>")
+def view_note(note_id):
+
+    if "user" not in session:
+        return redirect("/login")
+
+    with engine.connect() as conn:
+
+        note = conn.execute(
+            text("""
+                SELECT *
+                FROM notes
+                WHERE id = :id
+            """),
+            {"id": note_id}
+        ).fetchone()
+
+        if not note:
+            return "Note not found", 404
+
+        conn.execute(
+            text("""
+                UPDATE notes
+                SET views = views + 1
+                WHERE id = :id
+            """),
+            {"id": note_id}
+        )
+
+        conn.commit()
+
+    return render_template(
+        "view_note.html",
+        note=note
+    )
 
 
 @app.route("/profile", methods=["GET", "POST"])
@@ -375,6 +470,7 @@ def admin_logout():
     return redirect("/")
 
 @app.route("/add_lecture", methods=["GET", "POST"])
+@admin_required
 def add_lecture():
 
     if request.method == "POST":
@@ -386,10 +482,8 @@ def add_lecture():
 
             conn.execute(
                 text("""
-                INSERT INTO lectures
-                (title, youtube_url)
-                VALUES
-                (:title, :youtube_url)
+                INSERT INTO lectures (title, youtube_url)
+                VALUES (:title, :youtube_url)
                 """),
                 {
                     "title": title,
@@ -399,9 +493,92 @@ def add_lecture():
 
             conn.commit()
 
-        return redirect("/admin")
+        flash("Lecture added successfully!", "success")
+
+        return redirect("/manage_lectures")
 
     return render_template("add_lecture.html")
+
+@app.route("/manage_lectures")
+@admin_required
+def manage_lectures():
+
+    with engine.connect() as conn:
+
+        lectures = conn.execute(
+            text("SELECT * FROM lectures ORDER BY id DESC")
+        ).fetchall()
+
+    return render_template(
+        "manage_lectures.html",
+        lectures=lectures
+    )
+
+@app.route("/delete_lecture/<int:id>", methods=["POST"])
+@admin_required
+def delete_lecture(id):
+
+    with engine.connect() as conn:
+
+        conn.execute(
+            text("""
+            DELETE FROM lectures
+            WHERE id = :id
+            """),
+            {"id": id}
+        )
+
+        conn.commit()
+
+    flash("Lecture deleted successfully!", "success")
+
+    return redirect("/manage_lectures")
+
+@app.route("/edit_lecture/<int:id>", methods=["GET", "POST"])
+@admin_required
+def edit_lecture(id):
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        youtube_url = request.form["youtube_url"]
+
+        with engine.connect() as conn:
+
+            conn.execute(
+                text("""
+                UPDATE lectures
+                SET title = :title,
+                    youtube_url = :youtube_url
+                WHERE id = :id
+                """),
+                {
+                    "title": title,
+                    "youtube_url": youtube_url,
+                    "id": id
+                }
+            )
+
+            conn.commit()
+
+        flash("Lecture updated successfully!", "success")
+
+        return redirect("/manage_lectures")
+
+    with engine.connect() as conn:
+
+        lecture = conn.execute(
+            text("""
+            SELECT * FROM lectures
+            WHERE id = :id
+            """),
+            {"id": id}
+        ).fetchone()
+
+    return render_template(
+        "edit_lecture.html",
+        lecture=lecture
+    )
 
 @app.route("/lectures")
 def lect():
@@ -447,6 +624,59 @@ def add_pdf():
 
     return render_template("add_pdf.html")
 
+@app.route("/manage_pdfs")
+@admin_required
+def manage_pdfs():
+
+    with engine.connect() as conn:
+
+        pdfs = conn.execute(
+            text("SELECT * FROM pdfs ORDER BY id DESC")
+        ).fetchall()
+
+    return render_template(
+        "manage_pdfs.html",
+        pdfs=pdfs
+    )
+
+@app.route("/delete_pdf/<int:id>", methods=["POST"])
+@admin_required
+def delete_pdf(id):
+
+    with engine.connect() as conn:
+
+        pdf = conn.execute(
+            text("""
+            SELECT * FROM pdfs
+            WHERE id = :id
+            """),
+            {"id": id}
+        ).fetchone()
+
+        if pdf:
+
+            file_path = os.path.join(
+                app.config["PDF_FOLDER"],
+                pdf.pdf_file
+            )
+
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+            conn.execute(
+                text("""
+                DELETE FROM pdfs
+                WHERE id = :id
+                """),
+                {"id": id}
+            )
+
+            conn.commit()
+
+    flash("PDF deleted successfully!", "success")
+
+    return redirect("/manage_pdfs")
+
 @app.route("/pdfs")
 def pdfs():
 
@@ -458,6 +688,231 @@ def pdfs():
 
     return render_template("pdf.html", pdfs=pdf_list)
 
+@app.route("/add_note", methods=["GET", "POST"])
+@admin_required
+def add_note():
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        subject = request.form["subject"]
+        content = request.form["content"]
+
+        with engine.connect() as conn:
+            conn.execute(
+                text("""
+                INSERT INTO notes (title, subject, content)
+                VALUES (:title, :subject, :content)
+                """),
+                {
+                    "title": title,
+                    "subject": subject,
+                    "content": content
+                }
+            )
+
+            conn.commit()
+
+        flash("Note added successfully!", "success")
+
+        return redirect("/manage_notes")
+
+    return render_template("add_note.html")
+
+@app.route("/manage_notes")
+@admin_required
+def manage_notes():
+
+    with engine.connect() as conn:
+
+        notes = conn.execute(
+            text("""
+            SELECT * FROM notes
+            ORDER BY id DESC
+            """)
+        ).fetchall()
+
+    return render_template(
+        "manage_notes.html",
+        notes=notes
+    )
+
+@app.route("/edit_note/<int:id>", methods=["GET", "POST"])
+@admin_required
+def edit_note(id):
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        subject = request.form["subject"]
+        content = request.form["content"]
+
+        with engine.connect() as conn:
+
+            conn.execute(
+                text("""
+                UPDATE notes
+                SET title = :title,
+                    subject = :subject,
+                    content = :content
+                WHERE id = :id
+                """),
+                {
+                    "title": title,
+                    "subject": subject,
+                    "content": content,
+                    "id": id
+                }
+            )
+
+            conn.commit()
+
+        flash("Note updated successfully!", "success")
+
+        return redirect("/manage_notes")
+
+    with engine.connect() as conn:
+
+        note = conn.execute(
+            text("""
+            SELECT * FROM notes
+            WHERE id = :id
+            """),
+            {"id": id}
+        ).fetchone()
+
+    if not note:
+        return "Note not found", 404
+
+    return render_template(
+        "edit_note.html",
+        note=note
+    )
+
+@app.route("/delete_note/<int:id>", methods=["POST"])
+@admin_required
+def delete_note(id):
+
+    with engine.connect() as conn:
+
+        conn.execute(
+            text("""
+            DELETE FROM notes
+            WHERE id = :id
+            """),
+            {"id": id}
+        )
+
+        conn.commit()
+
+    flash("Note deleted successfully!", "success")
+
+    return redirect("/manage_notes")
+
+
+@app.route("/save_note/<int:note_id>")
+def save_note(note_id):
+
+    if "user" not in session:
+        return redirect("/login")
+
+    email = session.get("email")
+
+    with engine.connect() as conn:
+
+        existing = conn.execute(
+            text("""
+                SELECT id
+                FROM saved_notes
+                WHERE user_email = :email
+                AND note_id = :note_id
+            """),
+            {
+                "email": email,
+                "note_id": note_id
+            }
+        ).fetchone()
+
+        if not existing:
+
+            conn.execute(
+                text("""
+                    INSERT INTO saved_notes
+                    (user_email, note_id)
+                    VALUES (:email, :note_id)
+                """),
+                {
+                    "email": email,
+                    "note_id": note_id
+                }
+            )
+
+            conn.commit()
+
+    return redirect(f"/notes/{note_id}")
+
+
+@app.route("/saved_notes")
+def saved_notes():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    email = session.get("email")
+
+    with engine.connect() as conn:
+
+        notes = conn.execute(
+            text("""
+                SELECT notes.*
+                FROM saved_notes
+                JOIN notes
+                ON saved_notes.note_id = notes.id
+                WHERE saved_notes.user_email = :email
+                ORDER BY saved_notes.created_at DESC
+            """),
+            {"email": email}
+        ).fetchall()
+
+    return render_template(
+        "saved_notes.html",
+        notes=notes
+    )
+
+@app.route("/unsave_note/<int:note_id>")
+def unsave_note(note_id):
+
+    if "user" not in session:
+        return redirect("/login")
+
+    email = session.get("email")
+
+    with engine.connect() as conn:
+
+        conn.execute(
+            text("""
+                DELETE FROM saved_notes
+                WHERE user_email = :email
+                AND note_id = :note_id
+            """),
+            {
+                "email": email,
+                "note_id": note_id
+            }
+        )
+
+        conn.commit()
+
+    return redirect("/saved_notes")
+
+@app.route("/service-worker.js")
+def service_worker():
+
+    return send_from_directory(
+        "static",
+        "service-worker.js",
+        mimetype="application/javascript"
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

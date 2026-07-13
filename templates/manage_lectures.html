@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage Lectures</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+.header{
+    background:#6c63ff;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+.container{
+    max-width:1000px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.btn{
+    border:none;
+    padding:10px 15px;
+    border-radius:7px;
+    color:white;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.add{
+    background:#4CAF50;
+}
+
+.edit{
+    background:#2196F3;
+}
+
+.delete{
+    background:#e53935;
+}
+
+.back{
+    background:#6c63ff;
+}
+
+table{
+    width:100%;
+    background:white;
+    border-collapse:collapse;
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+
+th,
+td{
+    padding:15px;
+    text-align:left;
+    border-bottom:1px solid #ddd;
+}
+
+th{
+    background:#6c63ff;
+    color:white;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+}
+
+.actions form{
+    margin:0;
+}
+
+@media(max-width:700px){
+
+    table{
+        display:block;
+        overflow-x:auto;
+    }
+
+    .top{
+        flex-direction:column;
+        gap:15px;
+        align-items:flex-start;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🎥 Manage Lectures</h1>
+</div>
+
+<div class="container">
+
+    <div class="top">
+
+        <a href="/admin" class="btn back">
+            ← Admin
+        </a>
+
+        <a href="/add_lecture" class="btn add">
+            ➕ Add Lecture
+        </a>
+
+    </div>
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>YouTube URL</th>
+            <th>Action</th>
+        </tr>
+
+        {% for lecture in lectures %}
+
+        <tr>
+
+            <td>{{ lecture.id }}</td>
+
+            <td>{{ lecture.title }}</td>
+
+            <td>{{ lecture.youtube_url }}</td>
+
+            <td>
+
+                <div class="actions">
+
+                    <a
+                        href="/edit_lecture/{{ lecture.id }}"
+                        class="btn edit">
+                        ✏ Edit
+                    </a>
+
+                    <form
+                        action="/delete_lecture/{{ lecture.id }}"
+                        method="POST">
+
+                        <button
+                            type="submit"
+                            class="btn delete"
+                            onclick="return confirm('Delete this lecture?')">
+
+                            🗑 Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+</body>
+
+</html>

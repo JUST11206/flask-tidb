@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage PDFs</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+.header{
+    background:#2196F3;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+.container{
+    max-width:1000px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.btn{
+    display:inline-block;
+    padding:10px 15px;
+    border:none;
+    border-radius:7px;
+    color:white;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.add{
+    background:#4CAF50;
+}
+
+.delete{
+    background:#e53935;
+}
+
+.back{
+    background:#6c63ff;
+}
+
+table{
+    width:100%;
+    background:white;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:15px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+th{
+    background:#2196F3;
+    color:white;
+}
+
+@media(max-width:700px){
+
+    table{
+        display:block;
+        overflow-x:auto;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+    <h1>📄 Manage PDFs</h1>
+</div>
+
+<div class="container">
+
+    <div class="top">
+
+        <a href="/admin" class="btn back">
+            ← Admin
+        </a>
+
+        <a href="/add_pdf" class="btn add">
+            ➕ Add PDF
+        </a>
+
+    </div>
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>PDF File</th>
+            <th>Action</th>
+        </tr>
+
+        {% for pdf in pdfs %}
+
+        <tr>
+
+            <td>{{ pdf.id }}</td>
+
+            <td>{{ pdf.title }}</td>
+
+            <td>{{ pdf.pdf_file }}</td>
+
+            <td>
+
+                <form
+                    action="/delete_pdf/{{ pdf.id }}"
+                    method="POST">
+
+                    <button
+                        class="btn delete"
+                        onclick="return confirm('Delete this PDF?')">
+
+                        🗑 Delete
+
+                    </button>
+
+                </form>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+</body>
+
+</html>

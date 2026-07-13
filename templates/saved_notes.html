@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Saved Notes • StudyHub</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f6f8fc;
+    color:#111827;
+}
+
+.header{
+    background:white;
+    padding:20px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.header-content{
+    max-width:1100px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    color:#4f46e5;
+    font-size:25px;
+    font-weight:bold;
+}
+
+.back{
+    text-decoration:none;
+    color:#4f46e5;
+    font-weight:600;
+}
+
+.container{
+    max-width:1100px;
+    margin:40px auto;
+    padding:0 20px;
+}
+
+.title{
+    margin-bottom:30px;
+}
+
+.title h1{
+    font-size:30px;
+    margin-bottom:8px;
+}
+
+.title p{
+    color:#6b7280;
+}
+
+.notes-grid{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+}
+
+.note-card{
+    background:white;
+    padding:25px;
+    border-radius:16px;
+    border:1px solid #e5e7eb;
+    transition:.3s;
+}
+
+.note-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 25px rgba(0,0,0,.07);
+}
+
+.subject{
+    color:#4f46e5;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.note-card h3{
+    margin-bottom:10px;
+    font-size:21px;
+}
+
+.note-card p{
+    color:#6b7280;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+}
+
+.open-btn,
+.remove-btn{
+    flex:1;
+    text-align:center;
+    padding:11px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.open-btn{
+    background:#4f46e5;
+    color:white;
+}
+
+.remove-btn{
+    background:#fff1f2;
+    color:#e11d48;
+}
+
+.remove-btn:hover{
+    background:#e11d48;
+    color:white;
+}
+
+.empty{
+    background:white;
+    padding:50px 20px;
+    border-radius:15px;
+    text-align:center;
+    border:1px solid #e5e7eb;
+}
+
+.empty h2{
+    margin-bottom:10px;
+}
+
+.empty p{
+    color:#6b7280;
+    margin-bottom:20px;
+}
+
+.explore-btn{
+    display:inline-block;
+    background:#4f46e5;
+    color:white;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+}
+
+@media(max-width:600px){
+
+    .header{
+        padding:16px;
+    }
+
+    .container{
+        margin:25px auto;
+        padding:0 15px;
+    }
+
+    .title h1{
+        font-size:25px;
+    }
+
+    .notes-grid{
+        grid-template-columns:1fr;
+    }
+
+    .note-card{
+        padding:20px;
+    }
+
+    .actions{
+        flex-direction:column;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-content">
+
+        <div class="logo">
+            🎓 StudyHub
+        </div>
+
+        <a href="/dashboard" class="back">
+            ← Dashboard
+        </a>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div class="title">
+
+        <h1>❤️ My Saved Notes</h1>
+
+        <p>
+            Your saved learning resources.
+        </p>
+
+    </div>
+
+
+    {% if notes %}
+
+    <div class="notes-grid">
+
+        {% for note in notes %}
+
+        <div class="note-card">
+
+            <div class="subject">
+                📖 {{ note.subject }}
+            </div>
+
+            <h3>
+                {{ note.title }}
+            </h3>
+
+            <p>
+                {{ note.description }}
+            </p>
+
+            <div class="actions">
+
+                <a href="/notes/{{ note.id }}"
+                   class="open-btn">
+                    Open
+                </a>
+
+                <a href="/unsave_note/{{ note.id }}"
+                   class="remove-btn">
+                    Remove
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+
+        <h2>📚 No saved notes</h2>
+
+        <p>
+            Save useful notes and access them here.
+        </p>
+
+        <a href="/notes"
+           class="explore-btn">
+            Explore Notes
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</main>
+
+</body>
+
+</html>

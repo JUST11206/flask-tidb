@@ -1,558 +1,1806 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub • Dashboard</title>
 
-   <style>
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>StudyHub • Dashboard</title>
+
+<link rel="icon"
+type="image/png"
+href="{{ url_for('static', filename='images/logo.png') }}">
+
+<link rel="manifest"
+href="{{ url_for('static', filename='manifest.json') }}">
+
+<meta name="theme-color" content="#4f46e5">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<meta name="apple-mobile-web-app-title" content="StudyHub">
+
+<link rel="apple-touch-icon"
+href="{{ url_for('static', filename='images/icon-192.png') }}">
+
+<style>
+
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial,sans-serif;
+}
+
+:root{
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --primary-light:#eef2ff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --background:#f8fafc;
+    --white:#ffffff;
+}
+
+html{
+    scroll-behavior:smooth;
 }
 
 body{
-    background:#f4f6f9;
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    background:var(--background);
+    color:var(--text);
     overflow-x:hidden;
 }
 
-/* NAVBAR */
+a{
+    text-decoration:none;
+}
 
-.navbar{
-    height:70px;
-    background:#6c63ff;
-    color:white;
+
+/* ================= DESKTOP HEADER ================= */
+
+.header{
+    height:72px;
+
+    position:sticky;
+    top:0;
+    z-index:1000;
+
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    padding:0 20px;
+    justify-content:space-between;
+
+    padding:0 28px;
+
+    background:rgba(255,255,255,.94);
+    backdrop-filter:blur(15px);
+
+    border-bottom:1px solid var(--border);
 }
 
 .logo{
-    font-size:28px;
-    font-weight:bold;
-}
-
-.search-box input{
-    width:300px;
-    max-width:100%;
-    padding:10px;
-    border:none;
-    border-radius:5px;
-}
-
-.user{
     display:flex;
     align-items:center;
-    gap:15px;
+    gap:10px;
+
+    color:var(--primary);
+
+    font-size:22px;
+    font-weight:800;
 }
 
-.logout{
-    text-decoration:none;
+.logo img{
+    width:42px;
+    height:42px;
+    object-fit:contain;
+}
+
+.header-search{
+    width:100%;
+    max-width:500px;
+
+    display:flex;
+    align-items:center;
+
+    margin:0 35px;
+}
+
+.search-wrapper{
+    width:100%;
+    position:relative;
+}
+
+.search-wrapper input{
+    width:100%;
+    height:46px;
+
+    padding:0 55px 0 45px;
+
+    border:1px solid var(--border);
+    border-radius:13px;
+
+    background:#f8fafc;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:.3s;
+}
+
+.search-wrapper input:focus{
+    background:white;
+    border-color:var(--primary);
+
+    box-shadow:0 0 0 4px rgba(79,70,229,.1);
+}
+
+.search-icon{
+    position:absolute;
+    left:16px;
+    top:50%;
+
+    transform:translateY(-50%);
+}
+
+.search-button{
+    position:absolute;
+    right:6px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:35px;
+    height:35px;
+
+    border:none;
+    border-radius:9px;
+
+    background:var(--primary);
     color:white;
-    background:red;
-    padding:8px 15px;
-    border-radius:5px;
+
+    cursor:pointer;
 }
 
-/* LAYOUT */
+.header-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
 
-.container{
+.user-avatar{
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:var(--primary-light);
+    color:var(--primary);
+
+    font-size:18px;
+    font-weight:700;
+}
+
+.user-info strong{
+    display:block;
+    font-size:14px;
+}
+
+.user-info span{
+    color:var(--muted);
+    font-size:12px;
+}
+
+
+/* ================= LAYOUT ================= */
+
+.app-layout{
     display:flex;
 }
 
-/* DESKTOP SIDEBAR */
+
+/* ================= SIDEBAR ================= */
 
 .sidebar{
-    width:230px;
-    min-height:calc(100vh - 70px);
+    width:240px;
+    height:calc(100vh - 72px);
+
+    position:sticky;
+    top:72px;
+
+    padding:25px 15px;
+
     background:white;
-    box-shadow:2px 0 10px rgba(0,0,0,0.1);
+
+    border-right:1px solid var(--border);
 }
 
-.sidebar a{
-    display:block;
-    padding:18px 25px;
-    text-decoration:none;
-    color:#333;
-    font-weight:bold;
+.sidebar-title{
+    padding:0 14px;
+    margin-bottom:12px;
+
+    color:#94a3b8;
+
+    font-size:11px;
+    font-weight:700;
+
+    text-transform:uppercase;
+    letter-spacing:1px;
 }
 
-.sidebar a:hover{
-    background:#6c63ff;
-    color:white;
+.sidebar-links{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
 }
 
-/* CONTENT */
+.sidebar-link{
+    display:flex;
+    align-items:center;
+    gap:14px;
 
-.content{
-    flex:1;
+    padding:13px 15px;
+
+    border-radius:11px;
+
+    color:#475569;
+
+    font-size:14px;
+    font-weight:600;
+
+    transition:.3s;
+}
+
+.sidebar-link span{
+    font-size:19px;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active{
+    background:var(--primary-light);
+    color:var(--primary);
+}
+
+.logout-link{
+    margin-top:25px;
+    color:#dc2626;
+}
+
+.logout-link:hover{
+    background:#fef2f2;
+    color:#dc2626;
+}
+
+
+/* ================= MAIN ================= */
+
+.main-content{
+    width:calc(100% - 240px);
+    max-width:1400px;
+
     padding:30px;
 }
 
-.heading{
-    margin-bottom:25px;
+
+/* ================= MOBILE TOP ================= */
+
+.mobile-header{
+    display:none;
 }
+
+
+/* ================= WELCOME ================= */
+
+.welcome-card{
+    position:relative;
+    overflow:hidden;
+
+    padding:35px;
+
+    border-radius:22px;
+
+    background:linear-gradient(
+        135deg,
+        #312e81,
+        #4f46e5,
+        #7c3aed
+    );
+
+    color:white;
+
+    box-shadow:0 15px 35px rgba(79,70,229,.2);
+}
+
+.welcome-card::after{
+    content:"";
+
+    position:absolute;
+
+    width:250px;
+    height:250px;
+
+    right:-70px;
+    top:-100px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+}
+
+.welcome-content{
+    position:relative;
+    z-index:2;
+}
+
+.welcome-card h1{
+    margin-bottom:10px;
+
+    font-size:32px;
+}
+
+.welcome-card p{
+    max-width:550px;
+
+    color:#e0e7ff;
+
+    line-height:1.7;
+}
+
+.explore-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    margin-top:22px;
+    padding:12px 18px;
+
+    border-radius:10px;
+
+    background:white;
+    color:var(--primary);
+
+    font-size:14px;
+    font-weight:700;
+}
+
+
+/* ================= QUICK ACTION ================= */
+
+.quick-actions{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+
+    gap:16px;
+
+    margin-top:25px;
+}
+
+.quick-card{
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+    padding:20px;
+
+    border:1px solid var(--border);
+    border-radius:16px;
+
+    background:white;
+
+    color:var(--text);
+
+    transition:.3s;
+}
+
+.quick-card:hover{
+    transform:translateY(-4px);
+
+    box-shadow:0 12px 30px rgba(15,23,42,.08);
+}
+
+.quick-icon{
+    width:50px;
+    height:50px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:var(--primary-light);
+
+    font-size:25px;
+}
+
+.quick-card strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+.quick-card p{
+    color:var(--muted);
+    font-size:12px;
+}
+
+
+/* ================= SECTION ================= */
+
+.section{
+    margin-top:35px;
+}
+
+.section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:18px;
+}
+
+.section-header h2{
+    font-size:21px;
+}
+
+.view-all{
+    color:var(--primary);
+    font-size:14px;
+    font-weight:700;
+}
+
+
+/* ================= NOTES ================= */
 
 .notes-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
+    grid-template-columns:repeat(3,1fr);
+
+    gap:18px;
 }
 
-.card{
+.note-card{
+    padding:22px;
+
+    border:1px solid var(--border);
+    border-radius:18px;
+
     background:white;
-    border-radius:10px;
-    padding:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+
+    transition:.3s;
 }
 
-.card h3{
-    margin-bottom:10px;
+.note-card:hover{
+    transform:translateY(-5px);
+
+    box-shadow:0 15px 30px rgba(15,23,42,.08);
 }
 
-.card p{
-    color:#666;
-    margin-bottom:15px;
+.note-icon{
+    width:52px;
+    height:52px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-bottom:20px;
+
+    border-radius:15px;
+
+    background:var(--primary-light);
+
+    font-size:27px;
 }
-iframe{
+
+.note-card h3{
+    margin-bottom:8px;
+}
+
+.note-card p{
+    min-height:40px;
+
+    color:var(--muted);
+
+    font-size:14px;
+    line-height:1.5;
+}
+
+.open-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-top:20px;
+
+    color:var(--primary);
+
+    font-size:14px;
+    font-weight:700;
+}
+
+
+/* ================= LECTURES ================= */
+
+.lecture-scroll{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+
+    gap:18px;
+}
+
+.lecture-card{
+    overflow:hidden;
+
+    border:1px solid var(--border);
+    border-radius:18px;
+
+    background:white;
+}
+
+.video-wrapper{
+    position:relative;
+
     width:100%;
-    height:180px;
+    aspect-ratio:16/9;
+
+    background:#0f172a;
+}
+
+.video-wrapper iframe{
+    width:100%;
+    height:100%;
+
     border:none;
-    border-radius:10px;
-}
-.btn{
-    display:inline-block;
-    background:#6c63ff;
-    color:white;
-    text-decoration:none;
-    padding:10px 15px;
-    border-radius:5px;
 }
 
-/* TABLE */
-
-.recent{
-    margin-top:40px;
+.lecture-content{
+    padding:18px;
 }
 
-.table-wrapper{
-    overflow-x:auto;
+.lecture-content h3{
+    margin-bottom:8px;
+
+    font-size:16px;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
+.lecture-content p{
+    color:var(--muted);
+
+    font-size:13px;
+}
+
+
+/* ================= RECENT ================= */
+
+.recent-list{
+    display:flex;
+    flex-direction:column;
+
+    border:1px solid var(--border);
+    border-radius:18px;
+
     background:white;
+
+    overflow:hidden;
 }
 
-table th,
-table td{
-    padding:15px;
-    border-bottom:1px solid #ddd;
-    text-align:left;
+.recent-item{
+    display:flex;
+    align-items:center;
+
+    padding:17px 20px;
+
+    border-bottom:1px solid var(--border);
 }
 
-table th{
-    background:#6c63ff;
-    color:white;
+.recent-item:last-child{
+    border-bottom:none;
 }
 
-/* MOBILE BOTTOM NAV */
+.recent-icon{
+    width:44px;
+    height:44px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-right:15px;
+
+    border-radius:12px;
+
+    background:var(--primary-light);
+
+    font-size:21px;
+}
+
+.recent-info{
+    flex:1;
+}
+
+.recent-info strong{
+    display:block;
+
+    margin-bottom:4px;
+
+    font-size:14px;
+}
+
+.recent-info span{
+    color:var(--muted);
+
+    font-size:12px;
+}
+
+.recent-open{
+    padding:8px 12px;
+
+    border-radius:8px;
+
+    background:var(--primary-light);
+    color:var(--primary);
+
+    font-size:12px;
+    font-weight:700;
+}
+
+.coming{
+    background:#f1f5f9;
+    color:#64748b;
+}
+
+
+/* ================= BOTTOM NAV ================= */
 
 .bottom-nav{
     display:none;
 }
 
-/* MOBILE */
+
+/* ================= TABLET ================= */
+
+@media(max-width:1050px){
+
+    .quick-actions{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .notes-grid,
+    .lecture-scroll{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+
+/* ================= MOBILE APP ================= */
 
 @media(max-width:768px){
 
-    .navbar{
-        flex-wrap:wrap;
-        height:auto;
-        padding:15px;
-        gap:10px;
+    body{
+        background:#f8fafc;
     }
 
-    .search-box{
-        width:100%;
-    }
-
-    .search-box input{
-        width:100%;
-    }
-
-    .user{
-        width:100%;
-        justify-content:center;
-    }
-
+    .header,
     .sidebar{
         display:none;
     }
 
-    .content{
+    .app-layout{
+        display:block;
+    }
+
+    .main-content{
         width:100%;
-        padding:15px;
-        padding-bottom:90px;
+
+        padding:
+        max(15px, env(safe-area-inset-top))
+        16px
+        calc(95px + env(safe-area-inset-bottom));
     }
 
-    .notes-grid{
-        grid-template-columns:1fr;
-    }
 
-    .bottom-nav{
+    /* MOBILE HEADER */
+
+    .mobile-header{
         display:flex;
-        justify-content:space-around;
         align-items:center;
+        justify-content:space-between;
 
-        position:fixed;
-        bottom:0;
-        left:0;
+        margin-bottom:20px;
+    }
 
+    .mobile-user{
+        display:flex;
+        align-items:center;
+        gap:11px;
+    }
+
+    .mobile-user .user-avatar{
+        width:45px;
+        height:45px;
+    }
+
+    .mobile-user p{
+        color:var(--muted);
+
+        font-size:12px;
+
+        margin-bottom:3px;
+    }
+
+    .mobile-user h3{
+        font-size:17px;
+    }
+
+    .mobile-logo{
+        width:42px;
+        height:42px;
+
+        object-fit:contain;
+    }
+
+
+    /* MOBILE SEARCH */
+
+    .mobile-search{
+        display:flex;
+
+        position:relative;
+
+        margin-bottom:20px;
+    }
+
+    .mobile-search input{
         width:100%;
-        height:65px;
+        height:50px;
+
+        padding:0 55px 0 45px;
+
+        border:1px solid var(--border);
+        border-radius:14px;
 
         background:white;
 
-        box-shadow:0 -3px 10px rgba(0,0,0,0.1);
-        z-index:1000;
+        outline:none;
+
+        font-size:16px;
+    }
+
+    .mobile-search .search-icon{
+        left:16px;
+    }
+
+    .mobile-search .search-button{
+        right:7px;
+    }
+
+
+    /* WELCOME */
+
+    .welcome-card{
+        padding:25px 22px;
+
+        border-radius:20px;
+    }
+
+    .welcome-card h1{
+        font-size:25px;
+        line-height:1.25;
+    }
+
+    .welcome-card p{
+        font-size:14px;
+        line-height:1.6;
+    }
+
+    .explore-btn{
+        margin-top:18px;
+
+        padding:11px 15px;
+    }
+
+
+    /* QUICK ACTION */
+
+    .quick-actions{
+        grid-template-columns:repeat(4,1fr);
+
+        gap:8px;
+
+        margin-top:22px;
+    }
+
+    .quick-card{
+        min-width:0;
+
+        flex-direction:column;
+
+        gap:8px;
+
+        padding:12px 5px;
+
+        text-align:center;
+
+        border:none;
+        border-radius:14px;
+
+        box-shadow:0 3px 12px rgba(15,23,42,.05);
+    }
+
+    .quick-icon{
+        width:43px;
+        height:43px;
+
+        border-radius:13px;
+
+        font-size:22px;
+    }
+
+    .quick-card strong{
+        font-size:11px;
+    }
+
+    .quick-card p{
+        display:none;
+    }
+
+
+    /* SECTION */
+
+    .section{
+        margin-top:30px;
+    }
+
+    .section-header{
+        margin-bottom:15px;
+    }
+
+    .section-header h2{
+        font-size:19px;
+    }
+
+
+    /* MOBILE NOTES HORIZONTAL */
+
+    .notes-grid{
+        display:flex;
+
+        gap:14px;
+
+        overflow-x:auto;
+
+        margin-left:-16px;
+        margin-right:-16px;
+
+        padding:0 16px 12px;
+
+        scroll-snap-type:x mandatory;
+
+        scrollbar-width:none;
+    }
+
+    .notes-grid::-webkit-scrollbar{
+        display:none;
+    }
+
+    .note-card{
+        min-width:78%;
+        max-width:78%;
+
+        padding:20px;
+
+        scroll-snap-align:start;
+    }
+
+
+    /* MOBILE LECTURE SCROLL */
+
+    .lecture-scroll{
+        display:flex;
+
+        gap:14px;
+
+        overflow-x:auto;
+
+        margin-left:-16px;
+        margin-right:-16px;
+
+        padding:0 16px 12px;
+
+        scroll-snap-type:x mandatory;
+
+        scrollbar-width:none;
+    }
+
+    .lecture-scroll::-webkit-scrollbar{
+        display:none;
+    }
+
+    .lecture-card{
+        min-width:86%;
+        max-width:86%;
+
+        scroll-snap-align:start;
+    }
+
+
+    /* RECENT */
+
+    .recent-item{
+        padding:14px;
+    }
+
+    .recent-icon{
+        width:41px;
+        height:41px;
+
+        margin-right:12px;
+    }
+
+    .recent-open{
+        padding:7px 10px;
+    }
+
+
+    /* BOTTOM APP NAV */
+
+    .bottom-nav{
+        position:fixed;
+
+        left:0;
+        bottom:0;
+
+        z-index:2000;
+
+        width:100%;
+        height:calc(70px + env(safe-area-inset-bottom));
+
+        display:flex;
+        align-items:flex-start;
+        justify-content:space-around;
+
+        padding-top:9px;
+
+        background:rgba(255,255,255,.96);
+
+        backdrop-filter:blur(18px);
+
+        border-top:1px solid var(--border);
+
+        box-shadow:0 -5px 25px rgba(15,23,42,.06);
     }
 
     .bottom-nav a{
-        text-decoration:none;
-        color:#555;
+        width:20%;
 
         display:flex;
         flex-direction:column;
         align-items:center;
-        font-size:12px;
+
+        gap:4px;
+
+        color:#94a3b8;
+
+        font-size:11px;
+        font-weight:600;
     }
 
-    .bottom-nav span{
+    .bottom-nav a span{
+        width:37px;
+        height:32px;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        border-radius:12px;
+
+        font-size:20px;
+    }
+
+    .bottom-nav a.active{
+        color:var(--primary);
+    }
+
+    .bottom-nav a.active span{
+        background:var(--primary-light);
+    }
+
+}
+
+
+/* ================= SMALL PHONE ================= */
+
+@media(max-width:360px){
+
+    .main-content{
+        padding-left:13px;
+        padding-right:13px;
+    }
+
+    .quick-actions{
+        gap:5px;
+    }
+
+    .quick-card{
+        padding:10px 3px;
+    }
+
+    .quick-icon{
+        width:39px;
+        height:39px;
+
+        font-size:20px;
+    }
+
+    .quick-card strong{
+        font-size:10px;
+    }
+
+    .welcome-card h1{
         font-size:22px;
     }
+
 }
-.search-box{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    width:100%;
-    max-width:500px;
+/* =========================
+   DESKTOP FIX
+========================= */
+
+/* Mobile search hidden on desktop */
+.mobile-search{
+    display:none;
 }
 
-#searchInput{
-    flex:1;
-    padding:12px 15px;
-    border:2px solid #6c63ff;
-    border-radius:10px;
-    outline:none;
-    font-size:15px;
+/* Hero / Banner smaller on desktop */
+.hero{
+    min-height:auto;
+    padding:35px 40px;
+    border-radius:22px;
 }
 
-#searchInput:focus{
-    border-color:#4f46e5;
-    box-shadow:0 0 10px rgba(108,99,255,0.25);
+.hero h1{
+    font-size:36px;
+    margin-bottom:12px;
 }
 
-.search-btn{
-    padding:12px 18px;
-    border:none;
-    border-radius:10px;
-    background:#6c63ff;
-    color:white;
-    cursor:pointer;
-    font-weight:bold;
-    transition:0.3s;
+.hero p{
+    font-size:17px;
+    margin-bottom:22px;
 }
 
-.search-btn:hover{
-    background:#4f46e5;
-    transform:translateY(-2px);
+/* Desktop */
+@media (min-width: 769px){
+
+    .mobile-search{
+        display:none !important;
+    }
+
+    .top-search{
+        display:flex;
+    }
+
+    .hero{
+        padding:35px 40px;
+        min-height:220px;
+    }
+
 }
 
-/* Mobile */
+
+/* =========================
+   MOBILE
+========================= */
+
+/* =========================
+   MOBILE FINAL FIX
+========================= */
+
 @media(max-width:768px){
 
-    .search-box{
-        max-width:100%;
+    .top-search{
+        display:none !important;
     }
 
-    #searchInput{
-        font-size:14px;
+    .mobile-search{
+        display:flex !important;
+        align-items:center;
+        position:relative;
+        width:100%;
+        margin-bottom:18px;
     }
 
-    .search-btn{
-        padding:12px 15px;
-        font-size:14px;
+    .mobile-search input{
+        width:100%;
+        height:54px;
+        padding:0 58px 0 48px;
+
+        border:1px solid var(--border);
+        border-radius:15px;
+
+        background:white;
+
+        font-size:15px;
+        outline:none;
     }
-}
-.search-btn{
-    background: linear-gradient(135deg,#4f46e5,#06b6d4);
-    color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:10px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:all 0.3s ease;
-    box-shadow:0 4px 12px rgba(79,70,229,0.25);
-}
 
-.search-btn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(79,70,229,0.35);
-}
+    .mobile-search .search-icon{
+        position:absolute;
 
-.search-btn:active{
-    transform:scale(0.98);
-}
+        left:17px;
+        top:50%;
 
-.search-btn:focus{
-    outline:none;
-}
+        transform:translateY(-50%);
 
-/* Mobile */
-@media(max-width:768px){
-    .search-btn{
-        padding:10px 16px;
-        font-size:14px;
+        z-index:2;
+
+        font-size:18px;
+
+        pointer-events:none;
+    }
+
+    .mobile-search .search-button{
+        position:absolute;
+
+        right:7px;
+        top:50%;
+
+        transform:translateY(-50%);
+
+        width:42px;
+        height:42px;
+
+        border:none;
+        border-radius:12px;
+
+        background:var(--primary);
+        color:white;
+
+        font-size:18px;
+        cursor:pointer;
+    }
+
+    .quick-actions{
+        display:none !important;
     }
 }
 </style>
+
 </head>
+
+
 <body>
 
-<div class="navbar">
-    <div class="logo">🎓StudyHub</div>
-<div class="search-box">
 
-    <input
-        type="text"
-        id="searchInput"
-        placeholder=" Search here...">
-        
+<!-- ================= DESKTOP HEADER ================= -->
 
-    <button onclick="searchNotes()" class="search-btn">➡️</button>
+<header class="header">
 
-</div>
-    <div class="user">
-        <span>Welcome, {{ username }}</span>
-        <a href="/logout" class="logout">Logout</a>
-    </div>
-</div>
+    <a href="/dashboard" class="logo">
 
-<div class="container">
+        <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="StudyHub">
 
-    <!-- Desktop Sidebar -->
-    <div class="sidebar">
-        <a href="/dashboard">🏠 Dashboard</a>
-        <a href="/notes">📚 Notes</a>
-        <a href="/lectures">🎥 Lectures</a>
-        <a href="/pdfs">📄 PDFs</a>
-        <a href="/profile">👤 Profile</a>
-    </div>
+        StudyHub
 
-    <div class="content">
-
-        <h2 class="heading">Free Popular Notes 📖</h2>
-
-        <div class="notes-grid">
-
-            <div class="card">
-                <h3>Python Notes</h3>
-                <p>Complete Python notes for beginners.</p>
-                <a href="/notes/python" class="btn">View Notes</a>
-            </div>
-
-            <div class="card">
-                <h3>Web Development</h3>
-                <p>HTML, CSS, JavaScript notes.</p>
-                <a href="/notes/web" class="btn">View Notes</a>
-            </div>
-
-            <div class="card">
-                <h3>DBMS Notes</h3>
-                <p>Database Management System PDF.</p>
-                <a href="/notes/sql" class="btn">View Notes</a>
-            </div>
-<!-- 
-            <div class="card">
-                <h3>DSA Notes</h3>
-                <p>Data Structures & Algorithms.</p>
-                <a href="/notes/dsa" class="btn">View Notes</a>
-            </div> -->
-
-        </div>
-
-        <h2 class="heading" style="margin-top:40px;">🎥 Popular Video Lectures</h2>
-
-<div class="notes-grid">
-
-    <div class="card">
-        <h3>Python Full Course</h3>
-
-        <iframe
-            src="https://www.youtube.com/embed/kqtD5dpn9C8"
-            allowfullscreen>
-        </iframe>
-
-        <br><br>
-        <a href="/lectures" class="btn">More Lectures</a>
-    </div>
-
-    <div class="card">
-        <h3> Database with Query</h3>
-
-        <iframe
-            src="https://www.youtube.com/embed/ztHopE5Wnpc"
-            allowfullscreen>
-        </iframe>
-
-        <br><br>
-        <a href="/lectures" class="btn">More Lectures</a>
-    </div>
-
-    <div class="card">
-        <h3>Web Development</h3>
-
-        <iframe
-            src="https://www.youtube.com/embed/zysUIv0-xak"
-            allowfullscreen>
-        </iframe>
-
-        <br><br>
-        <a href="/lectures" class="btn">More Lectures</a>
-    </div>
-
-</div>
-        <div class="recent">
-
-            <h2>Recently Added Notes</h2>
-
-            <div class="table-wrapper">
-
-                <table>
-                    <tr>
-                        <th>Subject</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-
-                    <tr>
-                        <td>Python</td>
-                        <td>10 Jun 2026</td>
-                        <td>Available  <a href="/notes/python">View</a></td>
-                    </tr>
-
-                    <tr>
-                        <td>Web Development</td>
-                        <td>08 Jun 2026</td>
-                        <td>Available  <a href="/notes/web">View</a></td>
-                    </tr>
-                    <tr>
-                        <td>DBMS</td>
-                        <td>10 Jun 2026</td>
-                        <td>Available  <a href="/notes/sql">View</a></td>
-                    </tr>
-                    <tr>
-                        <td>DSA</td>
-                        <td>10 Jun 2026</td>
-                        <td>Available  <a href="/notes/dsa">View</a></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>PHP</td>
-                        <td>08 Jun 2026</td>
-                        <td>Available   <a href="/notes/php">View</a></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>HTML</td>
-                        <td>11 Jun 2026</td>
-                        <td>Available <a href="/notes/web">View</a></td>
-                    </tr>
-
-                    
-                    <tr>
-                        <td>CSS</td>
-                        <td>11 Jun 2026</td>
-                        <td>Available <a href="/notes/web">View</a></td>
-                    </tr>
-                    
-                    <tr>
-                        <td>Java</td>
-                        <td>18 Jun 2026</td>
-                        <td>Coming Soon</td>
-                    </tr>
-                    <tr>
-                        <td>JavaScript</td>
-                        <td>12 Jun 2026</td>
-                        <td>Coming Soon</td>
-                    </tr>
-                </table>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Mobile Bottom Navigation -->
-
-<div class="bottom-nav">
-
-    <a href="/dashboard">
-        <span>🏠</span>
-        <small>Home</small>
     </a>
+
+
+    <div class="header-search">
+
+        <div class="search-wrapper">
+
+            <span class="search-icon">🔍</span>
+
+            <input
+            type="text"
+            class="search-input"
+            placeholder="Search notes, PDFs and lectures...">
+
+            <button
+            class="search-button"
+            onclick="searchContent(this)">
+
+                →
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="header-user">
+
+        <div class="user-avatar">
+
+            {{ username[0]|upper }}
+
+        </div>
+
+        <div class="user-info">
+
+            <strong>{{ username }}</strong>
+
+            <span>Student</span>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<div class="app-layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <p class="sidebar-title">Menu</p>
+
+
+        <div class="sidebar-links">
+
+            <a href="/dashboard"
+            class="sidebar-link active">
+
+                <span>🏠</span>
+                Dashboard
+
+            </a>
+
+
+            <a href="/notes"
+            class="sidebar-link">
+
+                <span>📚</span>
+                Notes
+
+            </a>
+
+
+            <a href="/lectures"
+            class="sidebar-link">
+
+                <span>🎥</span>
+                Lectures
+
+            </a>
+
+
+            <a href="/pdfs"
+            class="sidebar-link">
+
+                <span>📄</span>
+                PDFs
+
+            </a>
+
+
+            <a href="/profile"
+            class="sidebar-link">
+
+                <span>👤</span>
+                Profile
+
+            </a>
+            <a href="/saved_notes" class="sidebar-link">
+    <span>❤️</span>
+    Saved Notes
+</a>
+            <a href="/logout"
+            class="sidebar-link logout-link">
+
+                <span>🚪</span>
+                Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- MOBILE HEADER -->
+
+        <div class="mobile-header">
+
+            <div class="mobile-user">
+
+                <div class="user-avatar">
+
+                    {{ username[0]|upper }}
+
+                </div>
+
+
+                <div>
+
+                    <p>Welcome back 👋</p>
+
+                    <h3>{{ username }}</h3>
+
+                </div>
+
+            </div>
+
+
+            <img
+            class="mobile-logo"
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="StudyHub">
+
+        </div>
+
+
+
+        <!-- MOBILE SEARCH -->
+
+        <div class="mobile-search">
+
+            <span class="search-icon">🔍</span>
+
+            <input
+            type="text"
+            class="search-input"
+            placeholder="Search StudyHub...">
+
+            <button
+            class="search-button"
+            onclick="searchContent(this)">
+
+                →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome-card">
+
+            <div class="welcome-content">
+
+                <h1>
+                    What will you learn today? 🚀
+                </h1>
+
+                <p>
+                    Explore free notes, PDF resources and
+                    video lectures made for students.
+                </p>
+
+                <a href="/notes" class="explore-btn">
+
+                    Start Learning →
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- QUICK ACTION -->
+
+        <section class="quick-actions">
+
+            <a href="/notes" class="quick-card">
+
+                <div class="quick-icon">📚</div>
+
+                <div>
+
+                    <strong>Notes</strong>
+
+                    <p>Study resources</p>
+
+                </div>
+
+            </a>
+
+
+            <a href="/pdfs" class="quick-card">
+
+                <div class="quick-icon">📄</div>
+
+                <div>
+
+                    <strong>PDFs</strong>
+
+                    <p>PDF resources</p>
+
+                </div>
+
+            </a>
+
+
+            <a href="/lectures" class="quick-card">
+
+                <div class="quick-icon">▶️</div>
+
+                <div>
+
+                    <strong>Videos</strong>
+
+                    <p>Video lectures</p>
+
+                </div>
+
+            </a>
+
+
+            <a href="/profile" class="quick-card">
+
+                <div class="quick-icon">👤</div>
+
+                <div>
+
+                    <strong>Profile</strong>
+
+                    <p>Your account</p>
+
+                </div>
+
+            </a>
+
+        </section>
+
+
+
+        <!-- ================= POPULAR NOTES ================= -->
+
+    
+           <section class="notes-section">
+
+    <div class="section-header">
+        <h2>Popular Notes 📖</h2>
+
+        <a href="/notes">
+            View all
+        </a>
+    </div>
+
+    <div class="notes-grid">
+
+        {% for note in popular_notes %}
+
+        <div class="note-card">
+
+            <div class="note-icon">
+                📚
+            </div>
+
+            <h3>{{ note.title }}</h3>
+
+            <p>
+                {{ note.subject }}
+            </p>
+
+            <a href="/notes/{{ note.id }}">
+                Start Learning →
+            </a>
+
+        </div>
+
+        {% else %}
+
+        <p>No notes available.</p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+        <!-- ================= VIDEO ================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>Video Lectures 🎥</h2>
+
+                <a href="/lectures"
+                class="view-all">
+
+                    View all
+
+                </a>
+
+            </div>
+
+
+            <div class="lecture-scroll">
+
+
+                <article class="lecture-card">
+
+                    <div class="video-wrapper">
+
+                        <iframe
+                        src="https://www.youtube.com/embed/kqtD5dpn9C8"
+                        loading="lazy"
+                        allowfullscreen>
+                        </iframe>
+
+                    </div>
+
+                    <div class="lecture-content">
+
+                        <h3>Python Full Course</h3>
+
+                        <p>Python • Beginner</p>
+
+                    </div>
+
+                </article>
+
+
+
+                <article class="lecture-card">
+
+                    <div class="video-wrapper">
+
+                        <iframe
+                        src="https://www.youtube.com/embed/ztHopE5Wnpc"
+                        loading="lazy"
+                        allowfullscreen>
+                        </iframe>
+
+                    </div>
+
+                    <div class="lecture-content">
+
+                        <h3>Database & SQL</h3>
+
+                        <p>Database • Beginner</p>
+
+                    </div>
+
+                </article>
+
+
+
+                <article class="lecture-card">
+
+                    <div class="video-wrapper">
+
+                        <iframe
+                        src="https://www.youtube.com/embed/zysUIv0-xak"
+                        loading="lazy"
+                        allowfullscreen>
+                        </iframe>
+
+                    </div>
+
+                    <div class="lecture-content">
+
+                        <h3>Web Development</h3>
+
+                        <p>Web • Beginner</p>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+<section class="notes-section">
+
+    <div class="section-header">
+        <h2>Recently Added 🆕</h2>
+
+        <a href="/notes">
+            View all
+        </a>
+    </div>
+
+    <div class="notes-grid">
+
+        {% for note in recent_notes %}
+
+        <a href="/notes/{{ note.id }}" class="note-card">
+
+            <div class="note-icon">
+                📘
+            </div>
+
+            <h3>{{ note.title }}</h3>
+
+            <p>
+                {{ note.description }}
+            </p>
+
+            <span class="learn-link">
+                Start learning →
+            </span>
+
+        </a>
+
+        {% else %}
+
+        <p>No recent notes available.</p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+    </main>
+
+</div>
+
+
+
+<!-- ================= MOBILE BOTTOM NAV ================= -->
+
+<nav class="bottom-nav">
+
+    <a href="/dashboard" class="active">
+
+        <span>🏠</span>
+
+        Home
+
+    </a>
+
 
     <a href="/notes">
+
         <span>📚</span>
-        <small>Notes</small>
+
+        Notes
+
     </a>
+
 
     <a href="/lectures">
-        <span>🎥</span>
-        <small>Lectures</small>
+
+        <span>▶️</span>
+
+        Videos
+
     </a>
+
 
     <a href="/pdfs">
+
         <span>📄</span>
-        <small>PDFs</small>
+
+        PDFs
+
     </a>
+
 
     <a href="/profile">
+
         <span>👤</span>
-        <small>Profile</small>
+
+        Profile
+
     </a>
 
-</div>
+</nav>
+
+
+
 <script>
-    function searchNotes(){
 
-    let q = document.getElementById("searchInput").value;
+const searchInputs =
+document.querySelectorAll(".search-input");
 
-    if(q.trim() !== ""){
+
+function performSearch(input){
+
+    const query = input.value.trim();
+
+    if(query !== ""){
+
         window.location.href =
-            "/search?q=" + encodeURIComponent(q);
+        "/search?q=" + encodeURIComponent(query);
+
     }
+
 }
 
-document.getElementById("searchInput")
-.addEventListener("keypress", function(e){
 
-    if(e.key === "Enter"){
-        searchNotes();
-    }
+function searchContent(button){
+
+    const wrapper =
+    button.parentElement;
+
+    const input =
+    wrapper.querySelector(".search-input");
+
+    performSearch(input);
+
+}
+
+
+searchInputs.forEach(input => {
+
+    input.addEventListener("keydown", function(event){
+
+        if(event.key === "Enter"){
+
+            performSearch(this);
+
+        }
+
+    });
 
 });
+
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", function(){
+
+        navigator.serviceWorker
+        .register("/service-worker.js")
+        .then(function(registration){
+
+            console.log(
+                "StudyHub PWA Registered",
+                registration
+            );
+
+        })
+        .catch(function(error){
+
+            console.log(
+                "PWA Error:",
+                error
+            );
+
+        });
+
+    });
+
+}
+
+
+
 </script>
+
+
 </body>
+
 </html>

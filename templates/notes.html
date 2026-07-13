@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>StudyHub • Notes</title>
 
 <style>
@@ -11,131 +13,406 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial,sans-serif;
+    font-family:Arial, sans-serif;
 }
 
 body{
-    background:#f4f6f9;
-    padding:40px;
+    background:#f5f7fb;
+    min-height:100vh;
+    padding:35px 20px;
+    overflow-x:hidden;
 }
 
 .container{
-    max-width:1000px;
+    width:100%;
+    max-width:1100px;
     margin:auto;
 }
 
-h1{
+/* HEADER */
+
+.page-header{
     text-align:center;
-    color:#6c63ff;
-    margin-bottom:40px;
+    margin-bottom:30px;
 }
+
+.page-header h1{
+    color:#5b50e6;
+    font-size:36px;
+    margin-bottom:8px;
+}
+
+.page-header p{
+    color:#777;
+    font-size:16px;
+}
+
+/* SEARCH */
+
+.notes-search{
+    margin-bottom:30px;
+}
+
+.notes-search form{
+    display:flex;
+    gap:12px;
+    background:#fff;
+    padding:14px;
+    border-radius:16px;
+    box-shadow:0 6px 25px rgba(0,0,0,.06);
+}
+
+.notes-search input,
+.notes-search select{
+    padding:14px 16px;
+    border:1px solid #e1e4eb;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+    background:#fff;
+}
+
+.notes-search input{
+    flex:1;
+    min-width:0;
+}
+
+.notes-search input:focus,
+.notes-search select:focus{
+    border-color:#6c63ff;
+}
+
+.notes-search button{
+    border:none;
+    background:#5b50e6;
+    color:white;
+    padding:14px 25px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.notes-search button:hover{
+    background:#473dd1;
+}
+
+/* RESULTS INFO */
+
+.results-info{
+    color:#666;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+/* NOTES GRID */
 
 .notes-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:25px;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:22px;
 }
 
 .note-card{
-    background:white;
+    min-width:0;
+    background:#fff;
     padding:25px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-    text-align:center;
-    transition:0.3s;
+    border-radius:18px;
+    border:1px solid #edf0f5;
+    box-shadow:0 6px 20px rgba(0,0,0,.05);
+    transition:.3s;
 }
 
 .note-card:hover{
-    transform:translateY(-8px);
+    transform:translateY(-5px);
+    box-shadow:0 12px 30px rgba(0,0,0,.09);
+}
+
+.subject{
+    display:inline-block;
+    color:#5b50e6;
+    background:#f0efff;
+    padding:7px 11px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:15px;
 }
 
 .note-card h3{
-    margin-bottom:15px;
-    color:#333;
+    color:#202124;
+    font-size:21px;
+    margin-bottom:12px;
 }
 
 .note-card p{
     color:#666;
-    margin-bottom:20px;
+    line-height:1.7;
+    font-size:15px;
+    margin-bottom:22px;
+
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+
+    word-break:break-word;
 }
 
 .btn{
-    display:inline-block;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
     text-decoration:none;
-    background:#6c63ff;
-    color:white;
-    padding:10px 20px;
-    border-radius:8px;
-    transition:0.3s;
+    background:#5b50e6;
+    color:#fff;
+    padding:11px 18px;
+    border-radius:9px;
+    font-weight:600;
+    font-size:14px;
+    transition:.3s;
 }
 
 .btn:hover{
-    background:#564fd8;
+    background:#473dd1;
+}
+
+/* EMPTY */
+
+.empty{
+    grid-column:1/-1;
+    background:#fff;
+    padding:60px 25px;
+    text-align:center;
+    border-radius:18px;
+    color:#777;
+}
+
+.empty h3{
+    color:#333;
+    margin-bottom:10px;
+}
+
+/* BACK */
+
+.back-container{
+    text-align:center;
+    margin-top:40px;
 }
 
 .back-btn{
     display:inline-block;
-    margin-top:40px;
     text-decoration:none;
-    background:#333;
-    color:white;
-    padding:12px 25px;
-    border-radius:8px;
+    background:#242424;
+    color:#fff;
+    padding:13px 24px;
+    border-radius:10px;
+    font-weight:600;
 }
 
-.back-container{
-    text-align:center;
+/* MOBILE */
+
+@media(max-width:600px){
+
+    body{
+        padding:25px 15px 100px;
+    }
+
+    .page-header{
+        margin-bottom:25px;
+    }
+
+    .page-header h1{
+        font-size:28px;
+    }
+
+    .page-header p{
+        font-size:14px;
+    }
+
+    .notes-search form{
+        flex-direction:column;
+        padding:12px;
+    }
+
+    .notes-search input,
+    .notes-search select,
+    .notes-search button{
+        width:100%;
+        min-height:48px;
+    }
+
+    .notes-grid{
+        grid-template-columns:1fr;
+        gap:16px;
+    }
+
+    .note-card{
+        padding:20px;
+        border-radius:15px;
+    }
+
+    .note-card h3{
+        font-size:19px;
+    }
+
+    .btn{
+        width:100%;
+        min-height:46px;
+    }
+
+    .back-btn{
+        width:100%;
+    }
+
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-    <h1> All Notes</h1>
+    <!-- HEADER -->
 
-    <div class="notes-grid">
+    <div class="page-header">
 
-        <div class="note-card">
-            <h3>🐍 Python Notes</h3>
-            <p>Complete Python Notes for Beginners.</p>
-            <a href="/notes/python" class="btn">View Notes</a>
-        </div>
-         <div class="note-card">
-             <h3>💻 Web Development</h3>
-             <p>Learn Html,CSS & Web Development.</p>
-             <a href="/notes/web" class="btn">View Notes</a>
-        </div>
+        <h1>📚 All Notes</h1>
 
-
-        <div class="note-card">
-            <h3>🌐 PHP Notes</h3>
-            <p>Learn PHP and Web Development.</p>
-            <a href="/notes/php" class="btn">View Notes</a>
-        </div>
-
-        <div class="note-card">
-            <h3>🗄️ SQL Notes</h3>
-            <p>Database and SQL Complete Notes.</p>
-            <a href="/notes/sql" class="btn">View Notes</a>
-        </div>
-
-        
-        <div class="note-card">
-            <h3>📊 DSA Notes</h3>
-            <p>Data Sturucture and SQL Algorithm Notes.</p>
-            <a href="/notes/dsa" class="btn">View Notes</a>
-        </div>
+        <p>
+            Search and explore free StudyHub learning notes
+        </p>
 
     </div>
 
+
+    <!-- SEARCH -->
+
+    <div class="notes-search">
+
+        <form method="GET" action="/notes">
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="🔍 Search notes..."
+            >
+
+            <select name="subject">
+
+                <option value="">
+                    All Subjects
+                </option>
+
+                {% for subject in subjects %}
+
+                <option
+                    value="{{ subject.subject }}"
+                    {% if selected_subject == subject.subject %}
+                    selected
+                    {% endif %}
+                >
+
+                    {{ subject.subject }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <button type="submit">
+                Search
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- RESULTS -->
+
+    {% if query or selected_subject %}
+
+    <div class="results-info">
+
+        Showing results
+
+        {% if query %}
+            for "<strong>{{ query }}</strong>"
+        {% endif %}
+
+        {% if selected_subject %}
+            in <strong>{{ selected_subject }}</strong>
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- NOTES -->
+
+    <div class="notes-grid">
+
+        {% for note in notes %}
+
+        <div class="note-card">
+
+            <div class="subject">
+                📖 {{ note.subject }}
+            </div>
+
+            <h3>
+                {{ note.title }}
+            </h3>
+
+            <p>
+                {{ note.content }}
+            </p>
+
+            <a
+                href="{{ url_for('view_note', note_id=note.id) }}"
+                class="btn"
+            >
+                View Notes →
+            </a>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty">
+
+            <h3>📭 No Notes Found</h3>
+
+            <p>
+                Try searching another topic or subject.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- BACK -->
+
     <div class="back-container">
-        <a href="/dashboard" class="back-btn">⬅ Back to Dashboard</a>
+
+        <a href="/dashboard" class="back-btn">
+            ← Back to Dashboard
+        </a>
+
     </div>
 
 </div>
 
 </body>
+
 </html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Edit Note</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#f4f6f9;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:600px;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+}
+
+textarea{
+    height:250px;
+    resize:vertical;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:#2196F3;
+    color:white;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.back{
+    display:block;
+    text-align:center;
+    margin-top:15px;
+    color:#6c63ff;
+    text-decoration:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>✏ Edit Note</h2>
+
+    <form method="POST">
+
+        <input
+            type="text"
+            name="title"
+            value="{{ note.title }}"
+            required>
+
+        <input
+            type="text"
+            name="subject"
+            value="{{ note.subject }}"
+            required>
+
+        <textarea
+            name="content"
+            required>{{ note.content }}</textarea>
+
+        <button type="submit">
+            Update Note
+        </button>
+
+    </form>
+
+    <a href="/manage_notes" class="back">
+        ← Back to Notes
+    </a>
+
+</div>
+
+</body>
+
+</html>

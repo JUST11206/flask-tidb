@@ -3,584 +3,1213 @@
 
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>StudyHub • Learn Smarter</title>
+<title>StudyHub • Free Learning Resources</title>
 
-<link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="icon" type="image/png"
+href="{{ url_for('static', filename='images/logo.png') }}">
 
 <style>
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Inter', system-ui, 'Segoe UI', 'Poppins', sans-serif;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-html {
-  scroll-behavior: smooth;
+html{
+    scroll-behavior:smooth;
 }
 
-body {
-  background: #f9fafc;
-  color: #0a0c12;
-  overflow-x: hidden;
+body{
+    font-family:Arial, sans-serif;
+    background:#f8fafc;
+    color:#0f172a;
 }
 
-/* ========== GLASS NAVBAR ========== */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  background: rgba(255,255,255,0.78);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(79,70,229,0.15);
-  transition: 0.25s;
+a{
+    text-decoration:none;
 }
 
-.nav-container {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 28px;
+/* NAVBAR */
+/* ================= NAVBAR ================= */
+
+.navbar{
+    position:sticky;
+    top:0;
+    width:100%;
+    z-index:1000;
+
+    background:rgba(255,255,255,.90);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border-bottom:1px solid rgba(226,232,240,.8);
 }
 
-.logo {
-  font-size: 1.7rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #4f46e5, #06b6d4);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  letter-spacing: -0.3px;
-}
-.logo i {
-  background: none;
-  -webkit-background-clip: unset;
-  color: #4f46e5;
-  margin-right: 5px;
+.nav-container{
+    max-width:1200px;
+    height:76px;
+    margin:auto;
+    padding:0 25px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 }
 
-.nav-menu {
-  display: flex;
-  list-style: none;
-  gap: 2rem;
-  align-items: center;
+
+/* LOGO */
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    text-decoration:none;
+
+    color:#4f46e5;
+    font-size:22px;
+    font-weight:800;
 }
 
-.nav-menu li a {
-  text-decoration: none;
-  font-weight: 600;
-  color: #1e293b;
-  transition: 0.2s;
-  font-size: 0.95rem;
+.logo img{
+    width:42px;
+    height:42px;
+
+    object-fit:contain;
 }
 
-.nav-menu li a:hover {
-  color: #4f46e5;
+.logo span{
+    letter-spacing:-.5px;
 }
 
-.menu-toggle {
-  display: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  color: #1e293b;
+
+/* NAV LINKS */
+
+.nav-links{
+    display:flex;
+    align-items:center;
+    gap:35px;
 }
 
-/* ========== HERO SECTION (gradient + animated floating shapes) ========== */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background: radial-gradient(circle at 10% 30%, #4f46e5, #0f2b6d);
-  overflow: hidden;
-  padding: 6rem 1.5rem 4rem;
+.nav-link{
+    position:relative;
+
+    color:#475569;
+    font-size:15px;
+    font-weight:600;
+
+    transition:.3s;
 }
 
-/* floating shapes */
-.shape {
-  position: absolute;
-  background: rgba(255,255,255,0.2);
-  border-radius: 50%;
-  filter: blur(40px);
-  z-index: 0;
-  animation: floatShape 12s infinite alternate ease-in-out;
-}
-.shape-1 { width: 280px; height: 280px; top: -80px; left: -100px; background: radial-gradient(circle, #a78bfa, #60a5fa); opacity: 0.4; }
-.shape-2 { width: 400px; height: 400px; bottom: -150px; right: -120px; background: radial-gradient(circle, #06b6d4, #3b82f6); opacity: 0.35; animation-duration: 18s; }
-.shape-3 { width: 180px; height: 180px; top: 40%; left: 15%; background: rgba(255,215,0,0.25); filter: blur(55px); animation-duration: 10s; }
-.shape-4 { width: 220px; height: 220px; bottom: 20%; right: 12%; background: rgba(167,139,250,0.3); filter: blur(60px); animation-duration: 14s; }
-
-@keyframes floatShape {
-  0% { transform: translateY(0px) translateX(0px) rotate(0deg);}
-  100% { transform: translateY(40px) translateX(25px) rotate(8deg);}
+.nav-link:hover{
+    color:#4f46e5;
 }
 
-.hero-container {
-  max-width: 1280px;
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  z-index: 2;
-  position: relative;
+.nav-link::after{
+    content:"";
+
+    position:absolute;
+    left:0;
+    bottom:-8px;
+
+    width:0;
+    height:2px;
+
+    background:#4f46e5;
+
+    border-radius:10px;
+
+    transition:.3s;
 }
 
-.hero-left {
-  flex: 1.2;
-  color: white;
+.nav-link:hover::after,
+.nav-link.active::after{
+    width:100%;
 }
 
-.hero-left h1 {
-  font-size: clamp(2.2rem, 6vw, 3.8rem);
-  font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-  background: linear-gradient(to right, #fff, #e0e7ff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.nav-link.active{
+    color:#4f46e5;
 }
 
-.hero-left p {
-  font-size: 1.1rem;
-  line-height: 1.5;
-  opacity: 0.92;
-  max-width: 550px;
-  margin-bottom: 2rem;
+
+/* AUTH BUTTONS */
+
+.nav-auth{
+    display:flex;
+    align-items:center;
+    gap:18px;
 }
 
-.btn-group {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+.login-link{
+    color:#334155;
+    font-weight:600;
 }
 
-.btn-primary, .btn-outline-light {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.8rem 1.6rem;
-  border-radius: 40px;
-  font-weight: 600;
-  transition: 0.25s;
-  text-decoration: none;
-  font-size: 0.95rem;
+.login-link:hover{
+    color:#4f46e5;
 }
 
-.btn-primary {
-  background: white;
-  color: #4f46e5;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.1);
-}
-.btn-primary:hover {
-  transform: translateY(-4px);
-  background: #f1f5ff;
-  box-shadow: 0 14px 26px rgba(0,0,0,0.15);
+.signup-btn{
+    display:inline-block;
+
+    padding:11px 20px;
+
+    background:#4f46e5;
+    color:white;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    box-shadow:0 8px 20px rgba(79,70,229,.20);
+
+    transition:.3s;
 }
 
-.btn-outline-light {
-  border: 1.5px solid rgba(255,255,255,0.7);
-  color: white;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(4px);
-}
-.btn-outline-light:hover {
-  background: white;
-  color: #4f46e5;
-  border-color: white;
-  transform: translateY(-3px);
+.signup-btn:hover{
+    background:#4338ca;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 12px 25px rgba(79,70,229,.30);
 }
 
-.student-badge {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 100px;
-  padding: 0.5rem 1.2rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 1.8rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-.student-badge i {
-  font-size: 1.2rem;
+
+/* MOBILE AUTH */
+
+.mobile-auth{
+    display:none;
 }
 
-.hero-right {
-  flex: 0.9;
-  display: flex;
-  justify-content: center;
+
+/* MENU BUTTON */
+
+.menu-btn{
+    display:none;
+
+    background:none;
+    border:none;
+
+    color:#0f172a;
+
+    font-size:28px;
+
+    cursor:pointer;
 }
 
-.illustration {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(4px);
-  border-radius: 42px;
-  padding: 1rem;
-  box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.3);
-}
 
-.illustration img {
-  width: 100%;
-  max-width: 320px;
-  border-radius: 32px;
-  display: block;
-  margin: 0 auto;
-  filter: drop-shadow(0 12px 20px rgba(0,0,0,0.2));
-}
+/* ================= MOBILE ================= */
 
-/* trusted by section */
-.trusted {
-  margin-top: 2rem;
-  text-align: left;
-}
-.trusted p {
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  margin-bottom: 0.6rem;
-  opacity: 0.8;
-}
-.logo-strip {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  align-items: center;
-  color: rgba(255,255,255,0.8);
-  font-weight: 500;
-}
-.logo-strip span {
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: rgba(255,255,255,0.2);
-  padding: 5px 12px;
-  border-radius: 40px;
-}
+@media(max-width:850px){
 
-/* ========== STATS SECTION ========== */
-.stats-section {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  padding: 4rem 1.5rem;
-  border-bottom: 1px solid #eef2ff;
-}
-.stats-grid {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1.5rem;
-  text-align: center;
-}
-.stat-card {
-  flex: 1;
-  background: white;
-  border-radius: 32px;
-  padding: 1.5rem 1rem;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.05);
-  transition: 0.2s;
-}
-.stat-card h3 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  background: linear-gradient(135deg,#4f46e5,#06b6d4);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.stat-card p { color: #334155; font-weight: 500; margin-top: 0.4rem; }
-
-/* ========== FEATURES UPGRADE (8 cards) ========== */
-.section {
-  padding: 5rem 1.5rem;
-}
-.container {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-.section-title {
-  text-align: center;
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin-bottom: 3rem;
-  background: linear-gradient(135deg,#1e293b,#4f46e5);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.8rem;
-}
-.feature-card {
-  background: white;
-  border-radius: 1.8rem;
-  padding: 1.6rem;
-  transition: all 0.25s;
-  box-shadow: 0 12px 25px -12px rgba(0,0,0,0.08);
-  border: 1px solid #eef2ff;
-  text-align: center;
-}
-.feature-card i {
-  font-size: 2.4rem;
-  background: linear-gradient(145deg,#4f46e5,#06b6d4);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-bottom: 0.8rem;
-}
-.feature-card h4 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-.feature-card p {
-  font-size: 0.85rem;
-  color: #475569;
-}
-
-/* VIDEO SECTION */
-.video-section {
-    background: #0f172a;
-    padding: 50px 20px;
-}
-
-.video-container {
-    max-width: 900px;   /* Desktop width limit */
-    margin: 0 auto;
-}
-
-.video-box {
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.video-box video {
-    width: 100%;
-    max-width: 850px;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    border-radius: 15px;
-    display: block;
-    margin: 0 auto;
-}
-
-.video-box h3 {
-    color: white;
-    margin-top: 15px;
-}
-
-.video-box p {
-    color: #cbd5e1;
-    font-size: 14px;
-}
-
-/* Tablet */
-@media (max-width: 992px) {
-    .video-container {
-        max-width: 700px;
-    }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .video-section {
-        padding: 30px 15px;
+    .nav-container{
+        height:70px;
+        padding:0 20px;
     }
 
-    .video-box {
-        padding: 15px;
+    .logo img{
+        width:38px;
+        height:38px;
     }
 
-    .video-box video {
-        max-width: 100%;
+    .logo{
+        font-size:20px;
     }
 
-    .video-box p {
-        font-size: 13px;
+
+    /* NAV MENU */
+
+    .nav-links{
+        position:absolute;
+
+        top:70px;
+        left:0;
+
+        width:100%;
+
+        display:none;
+        flex-direction:column;
+        align-items:flex-start;
+
+        gap:5px;
+
+        padding:20px;
+
+        background:white;
+
+        border-bottom:1px solid #e2e8f0;
+
+        box-shadow:0 20px 30px rgba(15,23,42,.08);
     }
+
+    .nav-links.active{
+        display:flex;
+    }
+
+    .nav-link{
+        width:100%;
+
+        padding:14px 10px;
+
+        border-radius:8px;
+    }
+
+    .nav-link:hover{
+        background:#f1f5f9;
+    }
+
+    .nav-link::after{
+        display:none;
+    }
+
+
+    /* HIDE DESKTOP AUTH */
+
+    .nav-auth{
+        display:none;
+    }
+
+
+    /* MOBILE AUTH */
+
+    .mobile-auth{
+        width:100%;
+
+        display:flex;
+        flex-direction:column;
+
+        gap:10px;
+
+        margin-top:10px;
+
+        padding-top:15px;
+
+        border-top:1px solid #e2e8f0;
+    }
+
+    .mobile-auth .login-link,
+    .mobile-auth .signup-btn{
+        width:100%;
+
+        padding:13px;
+
+        text-align:center;
+
+        border-radius:9px;
+    }
+
+    .mobile-auth .login-link{
+        background:#f1f5f9;
+    }
+
+
+    /* MENU */
+
+    .menu-btn{
+        display:block;
+    }
+
 }
-/* footer */
-.footer {
-  background: #020617;
-  color: #cbd5e1;
-  text-align: center;
-  padding: 2rem;
+/* HERO */
+
+.hero{
+    min-height:650px;
+    background:
+    radial-gradient(circle at 90% 10%, #c4b5fd 0, transparent 30%),
+    linear-gradient(135deg,#eef2ff,#ffffff);
+
+    display:flex;
+    align-items:center;
+    padding:70px 25px;
 }
 
-@media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-    flex-direction: column;
-    background: white;
-    position: absolute;
-    top: 70px;
-    left: 0;
-    width: 100%;
-    padding: 1rem;
-    box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-    gap: 1rem;
-  }
-  .nav-menu.active { display: flex; }
-  .menu-toggle { display: block; }
-  .hero-container { flex-direction: column; text-align: center; }
-  .btn-group { justify-content: center; }
-  .trusted { text-align: center; }
-  .stats-grid { flex-direction: column; }
+.hero-container{
+    width:100%;
+    max-width:1200px;
+    margin:auto;
+
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    align-items:center;
+    gap:60px;
+}
+
+.badge{
+    display:inline-block;
+    padding:8px 15px;
+    background:#ede9fe;
+    color:#6d28d9;
+    border-radius:30px;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.hero h1{
+    font-size:58px;
+    line-height:1.08;
+    letter-spacing:-2px;
+}
+
+.hero h1 span{
+    color:#4f46e5;
+}
+
+.hero p{
+    max-width:580px;
+    margin:25px 0;
+    color:#64748b;
+    font-size:18px;
+    line-height:1.7;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.primary-btn,
+.secondary-btn{
+    padding:14px 24px;
+    border-radius:12px;
+    font-weight:bold;
+}
+
+.primary-btn{
+    background:#4f46e5;
+    color:white;
+    box-shadow:0 10px 25px rgba(79,70,229,.25);
+}
+
+.secondary-btn{
+    background:white;
+    color:#0f172a;
+    border:1px solid #cbd5e1;
+}
+
+.hero-card{
+    background:#0f172a;
+    border-radius:28px;
+    padding:30px;
+    color:white;
+    box-shadow:0 30px 70px rgba(15,23,42,.25);
+}
+
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:30px;
+}
+
+.free-badge{
+    background:#22c55e;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.resource{
+    background:#1e293b;
+    margin-top:15px;
+    padding:18px;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.resource-icon{
+    width:48px;
+    height:48px;
+    border-radius:12px;
+    background:#334155;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+}
+
+.resource p{
+    margin:5px 0 0;
+    font-size:13px;
+    color:#94a3b8;
+}
+
+/* ABOUT */
+
+.about{
+    padding:100px 25px;
+}
+
+.section-container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.section-label{
+    color:#4f46e5;
+    font-weight:bold;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    font-size:13px;
+}
+
+.section-title{
+    font-size:42px;
+    margin-top:12px;
+    max-width:650px;
+}
+
+.section-description{
+    color:#64748b;
+    line-height:1.8;
+    max-width:750px;
+    margin-top:20px;
+    font-size:17px;
+}
+
+/* FEATURES */
+
+.features{
+    padding:100px 25px;
+    background:#f1f5f9;
+}
+
+.feature-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+    margin-top:50px;
+}
+
+.feature-card{
+    background:white;
+    padding:32px;
+    border-radius:20px;
+    border:1px solid #e2e8f0;
+    transition:.3s;
+}
+
+.feature-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 20px 40px rgba(15,23,42,.08);
+}
+
+.feature-icon{
+    width:60px;
+    height:60px;
+    border-radius:16px;
+    background:#eef2ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    margin-bottom:25px;
+}
+
+.feature-card h3{
+    font-size:21px;
+    margin-bottom:12px;
+}
+
+.feature-card p{
+    color:#64748b;
+    line-height:1.7;
+}
+
+/* FREE SECTION */
+
+.free-section{
+    padding:100px 25px;
+    background:#0f172a;
+    color:white;
+}
+
+.free-container{
+    max-width:1100px;
+    margin:auto;
+    text-align:center;
+}
+
+.free-container h2{
+    font-size:48px;
+    margin-bottom:20px;
+}
+
+.free-container h2 span{
+    color:#818cf8;
+}
+
+.free-container p{
+    max-width:700px;
+    margin:auto;
+    color:#94a3b8;
+    line-height:1.8;
+    font-size:17px;
+}
+
+.free-items{
+    display:flex;
+    justify-content:center;
+    gap:35px;
+    flex-wrap:wrap;
+    margin:45px 0;
+}
+
+.free-item{
+    color:#cbd5e1;
+    font-weight:bold;
+}
+
+/* CTA */
+
+.cta{
+    padding:100px 25px;
+    text-align:center;
+}
+
+.cta-box{
+    max-width:1000px;
+    margin:auto;
+    padding:70px 30px;
+    border-radius:30px;
+    color:white;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+}
+
+.cta-box h2{
+    font-size:45px;
+}
+
+.cta-box p{
+    margin:20px auto 30px;
+    max-width:600px;
+    line-height:1.7;
+    color:#e0e7ff;
+}
+
+.cta-btn{
+    display:inline-block;
+    padding:15px 28px;
+    background:white;
+    color:#4f46e5;
+    border-radius:12px;
+    font-weight:bold;
+}
+
+/* FOOTER */
+/* ================= FOOTER ================= */
+
+.footer{
+    background:#020617;
+    color:#94a3b8;
+    padding:70px 25px 25px;
+}
+
+.footer-container{
+    max-width:1200px;
+    margin:auto;
+
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:60px;
+}
+
+
+/* BRAND */
+
+.footer-brand{
+    max-width:380px;
+}
+
+.footer-logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    color:white;
+    font-size:24px;
+    font-weight:800;
+
+    margin-bottom:20px;
+}
+
+.footer-logo img{
+    width:45px;
+    height:45px;
+    object-fit:contain;
+}
+
+.footer-brand p{
+    color:#94a3b8;
+    line-height:1.8;
+    font-size:15px;
+}
+
+
+/* COLUMNS */
+
+.footer-column{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.footer-column h3{
+    color:white;
+    font-size:16px;
+    margin-bottom:8px;
+}
+
+.footer-column a{
+    color:#94a3b8;
+    font-size:14px;
+    transition:.3s;
+}
+
+.footer-column a:hover{
+    color:#818cf8;
+    transform:translateX(4px);
+}
+
+
+/* FOOTER BOTTOM */
+
+.footer-bottom{
+    max-width:1200px;
+    margin:60px auto 0;
+
+    padding-top:25px;
+
+    border-top:1px solid #1e293b;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:20px;
+
+    font-size:14px;
+}
+
+
+/* ================= TABLET ================= */
+
+@media(max-width:900px){
+
+    .footer-container{
+        grid-template-columns:2fr 1fr 1fr;
+    }
 
 }
-.course-img img{
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:650px){
+
+    .footer{
+        padding:55px 20px 25px;
+    }
+
+    .footer-container{
+        grid-template-columns:1fr 1fr;
+        gap:40px 25px;
+    }
+
+    .footer-brand{
+        grid-column:1/-1;
+    }
+
+    .footer-bottom{
+        margin-top:45px;
+
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+}
+
+
+/* SMALL MOBILE */
+
+@media(max-width:400px){
+
+    .footer-container{
+        grid-template-columns:1fr;
+    }
+
+    .footer-brand{
+        grid-column:auto;
+    }
+
+}
+/* MOBILE */
+
+@media(max-width:800px){
+
+    .nav-links{
+        display:none;
+        position:absolute;
+        top:72px;
+        left:0;
+        width:100%;
+        background:white;
+        padding:25px;
+        flex-direction:column;
+        box-shadow:0 15px 30px rgba(0,0,0,.1);
+    }
+
+    .nav-links.active{
+        display:flex;
+    }
+
+    .menu{
+        display:block;
+    }
+
+    .hero-container{
+        grid-template-columns:1fr;
+    }
+
+    .hero h1{
+        font-size:42px;
+    }
+
+    .hero-card{
+        margin-top:20px;
+    }
+
+    .feature-grid{
+        grid-template-columns:1fr;
+    }
+
+    .section-title{
+        font-size:34px;
+    }
+
+    .free-container h2,
+    .cta-box h2{
+        font-size:34px;
+    }
+
 }
 
 </style>
+
 </head>
+
 <body>
 <nav class="navbar">
-  <div class="nav-container">
-    <div class="logo">🎓StudyHub </div>
-    <ul class="nav-menu" id="nav-menu">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#features">Features</a></li>
-      <li><a href="#videos">Videos</a></li><li><a href="#join">Join</a></li>
-      <li><a href="/admin_login" class="nav-link">Admin</a></li>
-      <li><a href="/login">Login</a></li>
 
-    </ul>
-    <div class="menu-toggle" id="menu-toggle">☰</div>
-  </div>
+    <div class="nav-container">
+
+        <!-- LOGO -->
+        <a href="/" class="logo">
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="StudyHub Logo"
+            >
+            <span>StudyHub</span>
+        </a>
+
+
+        <!-- NAV LINKS -->
+        <div class="nav-links" id="navLinks">
+
+            <a href="/" class="nav-link active">
+                Home
+            </a>
+
+            <a href="#about" class="nav-link">
+                About
+            </a>
+
+            <a href="#resources" class="nav-link">
+                Resources
+            </a>
+
+            <a href="#free" class="nav-link">
+                Free Learning
+            </a>
+
+            <div class="mobile-auth">
+
+                <a href="/login" class="login-link">
+                    Login
+                </a>
+
+                <a href="/signup" class="signup-btn">
+                    Get Started
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- DESKTOP BUTTONS -->
+        <div class="nav-auth">
+
+            <a href="/login" class="login-link">
+                Login
+            </a>
+
+            <a href="/signup" class="signup-btn">
+                Get Started
+            </a>
+
+        </div>
+
+
+        <!-- MOBILE MENU -->
+        <button
+            class="menu-btn"
+            onclick="toggleMenu()"
+            id="menuBtn"
+            aria-label="Open Menu"
+        >
+            ☰
+        </button>
+
+    </div>
+
 </nav>
-<div style="height: 0px;"></div>
 
-<!-- HERO section with illustration, shapes, badges -->
-<section id="home" class="hero">
-  <div class="shape shape-1"></div><div class="shape shape-2"></div><div class="shape shape-3"></div><div class="shape shape-4"></div>
-  <div class="hero-container">
-    <div class="hero-left">
-      <h1>Level up your coding <br>with AI Study Assistant</h1>
-      <p>Join 10,000+ learners mastering Python, DSA, full-stack & AI. Interactive notes, coding challenges & live support.</p>
-      <div class="btn-group">
-        <a href="/signup" class="btn-primary"><i class="fas fa-rocket"></i> Get Started</a>
-        <a href="/login" class="btn-outline-light"><i class="fas fa-play-circle"></i> Watch Demo</a>
-      </div>
-      <div class="student-badge"><i class="fas fa-users"></i> 10,500+ active students this month</div>
-      <div class="trusted"><p>TRUSTED BY STUDENTS FROM</p><div class="logo-strip"><span>IITs</span><span>NITs</span><span>🌍Global Devs</span></div></div>
-    </div>
-    <div class="hero-right">
-      <div class="illustration"><img src="https://placehold.co/400x380/4f46e5/white?text=🚀+AI+Coding+Hub" alt="hero-illustration"></div>
-    </div>
-  </div>
-</section>
+<section class="hero">
 
+    <div class="hero-container">
 
-<!-- FEATURES Upgrade (8 cards) -->
-<section id="features" class="section">
-  <div class="container">
-    <div class="section-title">⚡ Ultimate Learning Toolkit</div>
-    <div class="feature-grid">
-      <div class="feature-card"><i class="fas fa-robot"></i><h4>AI Study Assistant</h4><p>Smart doubt solver & quiz generator</p></div>
-      <div class="feature-card"><i class="fas fa-code"></i><h4>Coding Challenges</h4><p>Real-world problems</p></div>
-      <div class="feature-card"><i class="fas fa-video"></i><h4>Video Lectures</h4><p>Conceptual + project based</p></div>
-      <div class="feature-card"><i class="fas fa-file-pdf"></i><h4>PDF Notes</h4><p>Downloadable, well-structured</p></div>
-      <div class="feature-card"><i class="fas fa-chart-line"></i><h4>Progress Tracking</h4><p>Analytics & streaks</p></div>
-      <div class="feature-card"><i class="fas fa-headset"></i><h4>Doubt Support</h4><p>24/7 community + expert</p></div>
-    </div>
-  </div>
-</section>
+        <div>
 
-<!-- 
-<div class="section-title video-title">🎥 Featured Introduction Video</div>
+            <div class="badge">
+                🎓 Learning should be accessible
+            </div>
 
-<div class="video-box">
-  <video controls>
-    <source src="static/videos/fb0e67daa41808f662b528981ea32b30.mp4">
-  </video>
-  <h3>StudyHub</h3>
-  <p>Learn Web development in easy way.</p>
-</div> -->
+            <h1>
+                Your learning resources.
+                <span>One simple platform.</span>
+            </h1>
 
-<section id="videos" class="video-section">
-    <div class="video-container">
+            <p>
+                StudyHub is a free learning platform created for students
+                and beginner developers. Access useful notes, PDF resources
+                and video lectures from one place.
+            </p>
 
-        <div class="section-title video-title">
-           Python Introduction Video
+            <div class="hero-buttons">
+
+                <a href="/signup" class="primary-btn">
+                    Create Free Account →
+                </a>
+
+                <a href="#about" class="secondary-btn">
+                    About StudyHub
+                </a>
+
+            </div>
+
         </div>
 
-        <div class="video-box">
-            <video controls>
-                <source src="static/videos/fb0e67daa41808f662b528981ea32b30.mp4">
-            </video>
 
-            <h3>StudyHub</h3>
-            <p>Learn Web Development in easy way.</p>
+        <div class="hero-card">
+
+            <div class="card-top">
+
+                <h2>Study Resources</h2>
+
+                <span class="free-badge">
+                    FREE
+                </span>
+
+            </div>
+
+            <div class="resource">
+
+                <div class="resource-icon">📚</div>
+
+                <div>
+                    <h3>Study Notes</h3>
+                    <p>Simple and structured learning notes.</p>
+                </div>
+
+            </div>
+
+            <div class="resource">
+
+                <div class="resource-icon">📄</div>
+
+                <div>
+                    <h3>PDF Resources</h3>
+                    <p>Useful PDF material in one place.</p>
+                </div>
+
+            </div>
+
+            <div class="resource">
+
+                <div class="resource-icon">🎥</div>
+
+                <div>
+                    <h3>Video Lectures</h3>
+                    <p>Learn concepts through video resources.</p>
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
-    <div class="video-container">
+</section>
 
-        <div class="section-title video-title">
-            🎥 Web Development 
+
+<section class="about" id="about">
+
+    <div class="section-container">
+
+        <div class="section-label">
+            About StudyHub
         </div>
 
-        <div class="video-box">
-            <video controls>
-                <source src="static\videos\9a64103d6aa37bc9232b65f15e9e747a_720w.mp4">
-            </video>
+        <h2 class="section-title">
+            A simple platform built to make study resources easier to access.
+        </h2>
 
-            <h3>StudyHub</h3>
-            <p>Learn Web Development in easy way.</p>
+        <p class="section-description">
+            StudyHub brings learning material together in one place.
+            Instead of searching different websites for notes, PDFs and
+            lectures, students can access useful study resources through
+            a simple dashboard.
+        </p>
+
+        <p class="section-description">
+            The goal of StudyHub is simple: provide students and beginner
+            programmers with accessible learning material and a clean
+            learning experience.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="features" id="resources">
+
+    <div class="section-container">
+
+        <div class="section-label">
+            What We Provide
+        </div>
+
+        <h2 class="section-title">
+            Resources designed for simple learning.
+        </h2>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">📚</div>
+
+                <h3>Learning Notes</h3>
+
+                <p>
+                    Read study notes directly on StudyHub.
+                    Notes are organised to make concepts easier
+                    to understand and revise.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">📄</div>
+
+                <h3>PDF Resources</h3>
+
+                <p>
+                    Access useful PDF study material from your
+                    dashboard and keep important learning resources
+                    available in one place.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">🎥</div>
+
+                <h3>Video Lectures</h3>
+
+                <p>
+                    Explore selected video lectures for programming
+                    and technical subjects to learn concepts visually.
+                </p>
+
+            </div>
+
         </div>
 
     </div>
 
 </section>
 
-<!-- STATS SECTION (10k+, 500+ notes etc) -->
-<section class="stats-section">
-  <div class="stats-grid">
-    <div class="stat-card"><h3>10,000+</h3><p>Happy Students</p></div>
-    <div class="stat-card"><h3>500+</h3><p>Premium Notes</p></div>
-    <div class="stat-card"><h3>100+</h3><p>Video Lectures</p></div>
-    <div class="stat-card"><h3>50+</h3><p>Expert Courses</p></div>
-  </div>
+
+<section class="free-section" id="free">
+
+    <div class="free-container">
+
+        <h2>
+            Learning resources.
+            <span>Free to access.</span>
+        </h2>
+
+        <p>
+            StudyHub is created to help students access useful learning
+            resources without complicated subscriptions. Create your
+            account and start exploring available study material.
+        </p>
+
+        <div class="free-items">
+
+            <div class="free-item">✓ Free Account</div>
+
+            <div class="free-item">✓ Study Notes</div>
+
+            <div class="free-item">✓ PDF Resources</div>
+
+            <div class="free-item">✓ Video Lectures</div>
+
+        </div>
+
+        <a href="/signup" class="cta-btn">
+            Start Learning Free
+        </a>
+
+    </div>
+
 </section>
 
-<!-- JOIN -->
-<section id="join" class="join" style="background: linear-gradient(125deg,#4f46e5,#0f172a); text-align:center; padding:4rem 1.5rem; color:white;">
-  <h2 style="font-size:2rem;">Start your coding journey today</h2>
-  <p style="margin:1rem auto; max-width:500px;">Get free access to 500+ notes, AI tutor and exclusive courses.</p>
-  <a href="/signup" class="btn-primary" style="background:white; color:#4f46e5; margin-top:0.5rem;">Create Free Account →</a>
+
+<section class="cta">
+
+    <div class="cta-box">
+
+        <h2>Ready to explore StudyHub?</h2>
+
+        <p>
+            Create your account and access available notes,
+            PDF resources and video lectures from your student dashboard.
+        </p>
+
+        <a href="/signup" class="cta-btn">
+            Create Free Account →
+        </a>
+
+    </div>
+
 </section>
 
-<footer class="footer"><p>© 2026 StudyHub AI — next-gen programming ecosystem | All features simulated for learning</p></footer>
+<footer class="footer">
+
+    <div class="footer-container">
+
+        <!-- BRAND -->
+        <div class="footer-brand">
+
+            <a href="/" class="footer-logo">
+                <img
+                    src="{{ url_for('static', filename='images/logo.png') }}"
+                    alt="StudyHub Logo"
+                >
+                <span>StudyHub</span>
+            </a>
+
+            <p>
+                A free learning platform for students and beginner
+                developers. Access notes, PDFs and video lectures
+                from one simple place.
+            </p>
+
+        </div>
+
+
+        <!-- PLATFORM -->
+        <div class="footer-column">
+
+            <h3>Platform</h3>
+
+            <a href="/">Home</a>
+            <a href="#about">About</a>
+            <a href="#resources">Resources</a>
+            <a href="#free">Free Learning</a>
+
+        </div>
+
+
+        <!-- RESOURCES -->
+        <div class="footer-column">
+
+            <h3>Resources</h3>
+
+            <a href="/login">Study Notes</a>
+            <a href="/login">PDF Resources</a>
+            <a href="/login">Video Lectures</a>
+            <a href="/login">Dashboard</a>
+
+        </div>
+
+
+        <!-- ACCOUNT -->
+        <div class="footer-column">
+
+            <h3>Account</h3>
+
+            <a href="/login">Login</a>
+            <a href="/signup">Create Account</a>
+            <a href="/profile">Profile</a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 StudyHub. Built for students 📚
+        </p>
+
+        <p>
+            Free Notes • PDFs • Lectures
+        </p>
+
+    </div>
+
+</footer>
+
+
 <script>
 
-const toggle = document.getElementById("menu-toggle");
-const menu = document.getElementById("nav-menu");
+function toggleMenu(){
 
-toggle.addEventListener("click", () => {
-  menu.classList.toggle("active");
-});
+    const nav = document.getElementById("navLinks");
+
+    nav.classList.toggle("active");
+
+}
+
 </script>
 
 </body>
+
 </html>
