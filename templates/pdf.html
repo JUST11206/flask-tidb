@@ -1,121 +1,659 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StudyHub •PDF Notes</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>StudyHub • PDF Resources</title>
+
+<link rel="icon"
+type="image/png"
+href="{{ url_for('static', filename='images/logo.png') }}">
+
+<meta name="theme-color" content="#4f46e5">
 
 <style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --primary-light:#eef2ff;
+
+    --text:#0f172a;
+    --muted:#64748b;
+
+    --border:#e2e8f0;
+    --background:#f8fafc;
+    --white:#ffffff;
+}
+
 body{
+    min-height:100vh;
+
     font-family:Arial,sans-serif;
-    background:#f4f6f9;
-    padding:20px;
+
+    background:var(--background);
+    color:var(--text);
 }
 
-/* container */
-.container{
-    max-width:900px;
-    margin:auto;
+a{
+    text-decoration:none;
 }
 
-/* title */
-h1{
-    color:#6c63ff;
-    margin-bottom:25px;
-    font-size:clamp(22px,4vw,32px);
-}
 
-/* card */
-.pdf-card{
-    background:white;
-    padding:15px 18px;
-    margin-bottom:15px;
-    border-radius:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+/* ================= HEADER ================= */
+
+.header{
+    height:72px;
+
+    position:sticky;
+    top:0;
+    z-index:1000;
 
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    justify-content:space-between;
+
+    padding:0 30px;
+
+    background:rgba(255,255,255,.95);
+
+    backdrop-filter:blur(15px);
+
+    border-bottom:1px solid var(--border);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+
     gap:10px;
+
+    color:var(--primary);
+
+    font-size:22px;
+    font-weight:800;
 }
 
-/* text */
-.pdf-card h3{
+.logo img{
+    width:42px;
+    height:42px;
+
+    object-fit:contain;
+}
+
+.back-btn{
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    background:var(--primary-light);
+
+    color:var(--primary);
+
+    font-size:14px;
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.back-btn:hover{
+    background:var(--primary);
+    color:white;
+}
+
+
+/* ================= CONTAINER ================= */
+
+.container{
+    width:100%;
+    max-width:1100px;
+
+    margin:auto;
+
+    padding:40px 25px 60px;
+}
+
+
+/* ================= HERO ================= */
+
+.hero{
+    position:relative;
+
+    overflow:hidden;
+
+    padding:35px;
+
+    margin-bottom:35px;
+
+    border-radius:22px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #312e81,
+        #4f46e5,
+        #7c3aed
+    );
+
+    color:white;
+
+    box-shadow:
+    0 15px 35px rgba(79,70,229,.18);
+}
+
+.hero::after{
+    content:"";
+
+    position:absolute;
+
+    width:220px;
+    height:220px;
+
+    right:-60px;
+    top:-100px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+}
+
+.hero-content{
+    position:relative;
+
+    z-index:2;
+}
+
+.hero h1{
+    margin-bottom:10px;
+
+    font-size:32px;
+}
+
+.hero p{
+    max-width:550px;
+
+    color:#e0e7ff;
+
+    font-size:15px;
+
+    line-height:1.7;
+}
+
+
+/* ================= SECTION ================= */
+
+.section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:20px;
+}
+
+.section-header h2{
+    font-size:22px;
+}
+
+.resource-count{
+    padding:7px 12px;
+
+    border-radius:20px;
+
+    background:var(--primary-light);
+
+    color:var(--primary);
+
+    font-size:12px;
+    font-weight:700;
+}
+
+
+/* ================= PDF GRID ================= */
+
+.pdf-grid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(2,1fr);
+
+    gap:17px;
+}
+
+
+/* ================= PDF CARD ================= */
+
+.pdf-card{
+    display:flex;
+    align-items:center;
+
+    gap:17px;
+
+    padding:20px;
+
+    border:1px solid var(--border);
+
+    border-radius:17px;
+
+    background:white;
+
+    transition:.3s;
+}
+
+.pdf-card:hover{
+    transform:translateY(-4px);
+
+    box-shadow:
+    0 15px 35px rgba(15,23,42,.08);
+}
+
+
+/* PDF ICON */
+
+.pdf-icon{
+    width:58px;
+    height:58px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:#fef2f2;
+
+    font-size:29px;
+}
+
+
+/* PDF INFO */
+
+.pdf-info{
+    flex:1;
+
+    min-width:0;
+}
+
+.pdf-info h3{
+    margin-bottom:6px;
+
     font-size:16px;
-    color:#333;
-}
 
-/* SMALL BUTTON (FIXED SIZE) */
-.pdf-btn{
-    display:inline-block;
-    padding:8px 12px;   /* 👈 reduced size */
-    font-size:14px;
-    background:linear-gradient(135deg,#4f46e5,#06b6d4);
-    color:white;
-    text-decoration:none;
-    border-radius:6px;
-    font-weight:500;
     white-space:nowrap;
-    transition:0.2s;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
 }
 
-/* hover */
-.pdf-btn:hover{
-    transform:scale(1.05);
+.pdf-info p{
+    color:var(--muted);
+
+    font-size:12px;
 }
 
-/* back button */
-.btn{
-    display:inline-block;
-    margin-top:20px;
-    text-decoration:none;
-    background:#6c63ff;
-    color:white;
+
+/* DOWNLOAD */
+
+.pdf-btn{
+    flex-shrink:0;
+
     padding:10px 14px;
-    border-radius:6px;
-    font-size:14px;
+
+    border-radius:10px;
+
+    background:var(--primary-light);
+
+    color:var(--primary);
+
+    font-size:13px;
+    font-weight:700;
+
+    transition:.3s;
 }
+
+.pdf-btn:hover{
+    background:var(--primary);
+
+    color:white;
+}
+
+
+/* ================= EMPTY ================= */
+
+.empty{
+    grid-column:1/-1;
+
+    padding:50px;
+
+    text-align:center;
+
+    border:1px dashed var(--border);
+
+    border-radius:18px;
+
+    background:white;
+
+    color:var(--muted);
+}
+
+.empty span{
+    display:block;
+
+    margin-bottom:15px;
+
+    font-size:45px;
+}
+
 
 /* ================= MOBILE ================= */
+
 @media(max-width:768px){
 
+    .header{
+        height:64px;
+
+        padding:0 16px;
+    }
+
+    .logo{
+        font-size:19px;
+    }
+
+    .logo img{
+        width:38px;
+        height:38px;
+    }
+
+    .back-btn{
+        display:none;
+    }
+
+
+    /* CONTAINER */
+
+    .container{
+        padding:
+        18px
+        16px
+        calc(40px + env(safe-area-inset-bottom));
+    }
+
+
+    /* HERO */
+
+    .hero{
+        padding:25px 22px;
+
+        margin-bottom:28px;
+
+        border-radius:20px;
+    }
+
+    .hero h1{
+        font-size:25px;
+
+        line-height:1.3;
+    }
+
+    .hero p{
+        font-size:14px;
+    }
+
+
+    /* HEADER */
+
+    .section-header{
+        margin-bottom:16px;
+    }
+
+    .section-header h2{
+        font-size:19px;
+    }
+
+
+    /* GRID */
+
+    .pdf-grid{
+        grid-template-columns:1fr;
+
+        gap:12px;
+    }
+
+
+    /* CARD */
+
     .pdf-card{
-        flex-direction:column;
-        align-items:flex-start;
+        padding:15px;
+
+        gap:13px;
+
+        border-radius:15px;
+    }
+
+    .pdf-icon{
+        width:49px;
+        height:49px;
+
+        border-radius:13px;
+
+        font-size:24px;
+    }
+
+    .pdf-info h3{
+        font-size:14px;
+    }
+
+    .pdf-info p{
+        font-size:11px;
     }
 
     .pdf-btn{
-        width:100%;
-        text-align:center;
+        padding:9px 11px;
+
+        font-size:12px;
     }
+
 }
+
+
+/* ================= SMALL PHONE ================= */
+
+@media(max-width:360px){
+
+    .container{
+        padding-left:13px;
+        padding-right:13px;
+    }
+
+    .pdf-card{
+        padding:13px;
+    }
+
+    .pdf-icon{
+        width:45px;
+        height:45px;
+    }
+
+    .pdf-btn{
+        padding:8px 9px;
+
+        font-size:11px;
+    }
+
+}
+
 </style>
 
 </head>
+
+
 <body>
 
-<div class="container">
 
-<h1>📄 PDF Notes</h1>
+<!-- ================= HEADER ================= -->
 
-{% for pdf in pdfs %}
+<header class="header">
 
-<div class="pdf-card">
-    <h3>{{ pdf.title }}</h3>
+    <a href="/dashboard"
+    class="logo">
 
-    <a href="{{ url_for('static', filename='pdfs/' + pdf.pdf_file) }}"
-       download
-       class="pdf-btn">
-       📥 Download
+        <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="StudyHub">
+
+        StudyHub
+
     </a>
-</div>
 
-{% endfor %}
 
-<br>
+    <a href="/dashboard"
+    class="back-btn">
 
-<a href="/dashboard" class="btn">Back to Dashboard</a>
+        ← Dashboard
 
-</div>
+    </a>
+
+</header>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                PDF Learning Resources 📄
+            </h1>
+
+            <p>
+                Download useful programming notes,
+                study materials and learning resources
+                available on StudyHub.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- PDF SECTION -->
+
+    <section>
+
+        <div class="section-header">
+
+            <h2>
+                Available PDFs
+            </h2>
+
+
+            <span class="resource-count">
+
+                {{ pdfs|length }} Resources
+
+            </span>
+
+        </div>
+
+
+
+        <div class="pdf-grid">
+
+
+            {% for pdf in pdfs %}
+
+
+            <article class="pdf-card">
+
+
+                <div class="pdf-icon">
+
+                    📄
+
+                </div>
+
+
+
+                <div class="pdf-info">
+
+                    <h3>
+
+                        {{ pdf.title }}
+
+                    </h3>
+
+
+                    <p>
+
+                        PDF Learning Resource
+
+                    </p>
+
+                </div>
+
+
+
+                <a
+                href="{{ url_for(
+                'static',
+                filename='pdfs/' + pdf.pdf_file
+                ) }}"
+                download
+                class="pdf-btn">
+
+                    ↓ Download
+
+                </a>
+
+
+            </article>
+
+
+            {% else %}
+
+
+            <div class="empty">
+
+                <span>📂</span>
+
+                No PDF resources available yet.
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
 </body>
+
 </html>

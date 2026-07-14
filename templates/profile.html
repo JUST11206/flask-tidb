@@ -1,15 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<title>StudyHub • Learn Smarter</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+<title>StudyHub • Profile</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="icon"
+type="image/png"
+href="{{ url_for('static', filename='images/logo.png') }}">
+
+<meta name="theme-color" content="#4f46e5">
 
 <style>
 
@@ -17,167 +22,874 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial,sans-serif;
+}
+
+:root{
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --primary-light:#eef2ff;
+
+    --text:#0f172a;
+    --muted:#64748b;
+
+    --border:#e2e8f0;
+    --background:#f8fafc;
+
+    --danger:#dc2626;
+    --danger-light:#fef2f2;
 }
 
 body{
-    background:#f4f6f9;
-    padding:20px;
+    min-height:100vh;
+
+    font-family:Arial,sans-serif;
+
+    background:var(--background);
+    color:var(--text);
 }
 
-.profile-card{
-    max-width:500px;
-    margin:auto;
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+a{
+    text-decoration:none;
 }
+
+
+/* ================= HEADER ================= */
+
+.header{
+    height:72px;
+
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 30px;
+
+    background:rgba(255,255,255,.95);
+
+    backdrop-filter:blur(15px);
+
+    border-bottom:1px solid var(--border);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    color:var(--primary);
+
+    font-size:22px;
+    font-weight:800;
+}
+
+.logo img{
+    width:42px;
+    height:42px;
+
+    object-fit:contain;
+}
+
+.dashboard-btn{
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    background:var(--primary-light);
+    color:var(--primary);
+
+    font-size:14px;
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.dashboard-btn:hover{
+    background:var(--primary);
+    color:white;
+}
+
+
+/* ================= MAIN ================= */
+
+.container{
+    width:100%;
+    max-width:700px;
+
+    margin:auto;
+
+    padding:40px 20px 60px;
+}
+
+
+/* ================= PROFILE HEADER ================= */
+
+.profile-header{
+    position:relative;
+
+    overflow:hidden;
+
+    padding:35px;
+
+    border-radius:22px 22px 0 0;
+
+    background:linear-gradient(
+        135deg,
+        #312e81,
+        #4f46e5,
+        #7c3aed
+    );
+
+    color:white;
+
+    text-align:center;
+}
+
+.profile-header::after{
+    content:"";
+
+    position:absolute;
+
+    width:220px;
+    height:220px;
+
+    right:-80px;
+    top:-120px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+}
+
+
+/* ================= AVATAR ================= */
 
 .avatar{
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    overflow:hidden;
-    margin:0 auto 20px;
-    background:#6c63ff;
+    position:relative;
+    z-index:2;
+
+    width:115px;
+    height:115px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    color:white;
-    font-size:40px;
-    font-weight:bold;
+    margin:0 auto 16px;
+
+    overflow:hidden;
+
+    border:4px solid rgba(255,255,255,.8);
+    border-radius:50%;
+
+    background:white;
+
+    color:var(--primary);
+
+    font-size:42px;
+    font-weight:800;
+
+    box-shadow:0 10px 25px rgba(15,23,42,.2);
 }
 
 .avatar img{
     width:100%;
     height:100%;
+
     object-fit:cover;
 }
 
+.profile-header h1{
+    position:relative;
+    z-index:2;
+
+    margin-bottom:6px;
+
+    font-size:25px;
+}
+
+.profile-header p{
+    position:relative;
+    z-index:2;
+
+    color:#e0e7ff;
+
+    font-size:14px;
+}
+
+
+/* ================= PROFILE CARD ================= */
+
+.profile-card{
+    padding:30px;
+
+    border:1px solid var(--border);
+    border-top:none;
+
+    border-radius:0 0 22px 22px;
+
+    background:white;
+
+    box-shadow:0 15px 35px rgba(15,23,42,.06);
+}
+
+
+/* ================= UPLOAD ================= */
+
+.upload-box{
+    margin-bottom:25px;
+}
+
+.upload-label{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:8px;
+
+    width:100%;
+
+    padding:13px;
+
+    border:1px dashed #a5b4fc;
+    border-radius:12px;
+
+    background:var(--primary-light);
+
+    color:var(--primary);
+
+    font-size:14px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.upload-label:hover{
+    border-color:var(--primary);
+}
+
+.upload-box input{
+    display:none;
+}
+
+.file-name{
+    display:block;
+
+    margin-top:8px;
+
+    text-align:center;
+
+    color:var(--muted);
+
+    font-size:12px;
+}
+
+
+/* ================= FORM ================= */
+
 .form-group{
-    margin-bottom:15px;
+    margin-bottom:20px;
 }
 
 .form-group label{
     display:block;
-    margin-bottom:5px;
-    font-weight:bold;
+
+    margin-bottom:8px;
+
+    color:#334155;
+
+    font-size:14px;
+    font-weight:600;
 }
 
 .form-group input{
     width:100%;
-    padding:12px;
-    border:1px solid #ddd;
-    border-radius:8px;
+
+    min-height:50px;
+
+    padding:13px 15px;
+
+    border:1px solid var(--border);
+    border-radius:11px;
+
+    background:white;
+
+    color:var(--text);
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:.3s;
 }
 
-.file-input{
-    margin-bottom:20px;
+.form-group input:focus{
+    border-color:var(--primary);
+
+    box-shadow:
+    0 0 0 4px rgba(79,70,229,.1);
 }
 
-button{
+.form-group input[readonly]{
+    background:#f8fafc;
+
+    color:#64748b;
+}
+
+
+/* ================= SAVE ================= */
+
+.save-btn{
     width:100%;
-    padding:12px;
-    background:#6c63ff;
-    color:white;
+
+    min-height:50px;
+
     border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:16px;
-}
+    border-radius:11px;
 
-button:hover{
-    opacity:.9;
-}
+    background:var(--primary);
 
-.dashboard-btn{
-    display:block;
-    margin-top:15px;
-    text-align:center;
-    text-decoration:none;
-    background:#333;
     color:white;
-    padding:12px;
-    border-radius:8px;
+
+    font-size:15px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 10px 25px rgba(79,70,229,.2);
+
+    transition:.3s;
 }
+
+.save-btn:hover{
+    background:var(--primary-dark);
+
+    transform:translateY(-2px);
+}
+
+/* ================= PROFILE MENU ================= */
+
+.profile-menu{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+
+    margin:25px 0;
+}
+
+.profile-menu-card{
+    display:flex;
+    align-items:center;
+    gap:13px;
+
+    padding:16px;
+
+    border:1px solid var(--border);
+    border-radius:13px;
+
+    background:#f8fafc;
+    color:var(--text);
+
+    transition:.3s;
+}
+
+.profile-menu-card:hover{
+    border-color:#c7d2fe;
+    background:var(--primary-light);
+    transform:translateY(-2px);
+}
+
+.menu-icon{
+    width:45px;
+    height:45px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:var(--primary-light);
+
+    font-size:21px;
+}
+
+.menu-info{
+    flex:1;
+    min-width:0;
+}
+
+.menu-info strong{
+    display:block;
+
+    margin-bottom:4px;
+
+    font-size:14px;
+}
+
+.menu-info span{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.menu-arrow{
+    color:var(--primary);
+
+    font-size:18px;
+    font-weight:bold;
+}
+
+
+/* MOBILE PROFILE MENU */
 
 @media(max-width:768px){
 
-    .profile-card{
-        padding:20px;
+    .profile-menu{
+        grid-template-columns:1fr;
+
+        gap:10px;
+
+        margin:22px 0;
+    }
+
+    .profile-menu-card{
+        min-height:70px;
+
+        padding:13px 14px;
+    }
+
+    .menu-icon{
+        width:44px;
+        height:44px;
+    }
+
+}
+
+/* ================= LOGOUT ================= */
+
+.logout-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:100%;
+
+    min-height:50px;
+
+    margin-top:13px;
+
+    border:1px solid #fecaca;
+    border-radius:11px;
+
+    background:var(--danger-light);
+
+    color:var(--danger);
+
+    font-size:15px;
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.logout-btn:hover{
+    background:var(--danger);
+    color:white;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
+
+    .header{
+        height:64px;
+
+        padding:0 16px;
+    }
+
+    .logo{
+        font-size:19px;
+    }
+
+    .logo img{
+        width:38px;
+        height:38px;
+    }
+
+    .dashboard-btn{
+        display:none;
+    }
+
+
+    /* MAIN */
+
+    .container{
+        padding:
+        18px
+        16px
+        calc(35px + env(safe-area-inset-bottom));
+    }
+
+
+    /* HEADER */
+
+    .profile-header{
+        padding:30px 20px;
+
+        border-radius:20px 20px 0 0;
     }
 
     .avatar{
         width:100px;
         height:100px;
+
+        font-size:37px;
     }
+
+    .profile-header h1{
+        font-size:22px;
+    }
+
+
+    /* CARD */
+
+    .profile-card{
+        padding:22px 18px;
+
+        border-radius:0 0 20px 20px;
+    }
+
+    .form-group{
+        margin-bottom:17px;
+    }
+
+    .form-group input{
+        min-height:52px;
+
+        font-size:16px;
+    }
+
+    .save-btn,
+    .logout-btn{
+        min-height:52px;
+    }
+
+}
+
+
+/* ================= SMALL PHONE ================= */
+
+@media(max-width:360px){
+
+    .container{
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .profile-card{
+        padding:20px 15px;
+    }
+
 }
 
 </style>
+
 </head>
+
 
 <body>
 
-<div class="profile-card">
 
-<form method="POST" enctype="multipart/form-data">
+<!-- ================= HEADER ================= -->
 
-    <div class="avatar">
+<header class="header">
 
-        {% if profile_image %}
-            <img src="{{ url_for('static', filename='profile_images/' + profile_image) }}" alt="Profile">
-        {% else %}
-            {{ username[0]|upper }}
-        {% endif %}
+    <a href="/dashboard"
+    class="logo">
 
-    </div>
+        <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="StudyHub">
 
-    <div class="file-input">
-        <input
-            type="file"
-            name="profile_image"
-            accept="image/*">
-    </div>
+        StudyHub
 
-    <div class="form-group">
-        <label>Username</label>
-        <input
-            type="text"
-            value="{{ username }}"
-            readonly>
-    </div>
+    </a>
 
-    <div class="form-group">
-        <label>Email</label>
-        <input
-            type="email"
-            value="{{ email }}"
-            readonly>
-    </div>
 
-    <div class="form-group">
-        <label>Mobile Number</label>
-        <input
-            type="text"
-            name="mobile"
-            value="{{ mobile }}"
-            placeholder="Enter Mobile Number">
-    </div>
+    <a href="/dashboard"
+    class="dashboard-btn">
 
-    <button type="submit">
-        Save Profile
-    </button>
+        ← Dashboard
 
-</form>
+    </a>
 
-<a href="/dashboard" class="dashboard-btn">
-    Back to Dashboard
-</a>
+</header>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+    <!-- PROFILE HEADER -->
+
+    <section class="profile-header">
+
+
+        <div class="avatar">
+
+            {% if profile_image %}
+
+                <img
+                src="{{ url_for(
+                    'static',
+                    filename='profile_images/' + profile_image
+                ) }}"
+                alt="Profile">
+
+            {% else %}
+
+                {{ username[0]|upper }}
+
+            {% endif %}
+
+        </div>
+
+
+        <h1>
+
+            {{ username }}
+
+        </h1>
+
+
+        <p>
+
+            StudyHub Student
+
+        </p>
+
+
+    </section>
+
+
+
+    <!-- PROFILE CARD -->
+
+    <section class="profile-card">
+
+
+        <form
+        method="POST"
+        enctype="multipart/form-data">
+
+
+            <!-- PROFILE IMAGE -->
+
+            <div class="upload-box">
+
+                <label
+                for="profileImage"
+                class="upload-label">
+
+                    📷 Change Profile Photo
+
+                </label>
+
+
+                <input
+                type="file"
+                id="profileImage"
+                name="profile_image"
+                accept="image/*">
+
+
+                <span
+                class="file-name"
+                id="fileName">
+
+                    JPG, PNG or WEBP
+
+                </span>
+
+            </div>
+
+
+
+            <!-- USERNAME -->
+
+            <div class="form-group">
+
+                <label>Username</label>
+
+                <input
+                type="text"
+                value="{{ username }}"
+                readonly>
+
+            </div>
+
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label>Email address</label>
+
+                <input
+                type="email"
+                value="{{ email }}"
+                readonly>
+
+            </div>
+
+
+
+            <!-- MOBILE -->
+
+            <div class="form-group">
+
+                <label>Mobile Number</label>
+
+                <input
+                type="tel"
+                name="mobile"
+                value="{{ mobile or '' }}"
+                placeholder="Enter your mobile number"
+                inputmode="numeric">
+
+            </div>
+
+
+
+            <!-- SAVE -->
+
+            <button
+            type="submit"
+            class="save-btn">
+
+                Save Profile →
+
+            </button>
+
+
+        </form>
+
+        <!-- ================= PROFILE MENU ================= -->
+
+<div class="profile-menu">
+
+
+    <!-- SAVED NOTES -->
+
+    <a href="/saved_notes"
+    class="profile-menu-card">
+
+        <div class="menu-icon">
+            ❤️
+        </div>
+
+        <div class="menu-info">
+
+            <strong>
+                Saved Notes
+            </strong>
+
+            <span>
+                View your saved notes
+            </span>
+
+        </div>
+
+        <span class="menu-arrow">
+            ›
+        </span>
+
+    </a>
+
+
+    <!-- DOWNLOADS -->
+
+    <a href="/downloads"
+    class="profile-menu-card">
+
+        <div class="menu-icon">
+            📥
+        </div>
+
+        <div class="menu-info">
+
+            <strong>
+                Downloads
+            </strong>
+
+            <span>
+                Your downloaded resources
+            </span>
+
+        </div>
+
+        <span class="menu-arrow">
+            ›
+        </span>
+
+    </a>
+
 
 </div>
-</body>
-</html>
 
+        <!-- LOGOUT -->
+
+        <a href="/logout"
+        class="logout-btn">
+
+            🚪 Logout from StudyHub
+
+        </a>
+
+
+    </section>
+
+
+</main>
+
+
+
+<script>
+
+const profileImage =
+document.getElementById("profileImage");
+
+const fileName =
+document.getElementById("fileName");
+
+
+profileImage.addEventListener(
+"change",
+function(){
+
+    if(this.files.length > 0){
+
+        fileName.textContent =
+        this.files[0].name;
+
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>

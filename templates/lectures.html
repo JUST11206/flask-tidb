@@ -1,154 +1,872 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
 <title>StudyHub • Video Lectures</title>
 
+<link rel="icon"
+type="image/png"
+href="{{ url_for('static', filename='images/logo.png') }}">
+
+<meta name="theme-color" content="#4f46e5">
+
 <style>
-body{
-    font-family:Arial,sans-serif;
-    background:#f4f6f9;
-    padding:30px;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
+
+:root{
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --primary-light:#eef2ff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --background:#f8fafc;
+    --white:#ffffff;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    background:var(--background);
+    color:var(--text);
+}
+
+a{
+    text-decoration:none;
+}
+
+
+/* ================= HEADER ================= */
+
+.header{
+    height:72px;
+
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 30px;
+
+    background:rgba(255,255,255,.95);
+
+    backdrop-filter:blur(15px);
+
+    border-bottom:1px solid var(--border);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    color:var(--primary);
+
+    font-size:22px;
+    font-weight:800;
+}
+
+.logo img{
+    width:42px;
+    height:42px;
+    object-fit:contain;
+}
+
+.dashboard-btn{
+    padding:10px 17px;
+
+    border-radius:10px;
+
+    background:var(--primary-light);
+    color:var(--primary);
+
+    font-size:14px;
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.dashboard-btn:hover{
+    background:var(--primary);
+    color:white;
+}
+
+
+/* ================= MAIN ================= */
 
 .container{
-    max-width:1200px;
+    width:100%;
+    max-width:1400px;
+
     margin:auto;
+
+    padding:35px 30px 70px;
 }
 
-h1{
-    color:#6c63ff;
-    margin-bottom:30px;
+
+/* ================= HERO ================= */
+
+.lecture-hero{
+    position:relative;
+    overflow:hidden;
+
+    padding:40px;
+
+    border-radius:24px;
+
+    background:linear-gradient(
+        135deg,
+        #312e81,
+        #4f46e5,
+        #7c3aed
+    );
+
+    color:white;
+
+    box-shadow:0 15px 35px rgba(79,70,229,.18);
 }
+
+.lecture-hero::after{
+    content:"";
+
+    position:absolute;
+
+    width:300px;
+    height:300px;
+
+    right:-80px;
+    top:-150px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+}
+
+.lecture-hero span{
+    display:inline-block;
+
+    margin-bottom:15px;
+
+    padding:7px 13px;
+
+    border-radius:20px;
+
+    background:rgba(255,255,255,.15);
+
+    font-size:13px;
+    font-weight:700;
+}
+
+.lecture-hero h1{
+    margin-bottom:12px;
+
+    font-size:38px;
+    letter-spacing:-1px;
+}
+
+.lecture-hero p{
+    max-width:600px;
+
+    color:#e0e7ff;
+
+    font-size:16px;
+    line-height:1.7;
+}
+
+
+/* ================= SECTION ================= */
+
+.section{
+    margin-top:40px;
+}
+
+.section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:20px;
+}
+
+.section-header h2{
+    font-size:23px;
+}
+
+.lecture-count{
+    color:var(--muted);
+
+    font-size:14px;
+}
+
+
+/* ================= GRID ================= */
 
 .lecture-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-    gap:20px;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:22px;
 }
 
-.card{
+
+/* ================= CARD ================= */
+
+.lecture-card{
+    overflow:hidden;
+
+    border:1px solid var(--border);
+    border-radius:19px;
+
     background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-iframe{
-    width:100%;
-    aspect-ratio:16/9;
-    border:none;
-    border-radius:10px;
-    display:block;
-}
-video{
-    width:100%;
-    border-radius:10px;
+
+    box-shadow:0 4px 15px rgba(15,23,42,.04);
+
+    transition:.3s;
 }
 
-.btn{
-    display:inline-block;
-    margin-top:15px;
-    text-decoration:none;
-    background:#6c63ff;
-    color:white;
-    padding:10px 15px;
-    border-radius:5px;
+.lecture-card:hover{
+    transform:translateY(-6px);
+
+    box-shadow:0 18px 35px rgba(15,23,42,.10);
 }
+
+
+/* ================= VIDEO ================= */
+
+.video-wrapper{
+    position:relative;
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    background:#0f172a;
+}
+
+.video-wrapper iframe{
+    width:100%;
+    height:100%;
+
+    display:block;
+
+    border:none;
+}
+
+
+/* ================= CARD CONTENT ================= */
+
+.lecture-content{
+    padding:20px;
+}
+
+.lecture-tag{
+    display:inline-block;
+
+    margin-bottom:11px;
+
+    padding:5px 10px;
+
+    border-radius:20px;
+
+    background:var(--primary-light);
+    color:var(--primary);
+
+    font-size:11px;
+    font-weight:700;
+
+    text-transform:uppercase;
+}
+
+.lecture-content h3{
+    margin-bottom:8px;
+
+    color:var(--text);
+
+    font-size:18px;
+    line-height:1.4;
+}
+
+.lecture-content p{
+    color:var(--muted);
+
+    font-size:13px;
+}
+
+
+/* ================= BACK ================= */
+
+.back-container{
+    margin-top:45px;
+
+    text-align:center;
+}
+
+.back-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    padding:12px 20px;
+
+    border-radius:11px;
+
+    background:var(--primary);
+    color:white;
+
+    font-size:14px;
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.back-btn:hover{
+    background:var(--primary-dark);
+
+    transform:translateY(-2px);
+}
+
+
+/* ================= TABLET ================= */
+
+@media(max-width:1000px){
+
+    .lecture-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:700px){
+
+    body{
+        background:#f8fafc;
+    }
+
+
+    /* HEADER */
+
+    .header{
+        height:65px;
+
+        padding:0 17px;
+    }
+
+    .logo{
+        font-size:20px;
+    }
+
+    .logo img{
+        width:39px;
+        height:39px;
+    }
+
+    .dashboard-btn{
+        padding:9px 12px;
+
+        font-size:12px;
+    }
+
+
+    /* MAIN */
+
+    .container{
+        padding:
+        18px
+        16px
+        calc(90px + env(safe-area-inset-bottom));
+    }
+
+
+    /* HERO */
+
+    .lecture-hero{
+        padding:27px 22px;
+
+        border-radius:20px;
+    }
+
+    .lecture-hero span{
+        margin-bottom:12px;
+
+        font-size:11px;
+    }
+
+    .lecture-hero h1{
+        font-size:27px;
+
+        line-height:1.25;
+
+        letter-spacing:-.5px;
+    }
+
+    .lecture-hero p{
+        font-size:14px;
+
+        line-height:1.6;
+    }
+
+
+    /* SECTION */
+
+    .section{
+        margin-top:30px;
+    }
+
+    .section-header{
+        margin-bottom:16px;
+    }
+
+    .section-header h2{
+        font-size:20px;
+    }
+
+    .lecture-count{
+        font-size:12px;
+    }
+
+
+    /* GRID */
+
+    .lecture-grid{
+        grid-template-columns:1fr;
+
+        gap:17px;
+    }
+
+
+    /* CARD */
+
+    .lecture-card{
+        border-radius:17px;
+    }
+
+    .lecture-content{
+        padding:17px;
+    }
+
+    .lecture-content h3{
+        font-size:17px;
+    }
+
+
+    /* BACK BUTTON HIDE MOBILE */
+
+    .back-container{
+        display:none;
+    }
+
+}
+
+
+/* ================= SMALL MOBILE ================= */
+
+@media(max-width:360px){
+
+    .container{
+        padding-left:13px;
+        padding-right:13px;
+    }
+
+    .lecture-hero{
+        padding:24px 19px;
+    }
+
+    .lecture-hero h1{
+        font-size:24px;
+    }
+
+}
+
 </style>
 
 </head>
+
+
 <body>
 
-<div class="container">
 
-<h2 style="margin-top:40px;color:#6c63ff;"> YouTube Lectures</h2>
+<!-- ================= HEADER ================= -->
 
-<div class="lecture-grid">
+<header class="header">
 
-        <div class="card">
-        <h3>HTML & CSS Tutorial</h3>
+    <a href="/dashboard" class="logo">
 
-        <iframe
-            src="https://www.youtube.com/embed/zysUIv0-xak"
-            title="HTML CSS"
-            allowfullscreen>
-        </iframe>
+        <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="StudyHub">
+
+        StudyHub
+
+    </a>
+
+
+    <a href="/dashboard"
+    class="dashboard-btn">
+
+        Dashboard →
+
+    </a>
+
+</header>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+    <!-- HERO -->
+
+    <section class="lecture-hero">
+
+        <div class="hero-content">
+
+            <span>🎥 FREE VIDEO LEARNING</span>
+
+            <h1>
+                Learn with Video Lectures
+            </h1>
+
+            <p>
+                Explore free programming and computer science
+                lectures. Watch, learn and improve your skills
+                at your own pace.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= LECTURES ================= -->
+
+    <section class="section">
+
+
+        <div class="section-header">
+
+            <h2>
+                Video Lectures 🎬
+            </h2>
+
+            <span class="lecture-count">
+                Start learning
+            </span>
+
+        </div>
+
+
+
+        <div class="lecture-grid">
+
+
+            <!-- HTML CSS -->
+
+            <article class="lecture-card">
+
+                <div class="video-wrapper">
+
+                    <iframe
+                    src="https://www.youtube.com/embed/zysUIv0-xak"
+                    title="HTML and CSS Tutorial"
+                    loading="lazy"
+                    allowfullscreen>
+                    </iframe>
+
+                </div>
+
+
+                <div class="lecture-content">
+
+                    <span class="lecture-tag">
+                        Web Development
+                    </span>
+
+                    <h3>
+                        HTML & CSS Tutorial
+                    </h3>
+
+                    <p>
+                        Beginner • Full Course
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- PYTHON -->
+
+            <article class="lecture-card">
+
+                <div class="video-wrapper">
+
+                    <iframe
+                    src="https://www.youtube.com/embed/kqtD5dpn9C8"
+                    title="Python Full Course"
+                    loading="lazy"
+                    allowfullscreen>
+                    </iframe>
+
+                </div>
+
+
+                <div class="lecture-content">
+
+                    <span class="lecture-tag">
+                        Python
+                    </span>
+
+                    <h3>
+                        Python Full Course
+                    </h3>
+
+                    <p>
+                        Beginner • Programming
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- C -->
+
+            <article class="lecture-card">
+
+                <div class="video-wrapper">
+
+                    <iframe
+                    src="https://www.youtube.com/embed/irqbmMNs2Bo"
+                    title="C Language Course"
+                    loading="lazy"
+                    allowfullscreen>
+                    </iframe>
+
+                </div>
+
+
+                <div class="lecture-content">
+
+                    <span class="lecture-tag">
+                        C Programming
+                    </span>
+
+                    <h3>
+                        C Language Full Course
+                    </h3>
+
+                    <p>
+                        Beginner • Programming
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- C++ -->
+
+            <article class="lecture-card">
+
+                <div class="video-wrapper">
+
+                    <iframe
+                    src="https://www.youtube.com/embed/ZzaPdXTrSb8"
+                    title="C++ Tutorial"
+                    loading="lazy"
+                    allowfullscreen>
+                    </iframe>
+
+                </div>
+
+
+                <div class="lecture-content">
+
+                    <span class="lecture-tag">
+                        C++
+                    </span>
+
+                    <h3>
+                        C++ Programming Course
+                    </h3>
+
+                    <p>
+                        Programming • Beginner
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- DBMS -->
+
+            <article class="lecture-card">
+
+                <div class="video-wrapper">
+
+                    <iframe
+                    src="https://www.youtube.com/embed/ztHopE5Wnpc"
+                    title="DBMS Tutorial"
+                    loading="lazy"
+                    allowfullscreen>
+                    </iframe>
+
+                </div>
+
+
+                <div class="lecture-content">
+
+                    <span class="lecture-tag">
+                        Database
+                    </span>
+
+                    <h3>
+                        DBMS Full Tutorial
+                    </h3>
+
+                    <p>
+                        Database • Beginner
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- PROJECT -->
+
+            <article class="lecture-card">
+
+                <div class="video-wrapper">
+
+                    <iframe
+                    src="https://www.youtube.com/embed/MBGhJFTULBo"
+                    title="Python Projects"
+                    loading="lazy"
+                    allowfullscreen>
+                    </iframe>
+
+                </div>
+
+
+                <div class="lecture-content">
+
+                    <span class="lecture-tag">
+                        Projects
+                    </span>
+
+                    <h3>
+                        Python Projects
+                    </h3>
+
+                    <p>
+                        Build • Learn • Practice
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- ================= DATABASE LECTURES ================= -->
+
+            {% for lecture in lectures %}
+
+            <article class="lecture-card">
+
+                <div class="video-wrapper">
+
+                    <iframe
+                    src="{{ lecture.youtube_url }}"
+                    title="{{ lecture.title }}"
+                    loading="lazy"
+                    allowfullscreen>
+                    </iframe>
+
+                </div>
+
+
+                <div class="lecture-content">
+
+                    <span class="lecture-tag">
+                        StudyHub
+                    </span>
+
+                    <h3>
+                        {{ lecture.title }}
+                    </h3>
+
+                    <p>
+                        Free Video Lecture
+                    </p>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- BACK -->
+
+    <div class="back-container">
+
+        <a href="/dashboard"
+        class="back-btn">
+
+            ← Back to Dashboard
+
+        </a>
+
     </div>
 
-    <div class="card">
-        <h3>Python Full Course</h3>
 
-        <iframe
-            src="https://www.youtube.com/embed/kqtD5dpn9C8"
-            title="Python Course"
-            allowfullscreen>
-        </iframe>
-    </div>
-<div class="card">
-    <h3>C Language Course</h3>
+</main>
 
-    <iframe
-        src="https://www.youtube.com/embed/irqbmMNs2Bo"
-        title="C Language Course"
-        allowfullscreen>
-    </iframe>
-</div>
-<div class="card">
-    <h3>C++ language</h3>
-
-    <iframe
-        src="https://www.youtube.com/embed/ZzaPdXTrSb8"
-        title="C++ Tutorial"
-        allowfullscreen>
-    </iframe>
-</div>
-
-
-
-    <div class="card">
-        <h3>DBMS Tutorial</h3>
-
-        <iframe
-            src="https://www.youtube.com/embed/ztHopE5Wnpc"
-            title="DBMS"
-            allowfullscreen>
-        </iframe>
-    </div>
-
-
-    
-<div class="card">
-    <h3>Python Projects</h3>
-
-    <iframe
-        src="https://www.youtube.com/embed/MBGhJFTULBo"
-        title="Projects"
-        allowfullscreen>
-    </iframe>
-</div>
-
-{% for lecture in lectures %}
-
-<div class="card">
-
-    <h3>{{ lecture.title }}</h3>
-
-    <iframe
-        src="{{ lecture.youtube_url }}"
-        allowfullscreen>
-    </iframe>
-
-</div>
-
-{% endfor %}
-
-</div>
-<br>
-
-<a href="/dashboard" class="btn">Back to Dashboard</a>
-
-</div>
 
 </body>
+
 </html>
