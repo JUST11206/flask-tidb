@@ -306,28 +306,33 @@ a{
 
 
 /* DOWNLOAD */
-
 .pdf-btn{
     flex-shrink:0;
 
     padding:10px 14px;
 
+    border:none;
     border-radius:10px;
 
     background:var(--primary-light);
-
     color:var(--primary);
 
     font-size:13px;
     font-weight:700;
+
+    cursor:pointer;
 
     transition:.3s;
 }
 
 .pdf-btn:hover{
     background:var(--primary);
-
     color:white;
+}
+
+.pdf-btn.downloaded{
+    background:#dcfce7;
+    color:#16a34a;
 }
 
 
@@ -614,18 +619,14 @@ a{
 
 
 
-                <a
-                href="{{ url_for(
-                'static',
-                filename='pdfs/' + pdf.pdf_file
-                ) }}"
-                download
-                class="pdf-btn">
-
-                    ↓ Download
-
-                </a>
-
+              <button
+    type="button"
+    class="pdf-btn"
+    data-url="{{ url_for('static', filename='pdfs/' ~ pdf.pdf_file) }}"
+    data-title="{{ pdf.title }}"
+>
+    ↓ Download
+</button>
 
             </article>
 
@@ -653,6 +654,139 @@ a{
 
 </main>
 
+<script>
+
+const PDF_CACHE = "studyhub-pdfs-v1";
+
+const pdfButtons =
+document.querySelectorAll(".pdf-btn");
+
+
+pdfButtons.forEach(button => {
+
+    button.addEventListener("click", function(){
+
+        const url = this.dataset.url;
+
+        const title = this.dataset.title;
+
+        downloadPDF(
+            url,
+            title,
+            this
+        );
+
+    });
+
+});
+
+
+async function downloadPDF(url, title, button){
+
+    try{
+
+        button.innerHTML = "Downloading...";
+
+        button.disabled = true;
+
+
+        const cache =
+        await caches.open(PDF_CACHE);
+
+
+        const response =
+        await fetch(url);
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "PDF download failed"
+            );
+
+        }
+
+
+        await cache.put(
+            url,
+            response.clone()
+        );
+
+
+        localStorage.setItem(
+            "pdf_" + url,
+            title
+        );
+
+
+        button.innerHTML =
+        "✓ Downloaded";
+
+        button.classList.add(
+            "downloaded"
+        );
+
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        button.innerHTML =
+        "Try Again";
+
+
+        button.disabled = false;
+
+
+        alert(
+            "Unable to download PDF"
+        );
+
+    }
+
+}
+
+
+
+async function checkDownloadedPDFs(){
+
+    const cache =
+    await caches.open(PDF_CACHE);
+
+
+    for(const button of pdfButtons){
+
+        const url =
+        button.dataset.url;
+
+
+        const cached =
+        await cache.match(url);
+
+
+        if(cached){
+
+            button.innerHTML =
+            "✓ Downloaded";
+
+            button.classList.add(
+                "downloaded"
+            );
+
+            button.disabled = true;
+
+        }
+
+    }
+
+}
+
+
+checkDownloadedPDFs();
+
+</script>
 
 </body>
 

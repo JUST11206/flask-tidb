@@ -1,7 +1,6 @@
-const CACHE_NAME = "studyhub-v2";
+const CACHE_NAME = "studyhub-v3";
 
 const STATIC_FILES = [
-    "/",
     "/static/manifest.json",
     "/static/images/logo.png",
     "/static/images/icon-192.png",
@@ -13,7 +12,7 @@ const STATIC_FILES = [
 
 self.addEventListener("install", event => {
 
-    console.log("StudyHub Service Worker Installing...");
+    console.log("StudyHub SW Installing...");
 
     event.waitUntil(
 
@@ -35,11 +34,12 @@ self.addEventListener("install", event => {
 
 self.addEventListener("activate", event => {
 
-    console.log("StudyHub Service Worker Activated");
+    console.log("StudyHub SW Activated");
 
     event.waitUntil(
 
-        caches.keys().then(cacheNames => {
+        caches.keys()
+        .then(cacheNames => {
 
             return Promise.all(
 
@@ -50,10 +50,9 @@ self.addEventListener("activate", event => {
             );
 
         })
+        .then(() => self.clients.claim())
 
     );
-
-    self.clients.claim();
 
 });
 
@@ -72,15 +71,10 @@ self.addEventListener("fetch", event => {
     const url = new URL(request.url);
 
 
-    // ================= YOUTUBE =================
+    // ================= EXTERNAL REQUEST =================
 
-    if(
-        url.hostname.includes("youtube.com") ||
-        url.hostname.includes("googlevideo.com")
-    ){
-
+    if(url.origin !== self.location.origin){
         return;
-
     }
 
 
@@ -92,37 +86,57 @@ self.addEventListener("fetch", event => {
 
             fetch(request)
 
-            .then(response => {
+            .then(async response => {
 
-                // Redirect/login response should not be cached
+                const responseURL =
+                    new URL(response.url);
 
-                if(response.redirected){
+
+                // LOGIN PAGE / REDIRECT CACHE NAHI KARNA
+
+                if(
+                    response.redirected ||
+                    responseURL.pathname === "/login" ||
+                    !response.ok
+                ){
 
                     return response;
 
                 }
 
 
-                const responseClone =
-                    response.clone();
+                // SUCCESS PAGE CACHE
+
+                const cache =
+                    await caches.open(CACHE_NAME);
 
 
-                caches.open(CACHE_NAME)
-                .then(cache => {
+                await cache.put(
+                    request,
+                    response.clone()
+                );
 
-                    cache.put(
-                        request,
-                        responseClone
-                    );
 
-                });
+                console.log(
+                    "Page cached:",
+                    url.pathname
+                );
 
 
                 return response;
 
             })
 
+
             .catch(async () => {
+
+                console.log(
+                    "Offline request:",
+                    url.pathname
+                );
+
+
+                // SAME PAGE CACHE
 
                 const cachedPage =
                     await caches.match(request);
@@ -130,10 +144,17 @@ self.addEventListener("fetch", event => {
 
                 if(cachedPage){
 
+                    console.log(
+                        "Opening cached page:",
+                        url.pathname
+                    );
+
                     return cachedPage;
 
                 }
 
+
+                // DASHBOARD FALLBACK
 
                 const dashboard =
                     await caches.match("/dashboard");
@@ -141,27 +162,44 @@ self.addEventListener("fetch", event => {
 
                 if(dashboard){
 
+                    console.log(
+                        "Opening cached dashboard"
+                    );
+
                     return dashboard;
 
                 }
 
+
+                // OFFLINE PAGE
 
                 return new Response(
 
                     `
                     <!DOCTYPE html>
 
-                    <html>
+                    <html lang="en">
 
                     <head>
+
+                    <meta charset="UTF-8">
 
                     <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1">
 
+                    <meta
+                    name="theme-color"
+                    content="#4f46e5">
+
                     <title>StudyHub Offline</title>
 
+
                     <style>
+
+                    *{
+                        box-sizing:border-box;
+                    }
 
                     body{
                         min-height:100vh;
@@ -184,7 +222,17 @@ self.addEventListener("fetch", event => {
                     }
 
                     .offline{
+                        width:100%;
                         max-width:400px;
+
+                        padding:35px 25px;
+
+                        background:white;
+
+                        border-radius:22px;
+
+                        box-shadow:
+                        0 15px 40px rgba(15,23,42,.08);
                     }
 
                     .icon{
@@ -195,6 +243,8 @@ self.addEventListener("fetch", event => {
                         margin:20px 0 10px;
 
                         color:#4f46e5;
+
+                        font-size:28px;
                     }
 
                     p{
@@ -204,12 +254,14 @@ self.addEventListener("fetch", event => {
                     }
 
                     button{
+                        width:100%;
+
                         margin-top:20px;
 
-                        padding:13px 22px;
+                        padding:14px;
 
                         border:none;
-                        border-radius:10px;
+                        border-radius:11px;
 
                         background:#4f46e5;
 
@@ -239,8 +291,8 @@ self.addEventListener("fetch", event => {
                         </h1>
 
                         <p>
-                            Connect to the internet to access
-                            this StudyHub page.
+                            This page hasn't been saved
+                            for offline use yet.
                         </p>
 
                         <button onclick="location.reload()">
@@ -255,8 +307,11 @@ self.addEventListener("fetch", event => {
                     `,
 
                     {
+                        status:200,
+
                         headers:{
-                            "Content-Type":"text/html"
+                            "Content-Type":
+                            "text/html; charset=UTF-8"
                         }
                     }
 
@@ -266,12 +321,13 @@ self.addEventListener("fetch", event => {
 
         );
 
+
         return;
 
     }
 
 
-    // ================= STATIC FILES =================
+    // ================= STATIC FILE CACHE =================
 
     if(url.pathname.startsWith("/static/")){
 
@@ -290,35 +346,26 @@ self.addEventListener("fetch", event => {
 
                 return fetch(request)
 
-                .then(networkResponse => {
+                .then(async response => {
 
-                    if(
-                        !networkResponse ||
-                        networkResponse.status !== 200
-                    ){
+                    if(!response || !response.ok){
 
-                        return networkResponse;
+                        return response;
 
                     }
 
 
-                    const responseClone =
-                        networkResponse.clone();
+                    const cache =
+                        await caches.open(CACHE_NAME);
 
 
-                    caches.open(CACHE_NAME)
-
-                    .then(cache => {
-
-                        cache.put(
-                            request,
-                            responseClone
-                        );
-
-                    });
+                    await cache.put(
+                        request,
+                        response.clone()
+                    );
 
 
-                    return networkResponse;
+                    return response;
 
                 });
 

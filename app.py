@@ -929,5 +929,17 @@ def service_worker():
         mimetype="application/javascript"
     )
 
+#Download pdfs in app
+@app.route("/downloads")
+def downloads():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    return render_template(
+        "downloads.html",
+        username=session["user"]
+    )
+
 if __name__ == "__main__":
     app.run(debug=True)

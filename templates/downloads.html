@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>StudyHub • Downloads</title>
+
+<meta name="theme-color" content="#4f46e5">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --primary:#4f46e5;
+    --primary-light:#eef2ff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --border:#e2e8f0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f8fafc;
+    color:var(--text);
+}
+
+a{
+    text-decoration:none;
+}
+
+.header{
+    height:72px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 30px;
+
+    background:white;
+
+    border-bottom:1px solid var(--border);
+}
+
+.logo{
+    color:var(--primary);
+
+    font-size:22px;
+    font-weight:800;
+}
+
+.back-btn{
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    background:var(--primary-light);
+    color:var(--primary);
+
+    font-size:14px;
+    font-weight:700;
+}
+
+.container{
+    width:100%;
+    max-width:900px;
+
+    margin:auto;
+
+    padding:40px 20px;
+}
+
+.hero{
+    padding:30px;
+
+    margin-bottom:30px;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+        135deg,
+        #312e81,
+        #4f46e5,
+        #7c3aed
+    );
+
+    color:white;
+}
+
+.hero h1{
+    margin-bottom:8px;
+}
+
+.hero p{
+    color:#e0e7ff;
+}
+
+.download-list{
+    display:flex;
+    flex-direction:column;
+
+    gap:12px;
+}
+
+.download-card{
+    display:flex;
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px;
+
+    border:1px solid var(--border);
+    border-radius:16px;
+
+    background:white;
+}
+
+.pdf-icon{
+    width:50px;
+    height:50px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    flex-shrink:0;
+
+    border-radius:13px;
+
+    background:#fef2f2;
+
+    font-size:25px;
+}
+
+.pdf-info{
+    flex:1;
+    min-width:0;
+}
+
+.pdf-info h3{
+    margin-bottom:5px;
+
+    font-size:15px;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.pdf-info p{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.open-btn,
+.delete-btn{
+    padding:9px 13px;
+
+    border:none;
+    border-radius:9px;
+
+    font-size:12px;
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+.open-btn{
+    background:var(--primary-light);
+    color:var(--primary);
+}
+
+.delete-btn{
+    background:#fef2f2;
+    color:#dc2626;
+}
+
+.empty{
+    padding:50px 20px;
+
+    text-align:center;
+
+    background:white;
+
+    border:1px dashed var(--border);
+    border-radius:16px;
+
+    color:var(--muted);
+}
+
+.empty span{
+    display:block;
+
+    margin-bottom:15px;
+
+    font-size:50px;
+}
+
+@media(max-width:768px){
+
+    .header{
+        height:64px;
+
+        padding:0 16px;
+    }
+
+    .back-btn{
+        display:none;
+    }
+
+    .container{
+        padding:20px 16px;
+    }
+
+    .hero{
+        padding:25px 20px;
+    }
+
+    .hero h1{
+        font-size:24px;
+    }
+
+    .download-card{
+        padding:14px;
+
+        gap:10px;
+    }
+
+    .pdf-icon{
+        width:45px;
+        height:45px;
+    }
+
+    .open-btn,
+    .delete-btn{
+        padding:8px 9px;
+
+        font-size:11px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <a href="/dashboard"
+    class="logo">
+
+        StudyHub
+
+    </a>
+
+    <a href="/dashboard"
+    class="back-btn">
+
+        ← Dashboard
+
+    </a>
+
+</header>
+
+
+<main class="container">
+
+    <section class="hero">
+
+        <h1>My Downloads 📥</h1>
+
+        <p>
+            Your downloaded learning resources
+            are available offline.
+        </p>
+
+    </section>
+
+
+    <div
+    class="download-list"
+    id="downloadList">
+
+    </div>
+
+</main>
+
+
+<script>
+
+const PDF_CACHE = "studyhub-pdfs-v1";
+
+const downloadList =
+document.getElementById("downloadList");
+
+
+async function loadDownloads(){
+
+    downloadList.innerHTML = "";
+
+
+    const cache =
+    await caches.open(PDF_CACHE);
+
+
+    const requests =
+    await cache.keys();
+
+
+    if(requests.length === 0){
+
+        downloadList.innerHTML = `
+
+            <div class="empty">
+
+                <span>📂</span>
+
+                <h3>No Downloads</h3>
+
+                <p>
+                    Download PDFs to access
+                    them offline.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    for(const request of requests){
+
+        const url =
+        new URL(request.url);
+
+
+        const title =
+        localStorage.getItem(
+            "pdf_" + url.pathname
+        ) || "PDF Resource";
+
+
+        const card =
+        document.createElement("div");
+
+
+        card.className =
+        "download-card";
+
+
+        card.innerHTML = `
+
+            <div class="pdf-icon">
+                📄
+            </div>
+
+
+            <div class="pdf-info">
+
+                <h3>${escapeHTML(title)}</h3>
+
+                <p>
+                    Available Offline
+                </p>
+
+            </div>
+
+
+            <button
+            class="open-btn">
+
+                Open
+
+            </button>
+
+
+            <button
+            class="delete-btn">
+
+                Delete
+
+            </button>
+
+        `;
+
+
+        card
+        .querySelector(".open-btn")
+        .addEventListener(
+            "click",
+            function(){
+
+                openPDF(
+                    url.pathname
+                );
+
+            }
+        );
+
+
+        card
+        .querySelector(".delete-btn")
+        .addEventListener(
+            "click",
+            function(){
+
+                deletePDF(
+                    url.pathname
+                );
+
+            }
+        );
+
+
+        downloadList.appendChild(card);
+
+    }
+
+}
+
+
+function escapeHTML(text){
+
+    const div =
+    document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+
+}
+
+
+function openPDF(url){
+
+    window.location.href = url;
+
+}
+
+
+async function deletePDF(url){
+
+    const confirmDelete =
+    confirm(
+        "Remove this PDF from downloads?"
+    );
+
+
+    if(!confirmDelete){
+        return;
+    }
+
+
+    const cache =
+    await caches.open(PDF_CACHE);
+
+
+    await cache.delete(url);
+
+
+    localStorage.removeItem(
+        "pdf_" + url
+    );
+
+
+    loadDownloads();
+
+}
+
+
+loadDownloads();
+
+</script>
+
+
+</body>
+
+</html>
