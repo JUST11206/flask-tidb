@@ -26,7 +26,7 @@ def admin_required(f):
 
 app = Flask(__name__)
 app.secret_key = "secret@123"
-app.permanent_session_lifetime = timedelta(days=7)
+app.permanent_session_lifetime = timedelta(days=30)
 
 
 print("SENDER_EMAIL =", os.getenv("SENDER_EMAIL"))
@@ -101,6 +101,8 @@ def verify_otp():
                     conn.commit()
 
                 # Auto login after verification
+                session.permanent = True
+                
                 session["user"] = session["username"]
                 session["email"] = session["email"]
 
@@ -133,6 +135,10 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
+    # Already logged in
+    if "user" in session:
+        return redirect("/dashboard")
+
     if request.method == "POST":
 
         email = request.form["email"]
@@ -153,10 +159,19 @@ def login():
             ).fetchone()
 
         if user:
+
+            session.permanent = True
+
             session["user"] = user.username
             session["email"] = user.email
+
             return redirect("/dashboard")
-        flash("You enter Wrong Password! or Email", "error")
+
+        flash(
+            "You entered wrong password or email!",
+            "error"
+        )
+
         return redirect("/login")
 
     return render_template("login.html")
