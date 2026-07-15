@@ -1231,6 +1231,239 @@ body.dark-mode .logout-link:hover{
         display:none !important;
     }
 }
+/* ================= COURSES ================= */
+
+.course-scroll{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+}
+
+.course-card{
+    position:relative;
+    overflow:hidden;
+
+    border:1px solid var(--border);
+    border-radius:18px;
+
+    background:var(--surface);
+    color:var(--text);
+
+    transition:.3s;
+}
+
+.course-card:hover{
+    transform:translateY(-6px);
+
+    box-shadow:
+    0 15px 35px rgba(15,23,42,.12);
+}
+
+.course-card img{
+    width:100%;
+    aspect-ratio:16/9;
+
+    display:block;
+
+    object-fit:cover;
+}
+
+.course-body{
+    padding:18px;
+}
+
+.course-badge{
+    display:inline-block;
+
+    margin-bottom:12px;
+    padding:5px 9px;
+
+    border-radius:7px;
+
+    background:#dcfce7;
+    color:#16a34a;
+
+    font-size:10px;
+    font-weight:800;
+}
+
+.course-body h3{
+    margin-bottom:8px;
+
+    font-size:17px;
+    line-height:1.4;
+}
+
+.course-body p{
+    color:var(--muted);
+
+    font-size:13px;
+    line-height:1.5;
+}
+
+
+/* ================= COURSE TABLET ================= */
+
+@media(max-width:1050px){
+
+    .course-scroll{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+
+/* ================= COURSE MOBILE ================= */
+
+@media(max-width:768px){
+
+    .course-scroll{
+        display:flex;
+
+        gap:14px;
+
+        overflow-x:auto;
+
+        margin-left:-16px;
+        margin-right:-16px;
+
+        padding:0 16px 15px;
+
+        scroll-snap-type:x mandatory;
+
+        scrollbar-width:none;
+    }
+
+    .course-scroll::-webkit-scrollbar{
+        display:none;
+    }
+
+    .course-card{
+        min-width:82%;
+        max-width:82%;
+
+        scroll-snap-align:start;
+    }
+
+    .course-body{
+        padding:16px;
+    }
+
+    .course-body h3{
+        font-size:17px;
+    }
+
+}
+/* ================= LEARNING TOOLS ================= */
+
+.tools-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+}
+
+.tool-card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+
+    padding:20px;
+
+    border:1px solid var(--border);
+    border-radius:18px;
+
+    background:var(--surface);
+    color:var(--text);
+
+    transition:.3s;
+}
+
+.tool-card:hover{
+    transform:translateY(-4px);
+
+    border-color:var(--primary);
+
+    box-shadow:
+    0 15px 35px rgba(15,23,42,.08);
+}
+
+.tool-icon{
+    width:55px;
+    height:55px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:16px;
+
+    background:var(--primary-light);
+
+    font-size:27px;
+}
+
+.tool-card div:nth-child(2){
+    flex:1;
+}
+
+.tool-card h3{
+    margin-bottom:6px;
+
+    font-size:16px;
+}
+
+.tool-card p{
+    color:var(--muted);
+
+    font-size:13px;
+    line-height:1.5;
+}
+
+.tool-arrow{
+    color:var(--primary);
+
+    font-size:22px;
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.tool-card:hover .tool-arrow{
+    transform:translateX(5px);
+}
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .tools-grid{
+        grid-template-columns:1fr;
+        gap:12px;
+    }
+
+    .tool-card{
+        padding:16px;
+    }
+
+    .tool-icon{
+        width:50px;
+        height:50px;
+
+        font-size:24px;
+    }
+
+    .tool-card h3{
+        font-size:15px;
+    }
+
+    .tool-card p{
+        font-size:12px;
+    }
+
+}
 </style>
 
 </head>
@@ -1469,7 +1702,122 @@ body.dark-mode .logout-link:hover{
 
         </section>
 
+<!-- ================= FEATURED COURSES ================= -->
 
+<section class="section course-section">
+
+    <div class="section-header">
+        <h2>Explore Free Courses 🚀</h2>
+
+        <a href="/lectures" class="view-all">
+            View all
+        </a>
+    </div>
+
+    <div class="course-scroll">
+
+        <a href="/lectures/web-development" class="course-card">
+
+            <img
+            src="{{ url_for('static', filename='images/courses/web-development.jpg') }}"
+            alt="Web Development">
+
+            <div class="course-body">
+
+                <span class="course-badge">
+                    FREE
+                </span>
+
+                <h3>
+                    Full Stack Web Development
+                </h3>
+
+                <p>
+                    HTML, CSS, JavaScript & Backend
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <a href="/lectures/dsa" class="course-card">
+
+            <img
+            src="{{ url_for('static', filename='images/courses/dsa-cpp.jpg') }}"
+            alt="DSA with C++">
+
+            <div class="course-body">
+
+                <span class="course-badge">
+                    FREE
+                </span>
+
+                <h3>
+                    DSA with C++
+                </h3>
+
+                <p>
+                    Learn Data Structures & Algorithms
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <a href="/lectures/ai-engineer" class="course-card">
+
+            <img
+            src="{{ url_for('static', filename='images/courses/python.jpg') }}"
+            alt="Python">
+
+            <div class="course-body">
+
+                <span class="course-badge">
+                    FREE
+                </span>
+
+                <h3>
+                    Python Programming
+                </h3>
+
+                <p>
+                    Python from Beginner to Advanced
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <a href="/lectures/ai-engineer" class="course-card">
+
+            <img
+            src="{{ url_for('static', filename='images/courses/ai-engineer.jpg') }}"
+            alt="AI Engineer">
+
+            <div class="course-body">
+
+                <span class="course-badge">
+                    FREE
+                </span>
+
+                <h3>
+                    AI Engineer Roadmap
+                </h3>
+
+                <p>
+                    Python, Machine Learning & AI
+                </p>
+
+            </div>
+
+        </a>
+
+    </div>
+
+</section>
 
         <!-- QUICK ACTION -->
 
@@ -1681,6 +2029,7 @@ body.dark-mode .logout-link:hover{
         </section>
 
 
+
 <section class="notes-section">
 
     <div class="section-header">
@@ -1719,6 +2068,48 @@ body.dark-mode .logout-link:hover{
 
         {% endfor %}
 
+    </div>
+
+</section>
+
+
+<!-- ================= LEARNING TOOLS ================= -->
+
+<section class="section">
+
+    <div class="section-header">
+        <h2>Learning Tools </h2>
+    </div>
+
+    <div class="tools-grid">
+
+        
+
+        <a href="/lectures" class="tool-card">
+            <div class="tool-icon">🎯</div>
+
+            <div>
+                <h3>Start Learning</h3>
+                <p>Explore free programming courses</p>
+            </div>
+
+            <span class="tool-arrow">→</span>
+        </a>
+
+
+        <a href="/pdfs" class="tool-card">
+            <div class="tool-icon">📥</div>
+
+            <div>
+                <h3>Study Resources</h3>
+                <p>Access free PDFs and resources</p>
+            </div>
+
+            <span class="tool-arrow">→</span>
+        </a>
+
+
+        
     </div>
 
 </section>

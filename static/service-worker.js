@@ -1,22 +1,33 @@
-const CACHE_NAME = "studyhub-v4";
+const CACHE_NAME = "studyhub-v6";
 
-const STATIC_FILES = [
+const APP_SHELL = [
     "/static/manifest.json",
+
     "/static/images/logo.png",
     "/static/images/icon-192.png",
     "/static/images/icon-512.png"
 ];
 
 
-// ================= INSTALL =================
+// =====================================================
+// INSTALL
+// =====================================================
 
 self.addEventListener("install", event => {
 
-    console.log("StudyHub SW Installing...");
+    console.log("📦 StudyHub Service Worker Installing...");
 
     event.waitUntil(
+
         caches.open(CACHE_NAME)
-        .then(cache => cache.addAll(STATIC_FILES))
+        .then(cache => {
+
+            console.log("Caching StudyHub App Shell");
+
+            return cache.addAll(APP_SHELL);
+
+        })
+
     );
 
     self.skipWaiting();
@@ -24,26 +35,45 @@ self.addEventListener("install", event => {
 });
 
 
-// ================= ACTIVATE =================
+// =====================================================
+// ACTIVATE
+// =====================================================
 
 self.addEventListener("activate", event => {
 
-    console.log("StudyHub SW Activated");
+    console.log("🚀 StudyHub Service Worker Activated");
 
     event.waitUntil(
 
         caches.keys()
+
         .then(cacheNames => {
 
             return Promise.all(
 
                 cacheNames
-                .filter(name => name !== CACHE_NAME)
-                .map(name => caches.delete(name))
+
+                .filter(cacheName => {
+
+                    return cacheName !== CACHE_NAME;
+
+                })
+
+                .map(cacheName => {
+
+                    console.log(
+                        "Deleting old cache:",
+                        cacheName
+                    );
+
+                    return caches.delete(cacheName);
+
+                })
 
             );
 
         })
+
         .then(() => self.clients.claim())
 
     );
@@ -51,11 +81,16 @@ self.addEventListener("activate", event => {
 });
 
 
-// ================= FETCH =================
+// =====================================================
+// FETCH
+// =====================================================
 
 self.addEventListener("fetch", event => {
 
     const request = event.request;
+
+
+    // ONLY GET REQUEST
 
     if(request.method !== "GET"){
         return;
@@ -65,106 +100,60 @@ self.addEventListener("fetch", event => {
     const url = new URL(request.url);
 
 
-    // ================= EXTERNAL =================
+    // =================================================
+    // EXTERNAL REQUEST
+    // =================================================
 
     if(url.origin !== self.location.origin){
+
         return;
+
     }
 
 
-    // ================= NAVIGATION =================
+    // =================================================
+    // NEVER CACHE AUTH / ADMIN PAGES
+    // =================================================
 
-    if(request.mode === "navigate"){
+    const noCacheRoutes = [
+
+        "/",
+        "/login",
+        "/signup",
+        "/verify-otp",
+        "/logout",
+
+        "/admin",
+        "/admin_login",
+        "/admin_logout",
+
+        "/add_lecture",
+        "/manage_lectures",
+
+        "/add_pdf",
+        "/manage_pdfs",
+
+        "/add_note",
+        "/manage_notes"
+
+    ];
+
+
+    const shouldNotCache = noCacheRoutes.some(route => {
+
+        return url.pathname === route ||
+               url.pathname.startsWith(route + "/");
+
+    });
+
+
+    if(shouldNotCache){
 
         event.respondWith(
 
             fetch(request)
 
-            .then(async response => {
-
-                const responseURL = new URL(response.url);
-
-
-                // AUTH PAGES CACHE NAHI HONGE
-
-                const authPages = [
-                    "/",
-                    "/login",
-                    "/signup",
-                    "/verify-otp",
-                    "/logout"
-                ];
-
-
-                if(
-                    response.redirected ||
-                    authPages.includes(responseURL.pathname) ||
-                    !response.ok
-                ){
-
-                    return response;
-
-                }
-
-
-                const cache =
-                    await caches.open(CACHE_NAME);
-
-
-                await cache.put(
-                    request,
-                    response.clone()
-                );
-
-
-                console.log(
-                    "Page cached:",
-                    url.pathname
-                );
-
-
-                return response;
-
-            })
-
-
-            .catch(async () => {
-
-                console.log(
-                    "Offline:",
-                    url.pathname
-                );
-
-
-                // SAME PAGE CACHE
-
-                const cachedPage =
-                    await caches.match(request);
-
-
-                if(cachedPage){
-
-                    return cachedPage;
-
-                }
-
-
-                // ONLY DASHBOARD REQUEST GET DASHBOARD CACHE
-
-                if(url.pathname === "/dashboard"){
-
-                    const dashboard =
-                        await caches.match("/dashboard");
-
-
-                    if(dashboard){
-
-                        return dashboard;
-
-                    }
-
-                }
-
+            .catch(() => {
 
                 return offlinePage();
 
@@ -172,205 +161,567 @@ self.addEventListener("fetch", event => {
 
         );
 
+        return;
+
+    }
+
+
+    // =================================================
+    // HTML / PAGE NAVIGATION
+    // NETWORK FIRST
+    // =================================================
+
+    if(request.mode === "navigate"){
+
+        event.respondWith(
+
+            networkFirstPage(request)
+
+        );
 
         return;
 
     }
 
 
-    // ================= STATIC CACHE =================
+    // =================================================
+    // IMAGES
+    // CACHE FIRST
+    // =================================================
+
+    if(request.destination === "image"){
+
+        event.respondWith(
+
+            cacheFirst(request)
+
+        );
+
+        return;
+
+    }
+
+
+    // =================================================
+    // CSS
+    // =================================================
+
+    if(request.destination === "style"){
+
+        event.respondWith(
+
+            staleWhileRevalidate(request)
+
+        );
+
+        return;
+
+    }
+
+
+    // =================================================
+    // JAVASCRIPT
+    // =================================================
+
+    if(request.destination === "script"){
+
+        event.respondWith(
+
+            staleWhileRevalidate(request)
+
+        );
+
+        return;
+
+    }
+
+
+    // =================================================
+    // PDF FILES
+    // =================================================
+
+    if(
+        url.pathname.startsWith("/static/pdfs/") ||
+        url.pathname.endsWith(".pdf")
+    ){
+
+        event.respondWith(
+
+            cacheFirst(request)
+
+        );
+
+        return;
+
+    }
+
+
+    // =================================================
+    // OTHER STATIC FILES
+    // =================================================
 
     if(url.pathname.startsWith("/static/")){
 
         event.respondWith(
 
-            caches.match(request)
-
-            .then(cachedResponse => {
-
-                if(cachedResponse){
-
-                    return cachedResponse;
-
-                }
-
-
-                return fetch(request)
-
-                .then(async response => {
-
-                    if(!response || !response.ok){
-
-                        return response;
-
-                    }
-
-
-                    const cache =
-                        await caches.open(CACHE_NAME);
-
-
-                    await cache.put(
-                        request,
-                        response.clone()
-                    );
-
-
-                    return response;
-
-                });
-
-            })
+            cacheFirst(request)
 
         );
+
+        return;
 
     }
 
 });
 
 
-// ================= OFFLINE PAGE =================
+// =====================================================
+// NETWORK FIRST PAGE
+// =====================================================
+
+async function networkFirstPage(request){
+
+    try{
+
+        const response = await fetch(request);
+
+
+        if(
+            !response ||
+            !response.ok ||
+            response.redirected
+        ){
+
+            return response;
+
+        }
+
+
+        const cache = await caches.open(CACHE_NAME);
+
+
+        await cache.put(
+
+            request,
+
+            response.clone()
+
+        );
+
+
+        console.log(
+
+            "📄 Page saved offline:",
+
+            new URL(request.url).pathname
+
+        );
+
+
+        return response;
+
+    }
+
+    catch(error){
+
+        console.log(
+
+            "📡 Offline page request:",
+
+            request.url
+
+        );
+
+
+        const cachedPage = await caches.match(request);
+
+
+        if(cachedPage){
+
+            console.log("✅ Opening cached page");
+
+            return cachedPage;
+
+        }
+
+
+        return offlinePage();
+
+    }
+
+}
+
+
+// =====================================================
+// CACHE FIRST
+// =====================================================
+
+async function cacheFirst(request){
+
+    const cachedResponse = await caches.match(request);
+
+
+    if(cachedResponse){
+
+        return cachedResponse;
+
+    }
+
+
+    try{
+
+        const response = await fetch(request);
+
+
+        if(
+            response &&
+            response.ok
+        ){
+
+            const cache = await caches.open(CACHE_NAME);
+
+
+            await cache.put(
+
+                request,
+
+                response.clone()
+
+            );
+
+
+            console.log(
+
+                "💾 Resource cached:",
+
+                request.url
+
+            );
+
+        }
+
+
+        return response;
+
+    }
+
+    catch(error){
+
+        console.log(
+
+            "Resource unavailable offline:",
+
+            request.url
+
+        );
+
+
+        return new Response(
+
+            "",
+
+            {
+                status: 503,
+                statusText: "Offline"
+            }
+
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// STALE WHILE REVALIDATE
+// =====================================================
+
+async function staleWhileRevalidate(request){
+
+    const cache = await caches.open(CACHE_NAME);
+
+
+    const cachedResponse = await cache.match(request);
+
+
+    const networkResponse = fetch(request)
+
+    .then(response => {
+
+        if(
+            response &&
+            response.ok
+        ){
+
+            cache.put(
+
+                request,
+
+                response.clone()
+
+            );
+
+        }
+
+
+        return response;
+
+    })
+
+    .catch(() => null);
+
+
+    if(cachedResponse){
+
+        return cachedResponse;
+
+    }
+
+
+    const response = await networkResponse;
+
+
+    if(response){
+
+        return response;
+
+    }
+
+
+    return new Response(
+
+        "",
+
+        {
+            status: 503,
+            statusText: "Offline"
+        }
+
+    );
+
+}
+
+
+// =====================================================
+// OFFLINE PAGE
+// =====================================================
 
 function offlinePage(){
 
     return new Response(
 
         `
-        <!DOCTYPE html>
+<!DOCTYPE html>
 
-        <html lang="en">
+<html lang="en">
 
-        <head>
+<head>
 
-        <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-        <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1">
 
-        <meta
-        name="theme-color"
-        content="#4f46e5">
+<meta
+name="theme-color"
+content="#4f46e5">
 
-        <title>StudyHub Offline</title>
-
-
-        <style>
-
-        *{
-            box-sizing:border-box;
-        }
-
-        body{
-            min-height:100vh;
-
-            margin:0;
-
-            display:flex;
-            align-items:center;
-            justify-content:center;
-
-            padding:25px;
-
-            font-family:Arial,sans-serif;
-
-            background:#f8fafc;
-
-            color:#0f172a;
-
-            text-align:center;
-        }
-
-        .offline{
-            width:100%;
-            max-width:400px;
-
-            padding:35px 25px;
-
-            background:white;
-
-            border-radius:22px;
-
-            box-shadow:
-            0 15px 40px rgba(15,23,42,.08);
-        }
-
-        .icon{
-            font-size:65px;
-        }
-
-        h1{
-            margin:20px 0 10px;
-
-            color:#4f46e5;
-        }
-
-        p{
-            color:#64748b;
-
-            line-height:1.6;
-        }
-
-        button{
-            width:100%;
-
-            margin-top:20px;
-
-            padding:14px;
-
-            border:none;
-            border-radius:11px;
-
-            background:#4f46e5;
-
-            color:white;
-
-            font-size:15px;
-            font-weight:bold;
-
-            cursor:pointer;
-        }
-
-        </style>
-
-        </head>
+<title>StudyHub • Offline</title>
 
 
-        <body>
+<style>
 
-        <div class="offline">
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-            <div class="icon">
-                📡
-            </div>
+body{
 
-            <h1>
-                You're Offline
-            </h1>
+    min-height:100vh;
 
-            <p>
-                This page hasn't been saved
-                for offline use yet.
-            </p>
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-            <button onclick="location.reload()">
-                Try Again
-            </button>
+    padding:25px;
 
-        </div>
+    font-family:Arial,sans-serif;
 
-        </body>
+    background:#f8fafc;
 
-        </html>
+    color:#0f172a;
+
+}
+
+.offline-card{
+
+    width:100%;
+    max-width:420px;
+
+    padding:40px 25px;
+
+    background:white;
+
+    border-radius:25px;
+
+    text-align:center;
+
+    box-shadow:
+    0 20px 50px rgba(15,23,42,.10);
+
+}
+
+.offline-icon{
+
+    width:90px;
+    height:90px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:auto;
+
+    border-radius:25px;
+
+    background:#eef2ff;
+
+    font-size:48px;
+
+}
+
+h1{
+
+    margin-top:25px;
+
+    color:#4f46e5;
+
+    font-size:28px;
+
+}
+
+p{
+
+    margin-top:12px;
+
+    color:#64748b;
+
+    font-size:15px;
+
+    line-height:1.6;
+
+}
+
+button{
+
+    width:100%;
+
+    margin-top:25px;
+
+    padding:15px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#4f46e5;
+
+    color:white;
+
+    font-size:15px;
+    font-weight:700;
+
+    cursor:pointer;
+
+}
+
+button:active{
+
+    transform:scale(.98);
+
+}
+
+.offline-info{
+
+    margin-top:18px;
+
+    color:#94a3b8;
+
+    font-size:12px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="offline-card">
+
+
+    <div class="offline-icon">
+
+        📡
+
+    </div>
+
+
+    <h1>
+
+        You're Offline
+
+    </h1>
+
+
+    <p>
+
+        This StudyHub page has not been
+        saved for offline use yet.
+
+        Open the page once while connected
+        to the internet.
+
+    </p>
+
+
+    <button onclick="location.reload()">
+
+        Try Again
+
+    </button>
+
+
+    <div class="offline-info">
+
+        StudyHub • Learn Anywhere 🚀
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
         `,
 
         {
-            status:200,
 
-            headers:{
+            status: 200,
+
+            headers: {
+
                 "Content-Type":
                 "text/html; charset=UTF-8"
+
             }
+
         }
 
     );
