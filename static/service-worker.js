@@ -1,4 +1,4 @@
-const CACHE_NAME = "studyhub-v3";
+const CACHE_NAME = "studyhub-v4";
 
 const STATIC_FILES = [
     "/static/manifest.json",
@@ -15,14 +15,8 @@ self.addEventListener("install", event => {
     console.log("StudyHub SW Installing...");
 
     event.waitUntil(
-
         caches.open(CACHE_NAME)
-        .then(cache => {
-
-            return cache.addAll(STATIC_FILES);
-
-        })
-
+        .then(cache => cache.addAll(STATIC_FILES))
     );
 
     self.skipWaiting();
@@ -71,14 +65,14 @@ self.addEventListener("fetch", event => {
     const url = new URL(request.url);
 
 
-    // ================= EXTERNAL REQUEST =================
+    // ================= EXTERNAL =================
 
     if(url.origin !== self.location.origin){
         return;
     }
 
 
-    // ================= PAGE NAVIGATION =================
+    // ================= NAVIGATION =================
 
     if(request.mode === "navigate"){
 
@@ -88,15 +82,23 @@ self.addEventListener("fetch", event => {
 
             .then(async response => {
 
-                const responseURL =
-                    new URL(response.url);
+                const responseURL = new URL(response.url);
 
 
-                // LOGIN PAGE / REDIRECT CACHE NAHI KARNA
+                // AUTH PAGES CACHE NAHI HONGE
+
+                const authPages = [
+                    "/",
+                    "/login",
+                    "/signup",
+                    "/verify-otp",
+                    "/logout"
+                ];
+
 
                 if(
                     response.redirected ||
-                    responseURL.pathname === "/login" ||
+                    authPages.includes(responseURL.pathname) ||
                     !response.ok
                 ){
 
@@ -104,8 +106,6 @@ self.addEventListener("fetch", event => {
 
                 }
 
-
-                // SUCCESS PAGE CACHE
 
                 const cache =
                     await caches.open(CACHE_NAME);
@@ -131,7 +131,7 @@ self.addEventListener("fetch", event => {
             .catch(async () => {
 
                 console.log(
-                    "Offline request:",
+                    "Offline:",
                     url.pathname
                 );
 
@@ -144,178 +144,29 @@ self.addEventListener("fetch", event => {
 
                 if(cachedPage){
 
-                    console.log(
-                        "Opening cached page:",
-                        url.pathname
-                    );
-
                     return cachedPage;
 
                 }
 
 
-                // DASHBOARD FALLBACK
+                // ONLY DASHBOARD REQUEST GET DASHBOARD CACHE
 
-                const dashboard =
-                    await caches.match("/dashboard");
+                if(url.pathname === "/dashboard"){
+
+                    const dashboard =
+                        await caches.match("/dashboard");
 
 
-                if(dashboard){
+                    if(dashboard){
 
-                    console.log(
-                        "Opening cached dashboard"
-                    );
+                        return dashboard;
 
-                    return dashboard;
+                    }
 
                 }
 
 
-                // OFFLINE PAGE
-
-                return new Response(
-
-                    `
-                    <!DOCTYPE html>
-
-                    <html lang="en">
-
-                    <head>
-
-                    <meta charset="UTF-8">
-
-                    <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1">
-
-                    <meta
-                    name="theme-color"
-                    content="#4f46e5">
-
-                    <title>StudyHub Offline</title>
-
-
-                    <style>
-
-                    *{
-                        box-sizing:border-box;
-                    }
-
-                    body{
-                        min-height:100vh;
-
-                        margin:0;
-
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-
-                        padding:25px;
-
-                        font-family:Arial,sans-serif;
-
-                        background:#f8fafc;
-
-                        color:#0f172a;
-
-                        text-align:center;
-                    }
-
-                    .offline{
-                        width:100%;
-                        max-width:400px;
-
-                        padding:35px 25px;
-
-                        background:white;
-
-                        border-radius:22px;
-
-                        box-shadow:
-                        0 15px 40px rgba(15,23,42,.08);
-                    }
-
-                    .icon{
-                        font-size:65px;
-                    }
-
-                    h1{
-                        margin:20px 0 10px;
-
-                        color:#4f46e5;
-
-                        font-size:28px;
-                    }
-
-                    p{
-                        color:#64748b;
-
-                        line-height:1.6;
-                    }
-
-                    button{
-                        width:100%;
-
-                        margin-top:20px;
-
-                        padding:14px;
-
-                        border:none;
-                        border-radius:11px;
-
-                        background:#4f46e5;
-
-                        color:white;
-
-                        font-size:15px;
-                        font-weight:bold;
-
-                        cursor:pointer;
-                    }
-
-                    </style>
-
-                    </head>
-
-
-                    <body>
-
-                    <div class="offline">
-
-                        <div class="icon">
-                            📡
-                        </div>
-
-                        <h1>
-                            You're Offline
-                        </h1>
-
-                        <p>
-                            This page hasn't been saved
-                            for offline use yet.
-                        </p>
-
-                        <button onclick="location.reload()">
-                            Try Again
-                        </button>
-
-                    </div>
-
-                    </body>
-
-                    </html>
-                    `,
-
-                    {
-                        status:200,
-
-                        headers:{
-                            "Content-Type":
-                            "text/html; charset=UTF-8"
-                        }
-                    }
-
-                );
+                return offlinePage();
 
             })
 
@@ -327,7 +178,7 @@ self.addEventListener("fetch", event => {
     }
 
 
-    // ================= STATIC FILE CACHE =================
+    // ================= STATIC CACHE =================
 
     if(url.pathname.startsWith("/static/")){
 
@@ -376,3 +227,152 @@ self.addEventListener("fetch", event => {
     }
 
 });
+
+
+// ================= OFFLINE PAGE =================
+
+function offlinePage(){
+
+    return new Response(
+
+        `
+        <!DOCTYPE html>
+
+        <html lang="en">
+
+        <head>
+
+        <meta charset="UTF-8">
+
+        <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1">
+
+        <meta
+        name="theme-color"
+        content="#4f46e5">
+
+        <title>StudyHub Offline</title>
+
+
+        <style>
+
+        *{
+            box-sizing:border-box;
+        }
+
+        body{
+            min-height:100vh;
+
+            margin:0;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            padding:25px;
+
+            font-family:Arial,sans-serif;
+
+            background:#f8fafc;
+
+            color:#0f172a;
+
+            text-align:center;
+        }
+
+        .offline{
+            width:100%;
+            max-width:400px;
+
+            padding:35px 25px;
+
+            background:white;
+
+            border-radius:22px;
+
+            box-shadow:
+            0 15px 40px rgba(15,23,42,.08);
+        }
+
+        .icon{
+            font-size:65px;
+        }
+
+        h1{
+            margin:20px 0 10px;
+
+            color:#4f46e5;
+        }
+
+        p{
+            color:#64748b;
+
+            line-height:1.6;
+        }
+
+        button{
+            width:100%;
+
+            margin-top:20px;
+
+            padding:14px;
+
+            border:none;
+            border-radius:11px;
+
+            background:#4f46e5;
+
+            color:white;
+
+            font-size:15px;
+            font-weight:bold;
+
+            cursor:pointer;
+        }
+
+        </style>
+
+        </head>
+
+
+        <body>
+
+        <div class="offline">
+
+            <div class="icon">
+                📡
+            </div>
+
+            <h1>
+                You're Offline
+            </h1>
+
+            <p>
+                This page hasn't been saved
+                for offline use yet.
+            </p>
+
+            <button onclick="location.reload()">
+                Try Again
+            </button>
+
+        </div>
+
+        </body>
+
+        </html>
+        `,
+
+        {
+            status:200,
+
+            headers:{
+                "Content-Type":
+                "text/html; charset=UTF-8"
+            }
+        }
+
+    );
+
+}
