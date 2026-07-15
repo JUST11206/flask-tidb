@@ -28,6 +28,16 @@ app = Flask(__name__)
 app.secret_key = "secret@123"
 app.permanent_session_lifetime = timedelta(days=30)
 
+app.config["PDF_FOLDER"] = os.path.join(
+    app.root_path,
+    "static",
+    "pdfs"
+)
+
+os.makedirs(
+    app.config["PDF_FOLDER"],
+    exist_ok=True
+)
 
 print("SENDER_EMAIL =", os.getenv("SENDER_EMAIL"))
 print("SENDGRID_API_KEY EXISTS =", bool(os.getenv("SENDGRID_API_KEY")))
@@ -488,31 +498,96 @@ def admin_logout():
 @admin_required
 def add_lecture():
 
+    with engine.connect() as conn:
+
+        categories = conn.execute(
+            text("""
+                SELECT *
+                FROM categories
+                ORDER BY id ASC
+            """)
+        ).fetchall()
+
+
     if request.method == "POST":
 
         title = request.form["title"]
         youtube_url = request.form["youtube_url"]
+        category_id = request.form["category_id"]
+
+
+        # ================= YOUTUBE URL CONVERT =================
+
+        if "watch?v=" in youtube_url:
+
+            video_id = (
+                youtube_url
+                .split("watch?v=")[1]
+                .split("&")[0]
+            )
+
+            youtube_url = (
+                "https://www.youtube.com/embed/"
+                + video_id
+            )
+
+
+        elif "youtu.be/" in youtube_url:
+
+            video_id = (
+                youtube_url
+                .split("youtu.be/")[1]
+                .split("?")[0]
+            )
+
+            youtube_url = (
+                "https://www.youtube.com/embed/"
+                + video_id
+            )
+
+
+        # ================= INSERT LECTURE =================
 
         with engine.connect() as conn:
 
             conn.execute(
                 text("""
-                INSERT INTO lectures (title, youtube_url)
-                VALUES (:title, :youtube_url)
+                    INSERT INTO lectures
+                    (
+                        title,
+                        youtube_url,
+                        category_id
+                    )
+
+                    VALUES
+                    (
+                        :title,
+                        :youtube_url,
+                        :category_id
+                    )
                 """),
                 {
                     "title": title,
-                    "youtube_url": youtube_url
+                    "youtube_url": youtube_url,
+                    "category_id": category_id
                 }
             )
 
             conn.commit()
 
-        flash("Lecture added successfully!", "success")
+
+        flash(
+            "Lecture added successfully!",
+            "success"
+        )
 
         return redirect("/manage_lectures")
 
-    return render_template("add_lecture.html")
+
+    return render_template(
+        "add_lecture.html",
+        categories=categories
+    )
 
 @app.route("/manage_lectures")
 @admin_required
@@ -521,13 +596,29 @@ def manage_lectures():
     with engine.connect() as conn:
 
         lectures = conn.execute(
-            text("SELECT * FROM lectures ORDER BY id DESC")
+            text("""
+                SELECT
+                    lectures.id,
+                    lectures.title,
+                    lectures.youtube_url,
+                    lectures.category_id,
+                    categories.name AS category_name,
+                    categories.icon AS category_icon
+
+                FROM lectures
+
+                LEFT JOIN categories
+                ON lectures.category_id = categories.id
+
+                ORDER BY lectures.id DESC
+            """)
         ).fetchall()
 
     return render_template(
         "manage_lectures.html",
         lectures=lectures
     )
+
 
 @app.route("/delete_lecture/<int:id>", methods=["POST"])
 @admin_required
@@ -557,87 +648,160 @@ def edit_lecture(id):
 
         title = request.form["title"]
         youtube_url = request.form["youtube_url"]
+        category_id = request.form["category_id"]
+
+        # YouTube normal URL → embed URL
+        if "watch?v=" in youtube_url:
+
+            video_id = youtube_url.split("watch?v=")[1].split("&")[0]
+
+            youtube_url = (
+                "https://www.youtube.com/embed/"
+                + video_id
+            )
+
+        elif "youtu.be/" in youtube_url:
+
+            video_id = youtube_url.split("youtu.be/")[1].split("?")[0]
+
+            youtube_url = (
+                "https://www.youtube.com/embed/"
+                + video_id
+            )
 
         with engine.connect() as conn:
 
             conn.execute(
                 text("""
-                UPDATE lectures
-                SET title = :title,
-                    youtube_url = :youtube_url
-                WHERE id = :id
+                    UPDATE lectures
+
+                    SET title = :title,
+                        youtube_url = :youtube_url,
+                        category_id = :category_id
+
+                    WHERE id = :id
                 """),
                 {
                     "title": title,
                     "youtube_url": youtube_url,
+                    "category_id": category_id,
                     "id": id
                 }
             )
 
             conn.commit()
 
-        flash("Lecture updated successfully!", "success")
+        flash(
+            "Lecture updated successfully!",
+            "success"
+        )
 
         return redirect("/manage_lectures")
+
 
     with engine.connect() as conn:
 
         lecture = conn.execute(
             text("""
-            SELECT * FROM lectures
-            WHERE id = :id
+                SELECT *
+                FROM lectures
+                WHERE id = :id
             """),
-            {"id": id}
+            {
+                "id": id
+            }
         ).fetchone()
+
+
+        categories = conn.execute(
+            text("""
+                SELECT *
+                FROM categories
+                ORDER BY id ASC
+            """)
+        ).fetchall()
+
+
+    if not lecture:
+        return "Lecture not found", 404
+
 
     return render_template(
         "edit_lecture.html",
-        lecture=lecture
+        lecture=lecture,
+        categories=categories
     )
 
 @app.route("/lectures")
 def lect():
 
     with engine.connect() as conn:
-        lectures = conn.execute(
-            text("SELECT * FROM lectures")
-        ).fetchall()
 
-    print(lectures)   # <-- add this
+        categories = conn.execute(
+            text("""
+                SELECT
+                    categories.*,
+                    COUNT(lectures.id) AS lecture_count
+
+                FROM categories
+
+                LEFT JOIN lectures
+                ON categories.id = lectures.category_id
+
+                GROUP BY
+                    categories.id,
+                    categories.name,
+                    categories.slug,
+                    categories.icon,
+                    categories.description
+
+                ORDER BY categories.id ASC
+            """)
+        ).fetchall()
 
     return render_template(
         "lectures.html",
-        lectures=lectures
+        categories=categories
     )
+@app.route("/lectures/<slug>")
+def category_lectures(slug):
 
-PDF_FOLDER = "static/pdfs"
-app.config["PDF_FOLDER"] = PDF_FOLDER
+    with engine.connect() as conn:
 
-os.makedirs(PDF_FOLDER, exist_ok=True)
+        category = conn.execute(
+            text("""
+                SELECT *
+                FROM categories
+                WHERE slug = :slug
+            """),
+            {
+                "slug": slug
+            }
+        ).fetchone()
 
-@app.route("/add_pdf", methods=["GET", "POST"])
-def add_pdf():
 
-    if request.method == "POST":
+        if not category:
+            return "Category not found", 404
 
-        title = request.form["title"]
-        pdf = request.files["pdf"]
 
-        filename = secure_filename(pdf.filename)
+        lectures = conn.execute(
+            text("""
+                SELECT *
+                FROM lectures
+                WHERE category_id = :category_id
+                ORDER BY id ASC
+            """),
+            {
+                "category_id": category.id
+            }
+        ).fetchall()
 
-        path = os.path.join(app.config["PDF_FOLDER"], filename)
-        pdf.save(path)
 
-        with engine.connect() as conn:
-            conn.execute(
-                text("INSERT INTO pdfs (title, pdf_file) VALUES (:title, :pdf_file)"),
-                {"title": title, "pdf_file": filename}
-            )
-            conn.commit()
-
-        return redirect("/pdfs")   # 👈 MUST BE THIS
-
-    return render_template("add_pdf.html")
+    return render_template(
+        "category_lectures.html",
+        lectures=lectures,
+        category=category
+    )
 
 @app.route("/manage_pdfs")
 @admin_required
@@ -645,14 +809,63 @@ def manage_pdfs():
 
     with engine.connect() as conn:
 
-        pdfs = conn.execute(
-            text("SELECT * FROM pdfs ORDER BY id DESC")
+        pdf_list = conn.execute(
+            text("""
+                SELECT *
+                FROM pdfs
+                ORDER BY id DESC
+            """)
         ).fetchall()
 
     return render_template(
         "manage_pdfs.html",
-        pdfs=pdfs
+        pdfs=pdf_list
     )
+
+@app.route("/add_pdf", methods=["GET", "POST"])
+@admin_required
+def add_pdf():
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        pdf = request.files["pdf"]
+
+        if not pdf or pdf.filename == "":
+            flash("Please select a PDF file!", "danger")
+            return redirect("/add_pdf")
+
+        filename = secure_filename(pdf.filename)
+
+        file_path = os.path.join(
+            app.config["PDF_FOLDER"],
+            filename
+        )
+
+        pdf.save(file_path)
+
+        with engine.connect() as conn:
+
+            conn.execute(
+                text("""
+                    INSERT INTO pdfs
+                    (title, pdf_file)
+                    VALUES
+                    (:title, :pdf_file)
+                """),
+                {
+                    "title": title,
+                    "pdf_file": filename
+                }
+            )
+
+            conn.commit()
+
+        flash("PDF added successfully!", "success")
+
+        return redirect("/pdfs")
+
+    return render_template("add_pdf.html")
 
 @app.route("/delete_pdf/<int:id>", methods=["POST"])
 @admin_required
@@ -662,46 +875,54 @@ def delete_pdf(id):
 
         pdf = conn.execute(
             text("""
-            SELECT * FROM pdfs
-            WHERE id = :id
+                SELECT *
+                FROM pdfs
+                WHERE id = :id
             """),
             {"id": id}
         ).fetchone()
 
-        if pdf:
+        if not pdf:
+            flash("PDF not found!", "danger")
+            return redirect("/pdfs")
 
-            file_path = os.path.join(
-                app.config["PDF_FOLDER"],
-                pdf.pdf_file
-            )
+        file_path = os.path.join(
+            app.config["PDF_FOLDER"],
+            pdf.pdf_file
+        )
 
-            if os.path.exists(file_path):
-                os.remove(file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
-            conn.execute(
-                text("""
+        conn.execute(
+            text("""
                 DELETE FROM pdfs
                 WHERE id = :id
-                """),
-                {"id": id}
-            )
+            """),
+            {"id": id}
+        )
 
-            conn.commit()
+        conn.commit()
 
     flash("PDF deleted successfully!", "success")
 
-    return redirect("/manage_pdfs")
+    return redirect("/pdfs")
 
 @app.route("/pdfs")
 def pdfs():
 
     with engine.connect() as conn:
-        result = conn.execute(text("SELECT * FROM pdfs"))
+
+        result = conn.execute(
+            text("SELECT * FROM pdfs")
+        )
+
         pdf_list = result.fetchall()
 
-    print(pdf_list)   # 👈 ADD THIS LINE (IMPORTANT DEBUG)
-
-    return render_template("pdf.html", pdfs=pdf_list)
+    return render_template(
+        "pdf.html",
+        pdfs=pdf_list
+    )
 
 @app.route("/add_note", methods=["GET", "POST"])
 @admin_required

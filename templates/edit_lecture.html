@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Add YouTube Lecture</title>
+<title>Edit Lecture • StudyHub</title>
 
 <style>
 
@@ -17,6 +17,15 @@ content="width=device-width, initial-scale=1.0">
     padding:0;
     box-sizing:border-box;
     font-family:Arial,sans-serif;
+}
+
+:root{
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --text:#0f172a;
+    --muted:#64748b;
+    --border:#cbd5e1;
+    --background:#f8fafc;
 }
 
 body{
@@ -28,7 +37,7 @@ body{
 
     padding:20px;
 
-    background:#f4f6f9;
+    background:var(--background);
 }
 
 .form-container{
@@ -58,7 +67,7 @@ h2{
 
     text-align:center;
 
-    color:#0f172a;
+    color:var(--text);
 }
 
 .subtitle{
@@ -66,7 +75,7 @@ h2{
 
     text-align:center;
 
-    color:#64748b;
+    color:var(--muted);
 
     font-size:14px;
 }
@@ -90,11 +99,13 @@ select{
 
     margin-bottom:18px;
 
-    border:1px solid #cbd5e1;
+    border:1px solid var(--border);
 
     border-radius:10px;
 
     background:white;
+
+    color:var(--text);
 
     font-size:15px;
 }
@@ -103,7 +114,7 @@ input:focus,
 select:focus{
     outline:none;
 
-    border-color:#4f46e5;
+    border-color:var(--primary);
 
     box-shadow:
     0 0 0 3px rgba(79,70,229,.10);
@@ -115,11 +126,9 @@ button{
     padding:14px;
 
     border:none;
-
     border-radius:10px;
 
-    background:#4f46e5;
-
+    background:var(--primary);
     color:white;
 
     font-size:15px;
@@ -131,7 +140,7 @@ button{
 }
 
 button:hover{
-    background:#4338ca;
+    background:var(--primary-dark);
 
     transform:translateY(-2px);
 }
@@ -143,11 +152,15 @@ button:hover{
 
     text-align:center;
 
-    color:#64748b;
+    color:var(--muted);
 
     font-size:13px;
 
     text-decoration:none;
+}
+
+.back:hover{
+    color:var(--primary);
 }
 
 @media(max-width:500px){
@@ -170,22 +183,24 @@ button:hover{
 
 
     <div class="form-icon">
-        🎥
+        ✏️
     </div>
 
 
     <h2>
-        Add YouTube Lecture
+        Edit Lecture
     </h2>
 
 
     <p class="subtitle">
-        Add a tutorial to a StudyHub learning path
+        Update YouTube lecture details and learning path
     </p>
 
 
     <form method="POST">
 
+
+        <!-- LECTURE TITLE -->
 
         <label>
             Lecture Title
@@ -194,29 +209,49 @@ button:hover{
         <input
         type="text"
         name="title"
-        placeholder="Example: HTML Full Course"
+        value="{{ lecture.title }}"
+        placeholder="Lecture Title"
         required>
 
 
+
+        <!-- LEARNING PATH -->
+
         <label>
-    Learning Path
-</label>
+            Learning Path
+        </label>
 
-<select name="category_id" required>
+        <select
+        name="category_id"
+        required>
 
-    <option value="">
-        Select Learning Path
-    </option>
+            <option value="">
+                Select Learning Path
+            </option>
 
-    {% for category in categories %}
 
-    <option value="{{ category.id }}">
-        {{ category.icon }} {{ category.name }}
-    </option>
+            {% for category in categories %}
 
-    {% endfor %}
+            <option
+            value="{{ category.id }}"
 
-</select>
+            {% if category.id == lecture.category_id %}
+            selected
+            {% endif %}>
+
+                {{ category.icon }}
+                {{ category.name }}
+
+            </option>
+
+            {% endfor %}
+
+
+        </select>
+
+
+
+        <!-- YOUTUBE URL -->
 
         <label>
             YouTube Video URL
@@ -225,12 +260,18 @@ button:hover{
         <input
         type="url"
         name="youtube_url"
+        value="{{ lecture.youtube_url }}"
         placeholder="https://youtube.com/watch?v=..."
         required>
 
 
+
+        <!-- UPDATE BUTTON -->
+
         <button type="submit">
-            + Add YouTube Lecture
+
+            💾 Update Lecture
+
         </button>
 
 
