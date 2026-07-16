@@ -28,6 +28,15 @@ app = Flask(__name__)
 app.secret_key = "secret@123"
 app.permanent_session_lifetime = timedelta(days=30)
 
+@app.after_request
+def add_header(response):
+
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+
+    return response
+
 app.config["PDF_FOLDER"] = os.path.join(
     app.root_path,
     "static",
@@ -140,6 +149,9 @@ def verify_otp():
 
 @app.route("/")
 def home():
+    if "user" in session:
+        return redirect("/dashboard")
+
     return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -222,6 +234,9 @@ def dashboard():
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+    # If user is already logged in, don't allow signup page
+    if "user" in session:
+        return redirect("/dashboard")
 
     if request.method == "POST":
 
