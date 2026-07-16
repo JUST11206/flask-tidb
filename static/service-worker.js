@@ -1,13 +1,26 @@
 const CACHE_NAME = "studyhub-v6";
 
 const APP_SHELL = [
+
+    "/dashboard",
+
+    "/notes",
+
+    "/lectures",
+
+    "/pdfs",
+
+    "/profile",
+
     "/static/manifest.json",
 
     "/static/images/logo.png",
-    "/static/images/icon-192.png",
-    "/static/images/icon-512.png"
-];
 
+    "/static/images/icon-192.png",
+
+    "/static/images/icon-512.png"
+
+];
 
 // =====================================================
 // INSTALL

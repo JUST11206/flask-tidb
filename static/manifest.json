@@ -2,12 +2,13 @@
     "id": "/dashboard",
     "name": "StudyHub",
     "short_name": "StudyHub",
-    "description": "Notes, PDFs and video lectures for students",
+    "description": "Free Notes, PDFs and Video Lectures for Students",
 
     "start_url": "/dashboard",
     "scope": "/",
 
     "display": "standalone",
+    "display_override": ["standalone"],
 
     "background_color": "#f8fafc",
     "theme_color": "#4f46e5",
@@ -19,13 +20,13 @@
             "src": "/static/images/icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any"
+            "purpose": "any maskable"
         },
         {
             "src": "/static/images/icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "any"
+            "purpose": "any maskable"
         }
     ]
 }
