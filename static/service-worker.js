@@ -28,7 +28,7 @@ const APP_SHELL = [
 
 self.addEventListener("install", event => {
 
-    console.log("📦 StudyHub Service Worker Installing...");
+    console.log(" StudyHub Service Worker Installing...");
 
     event.waitUntil(
 
@@ -99,6 +99,7 @@ self.addEventListener("activate", event => {
 // =====================================================
 
 self.addEventListener("fetch", event => {
+    console.log("FETCH =>", event.request.url);
 
     const request = event.request;
 
