@@ -1,34 +1,83 @@
-const CACHE_NAME = "studyhub-v6";
+/* ==========================================================
+   StudyHub PWA Service Worker
+   Part 1 / 3
+   Author : ChatGPT
+   Version : v7
+========================================================== */
 
-const APP_SHELL=[
+const CACHE_VERSION = "studyhub-v7";
 
-"/static/manifest.json",
+const STATIC_CACHE = `${CACHE_VERSION}-static`;
+const PAGE_CACHE = `${CACHE_VERSION}-pages`;
+const IMAGE_CACHE = `${CACHE_VERSION}-images`;
+const PDF_CACHE = `${CACHE_VERSION}-pdfs`;
+const FONT_CACHE = `${CACHE_VERSION}-fonts`;
 
-"/static/images/logo.png",
+const APP_SHELL = [
 
-"/static/images/icon-192.png",
+    "/dashboard",
 
-"/static/images/icon-512.png"
+    "/notes",
+
+    "/lectures",
+
+    "/pdfs",
+
+    "/profile",
+
+    "/static/manifest.json",
+
+    "/static/images/logo.png",
+
+    "/static/images/icon-192.png",
+
+    "/static/images/icon-512.png"
 
 ];
-// =====================================================
-// INSTALL
-// =====================================================
+
+const NEVER_CACHE = [
+
+    "/",
+    "/login",
+    "/signup",
+    "/verify-otp",
+    "/logout",
+
+    "/admin",
+    "/admin_login",
+    "/admin_logout",
+
+    "/add_note",
+    "/manage_notes",
+
+    "/add_pdf",
+    "/manage_pdfs",
+
+    "/add_lecture",
+    "/manage_lectures"
+
+];
+
+
+/* ==========================================================
+   INSTALL
+========================================================== */
 
 self.addEventListener("install", event => {
 
-    console.log(" StudyHub Service Worker Installing...");
+    console.log("📦 Installing StudyHub PWA...");
 
     event.waitUntil(
 
-        caches.open(CACHE_NAME)
-        .then(cache => {
+        (async () => {
 
-            console.log("Caching StudyHub App Shell");
+            const cache = await caches.open(STATIC_CACHE);
 
-            return cache.addAll(APP_SHELL);
+            await cache.addAll(APP_SHELL);
 
-        })
+            console.log("✅ App Shell Cached");
+
+        })()
 
     );
 
@@ -37,130 +86,90 @@ self.addEventListener("install", event => {
 });
 
 
-// =====================================================
-// ACTIVATE
-// =====================================================
+/* ==========================================================
+   ACTIVATE
+========================================================== */
 
 self.addEventListener("activate", event => {
 
-    console.log("🚀 StudyHub Service Worker Activated");
+    console.log("🚀 Activating Service Worker");
 
     event.waitUntil(
 
-        caches.keys()
+        (async () => {
 
-        .then(cacheNames => {
+            const keys = await caches.keys();
 
-            return Promise.all(
+            await Promise.all(
 
-                cacheNames
+                keys.map(key => {
 
-                .filter(cacheName => {
+                    if (
 
-                    return cacheName !== CACHE_NAME;
+                        key !== STATIC_CACHE &&
+                        key !== PAGE_CACHE &&
+                        key !== IMAGE_CACHE &&
+                        key !== PDF_CACHE &&
+                        key !== FONT_CACHE
 
-                })
+                    ) {
 
-                .map(cacheName => {
+                        console.log("🗑 Removing old cache:", key);
 
-                    console.log(
-                        "Deleting old cache:",
-                        cacheName
-                    );
+                        return caches.delete(key);
 
-                    return caches.delete(cacheName);
+                    }
 
                 })
 
             );
 
-        })
+            await self.clients.claim();
 
-        .then(() => self.clients.claim())
+            console.log("✅ Ready");
+
+        })()
 
     );
 
 });
 
 
-// =====================================================
-// FETCH
-// =====================================================
+/* ==========================================================
+   FETCH
+========================================================== */
 
 self.addEventListener("fetch", event => {
-    console.log("FETCH =>", event.request.url);
 
     const request = event.request;
 
-
-    // ONLY GET REQUEST
-
-    if(request.method !== "GET"){
+    if (request.method !== "GET")
         return;
-    }
-
 
     const url = new URL(request.url);
 
-
-    // =================================================
-    // EXTERNAL REQUEST
-    // =================================================
-
-    if(url.origin !== self.location.origin){
-
+    if (url.origin !== self.location.origin)
         return;
 
-    }
 
+    /* ------------------------------------------
+       Never Cache Authentication
+    ------------------------------------------ */
 
-    // =================================================
-    // NEVER CACHE AUTH / ADMIN PAGES
-    // =================================================
-
-    const noCacheRoutes = [
-
-        "/",
-        "/login",
-        "/signup",
-        "/verify-otp",
-        "/logout",
-
-        "/admin",
-        "/admin_login",
-        "/admin_logout",
-
-        "/add_lecture",
-        "/manage_lectures",
-
-        "/add_pdf",
-        "/manage_pdfs",
-
-        "/add_note",
-        "/manage_notes"
-
-    ];
-
-
-    const shouldNotCache = noCacheRoutes.some(route => {
+    const blocked = NEVER_CACHE.some(route => {
 
         return url.pathname === route ||
                url.pathname.startsWith(route + "/");
 
     });
 
-
-    if(shouldNotCache){
+    if (blocked) {
 
         event.respondWith(
 
             fetch(request)
 
-            .catch(() => {
-
-                return offlinePage();
-
-            })
+            .catch(() => offlinePage())
 
         );
 
@@ -169,30 +178,15 @@ self.addEventListener("fetch", event => {
     }
 
 
-    // =================================================
-    // HTML / PAGE NAVIGATION
-    // NETWORK FIRST
-    // =================================================
+    /* ------------------------------------------
+       HTML Pages
+    ------------------------------------------ */
 
-if(request.mode==="navigate"){
-
-    event.respondWith(
-        appShell(request)
-    );
-
-    return;
-}        
-
-    // =================================================
-    // IMAGES
-    // CACHE FIRST
-    // =================================================
-
-    if(request.destination === "image"){
+    if (request.mode === "navigate") {
 
         event.respondWith(
 
-            cacheFirst(request)
+            networkFirstPage(request)
 
         );
 
@@ -201,15 +195,21 @@ if(request.mode==="navigate"){
     }
 
 
-    // =================================================
-    // CSS
-    // =================================================
+    /* ------------------------------------------
+       Images
+    ------------------------------------------ */
 
-    if(request.destination === "style"){
+    if (request.destination === "image") {
 
         event.respondWith(
 
-            staleWhileRevalidate(request)
+            cacheFirst(
+
+                request,
+
+                IMAGE_CACHE
+
+            )
 
         );
 
@@ -218,15 +218,21 @@ if(request.mode==="navigate"){
     }
 
 
-    // =================================================
-    // JAVASCRIPT
-    // =================================================
+    /* ------------------------------------------
+       CSS
+    ------------------------------------------ */
 
-    if(request.destination === "script"){
+    if (request.destination === "style") {
 
         event.respondWith(
 
-            staleWhileRevalidate(request)
+            staleWhileRevalidate(
+
+                request,
+
+                STATIC_CACHE
+
+            )
 
         );
 
@@ -235,18 +241,21 @@ if(request.mode==="navigate"){
     }
 
 
-    // =================================================
-    // PDF FILES
-    // =================================================
+    /* ------------------------------------------
+       JavaScript
+    ------------------------------------------ */
 
-    if(
-        url.pathname.startsWith("/static/pdfs/") ||
-        url.pathname.endsWith(".pdf")
-    ){
+    if (request.destination === "script") {
 
         event.respondWith(
 
-            cacheFirst(request)
+            staleWhileRevalidate(
+
+                request,
+
+                STATIC_CACHE
+
+            )
 
         );
 
@@ -255,15 +264,77 @@ if(request.mode==="navigate"){
     }
 
 
-    // =================================================
-    // OTHER STATIC FILES
-    // =================================================
+    /* ------------------------------------------
+       Fonts
+    ------------------------------------------ */
 
-    if(url.pathname.startsWith("/static/")){
+    if (request.destination === "font") {
 
         event.respondWith(
 
-            cacheFirst(request)
+            cacheFirst(
+
+                request,
+
+                FONT_CACHE
+
+            )
+
+        );
+
+        return;
+
+    }
+
+
+    /* ------------------------------------------
+       PDFs
+    ------------------------------------------ */
+
+    if (
+
+        url.pathname.endsWith(".pdf") ||
+
+        url.pathname.startsWith("/static/pdfs/")
+
+    ) {
+
+        event.respondWith(
+
+            cacheFirst(
+
+                request,
+
+                PDF_CACHE
+
+            )
+
+        );
+
+        return;
+
+    }
+
+
+    /* ------------------------------------------
+       Other Static Files
+    ------------------------------------------ */
+
+    if (
+
+        url.pathname.startsWith("/static/")
+
+    ) {
+
+        event.respondWith(
+
+            cacheFirst(
+
+                request,
+
+                STATIC_CACHE
+
+            )
 
         );
 
@@ -272,54 +343,64 @@ if(request.mode==="navigate"){
     }
 
 });
+/* ==========================================================
+   PART 2
+   CACHE STRATEGIES
+========================================================== */
 
 
-// =====================================================
-// NETWORK FIRST PAGE
-// =====================================================
-async function appShell(request){
+/* ==========================================================
+   NETWORK FIRST
+========================================================== */
 
-    const cache = await caches.open(CACHE_NAME);
+async function networkFirstPage(request) {
 
-    const cached = await cache.match(request,{
-        ignoreSearch:true
-    });
+    const cache = await caches.open(PAGE_CACHE);
 
-    if(cached){
+    try {
 
-        fetch(request)
+        const networkResponse = await fetch(request);
 
-        .then(response=>{
+        if (
+            networkResponse &&
+            networkResponse.ok &&
+            !networkResponse.redirected
+        ) {
 
-            if(response.ok && !response.redirected){
+            cache.put(
+                request,
+                networkResponse.clone()
+            );
 
-                cache.put(request,response.clone());
-
-            }
-
-        })
-
-        .catch(()=>{});
-
-        return cached;
-
-    }
-
-    try{
-
-        const response=await fetch(request);
-
-        if(response.ok){
-
-            cache.put(request,response.clone());
+            console.log(
+                "📄 Updated:",
+                new URL(request.url).pathname
+            );
 
         }
 
-        return response;
+        return networkResponse;
 
     }
 
-    catch{
+    catch (error) {
+
+        console.log(
+            "📡 Offline:",
+            request.url
+        );
+
+        const cached = await cache.match(request);
+
+        if (cached) {
+
+            console.log(
+                "✅ Cached page loaded"
+            );
+
+            return cached;
+
+        }
 
         return offlinePage();
 
@@ -327,166 +408,260 @@ async function appShell(request){
 
 }
 
-// =====================================================
-// CACHE FIRST
-// =====================================================
 
-async function cacheFirst(request){
+/* ==========================================================
+   CACHE FIRST
+========================================================== */
 
-    const cachedResponse = await caches.match(request);
+async function cacheFirst(request, cacheName) {
 
+    const cache = await caches.open(cacheName);
 
-    if(cachedResponse){
+    const cached = await cache.match(request);
 
-        return cachedResponse;
+    if (cached) {
+
+        return cached;
 
     }
 
-
-    try{
+    try {
 
         const response = await fetch(request);
 
-
-        if(
+        if (
             response &&
             response.ok
-        ){
-
-            const cache = await caches.open(CACHE_NAME);
-
-
-            await cache.put(
-
-                request,
-
-                response.clone()
-
-            );
-
-
-            console.log(
-
-                "💾 Resource cached:",
-
-                request.url
-
-            );
-
-        }
-
-
-        return response;
-
-    }
-
-    catch(error){
-
-        console.log(
-
-            "Resource unavailable offline:",
-
-            request.url
-
-        );
-
-
-        return new Response(
-
-            "",
-
-            {
-                status: 503,
-                statusText: "Offline"
-            }
-
-        );
-
-    }
-
-}
-
-
-// =====================================================
-// STALE WHILE REVALIDATE
-// =====================================================
-
-async function staleWhileRevalidate(request){
-
-    const cache = await caches.open(CACHE_NAME);
-
-
-    const cachedResponse = await cache.match(request);
-
-
-    const networkResponse = fetch(request)
-
-    .then(response => {
-
-        if(
-            response &&
-            response.ok
-        ){
+        ) {
 
             cache.put(
-
                 request,
-
                 response.clone()
-
             );
 
         }
 
-
-        return response;
-
-    })
-
-    .catch(() => null);
-
-
-    if(cachedResponse){
-
-        return cachedResponse;
-
-    }
-
-
-    const response = await networkResponse;
-
-
-    if(response){
-
         return response;
 
     }
 
+    catch {
 
-    return new Response(
+        if (request.destination === "image") {
 
-        "",
+            const logo = await caches.match(
+                "/static/images/logo.png"
+            );
 
-        {
-            status: 503,
-            statusText: "Offline"
+            if (logo)
+                return logo;
+
         }
 
-    );
+        return new Response("", {
+            status: 503
+        });
+
+    }
 
 }
 
 
-// =====================================================
-// OFFLINE PAGE
-// =====================================================
+/* ==========================================================
+   STALE WHILE REVALIDATE
+========================================================== */
 
-function offlinePage(){
+async function staleWhileRevalidate(
+    request,
+    cacheName
+) {
+
+    const cache = await caches.open(cacheName);
+
+    const cached = await cache.match(request);
+
+    const networkFetch = fetch(request)
+
+        .then(response => {
+
+            if (
+                response &&
+                response.ok
+            ) {
+
+                cache.put(
+                    request,
+                    response.clone()
+                );
+
+            }
+
+            return response;
+
+        })
+
+        .catch(() => null);
+
+    if (cached) {
+
+        return cached;
+
+    }
+
+    const network = await networkFetch;
+
+    if (network) {
+
+        return network;
+
+    }
+
+    return new Response("", {
+        status: 503
+    });
+
+}
+
+
+/* ==========================================================
+   BACKGROUND UPDATE
+========================================================== */
+
+async function updateCache(request) {
+
+    try {
+
+        const response = await fetch(request);
+
+        if (
+            response &&
+            response.ok
+        ) {
+
+            const cache =
+                await caches.open(PAGE_CACHE);
+
+            await cache.put(
+                request,
+                response.clone()
+            );
+
+        }
+
+    }
+
+    catch (e) {
+
+        console.log(
+            "Background update skipped."
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   LIMIT CACHE SIZE
+========================================================== */
+
+async function limitCache(cacheName, maxItems) {
+
+    const cache =
+        await caches.open(cacheName);
+
+    const keys =
+        await cache.keys();
+
+    if (
+        keys.length <= maxItems
+    )
+        return;
+
+    while (
+        keys.length > maxItems
+    ) {
+
+        await cache.delete(keys[0]);
+
+        keys.shift();
+
+    }
+
+}
+
+
+/* ==========================================================
+   CLEAN OLD FILES
+========================================================== */
+
+self.addEventListener(
+    "message",
+    event => {
+
+        if (
+            event.data === "cleanup"
+        ) {
+
+            limitCache(
+                IMAGE_CACHE,
+                80
+            );
+
+            limitCache(
+                PAGE_CACHE,
+                25
+            );
+
+            limitCache(
+                PDF_CACHE,
+                30
+            );
+
+        }
+
+    }
+
+);
+
+
+/* ==========================================================
+   ONLINE EVENT
+========================================================== */
+
+self.addEventListener(
+    "sync",
+    event => {
+
+        if (
+            event.tag ===
+            "studyhub-sync"
+        ) {
+
+            console.log(
+                "Background Sync"
+            );
+
+        }
+
+    }
+
+);
+/* ==========================================================
+   PART 3
+   OFFLINE PAGE + FINAL
+========================================================== */
+
+
+/* ==========================================================
+   OFFLINE PAGE
+========================================================== */
+
+function offlinePage() {
 
     return new Response(
 
-        `
-<!DOCTYPE html>
+`<!DOCTYPE html>
 
 <html lang="en">
 
@@ -494,137 +669,110 @@ function offlinePage(){
 
 <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
 
-<meta
-name="theme-color"
+<meta name="theme-color"
 content="#4f46e5">
 
-<title>StudyHub • Offline</title>
-
+<title>StudyHub Offline</title>
 
 <style>
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
 
-    min-height:100vh;
+font-family:Arial,sans-serif;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+background:#f8fafc;
 
-    padding:25px;
+display:flex;
+align-items:center;
+justify-content:center;
 
-    font-family:Arial,sans-serif;
+min-height:100vh;
 
-    background:#f8fafc;
-
-    color:#0f172a;
+padding:25px;
 
 }
 
-.offline-card{
+.card{
 
-    width:100%;
-    max-width:420px;
+width:100%;
+max-width:420px;
 
-    padding:40px 25px;
+background:#fff;
 
-    background:white;
+border-radius:22px;
 
-    border-radius:25px;
+padding:35px;
 
-    text-align:center;
+text-align:center;
 
-    box-shadow:
-    0 20px 50px rgba(15,23,42,.10);
+box-shadow:0 15px 45px rgba(0,0,0,.08);
 
 }
 
-.offline-icon{
+.icon{
 
-    width:90px;
-    height:90px;
+font-size:70px;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    margin:auto;
-
-    border-radius:25px;
-
-    background:#eef2ff;
-
-    font-size:48px;
+margin-bottom:20px;
 
 }
 
 h1{
 
-    margin-top:25px;
+color:#4f46e5;
 
-    color:#4f46e5;
-
-    font-size:28px;
+margin-bottom:15px;
 
 }
 
 p{
 
-    margin-top:12px;
+color:#64748b;
 
-    color:#64748b;
+line-height:1.7;
 
-    font-size:15px;
-
-    line-height:1.6;
+margin-bottom:25px;
 
 }
 
 button{
 
-    width:100%;
+width:100%;
 
-    margin-top:25px;
+padding:15px;
 
-    padding:15px;
+border:none;
 
-    border:none;
-    border-radius:12px;
+border-radius:12px;
 
-    background:#4f46e5;
+background:#4f46e5;
 
-    color:white;
+color:#fff;
 
-    font-size:15px;
-    font-weight:700;
+font-size:16px;
 
-    cursor:pointer;
+font-weight:bold;
 
-}
-
-button:active{
-
-    transform:scale(.98);
+cursor:pointer;
 
 }
 
-.offline-info{
+small{
 
-    margin-top:18px;
+display:block;
 
-    color:#94a3b8;
+margin-top:18px;
 
-    font-size:12px;
+color:#94a3b8;
 
 }
 
@@ -632,73 +780,135 @@ button:active{
 
 </head>
 
-
 <body>
 
+<div class="card">
 
-<div class="offline-card">
+<div class="icon">
+📡
+</div>
 
+<h1>
+You're Offline
+</h1>
 
-    <div class="offline-icon">
+<p>
 
-        📡
+This page isn't available offline yet.
 
-    </div>
+Please connect to the internet once
+to save this page.
 
+</p>
 
-    <h1>
+<button onclick="location.reload()">
 
-        You're Offline
+Try Again
 
-    </h1>
+</button>
 
+<small>
 
-    <p>
+StudyHub • Learn Anywhere 🚀
 
-        This StudyHub page has not been
-        saved for offline use yet.
-
-        Open the page once while connected
-        to the internet.
-
-    </p>
-
-
-    <button onclick="location.reload()">
-
-        Try Again
-
-    </button>
-
-
-    <div class="offline-info">
-
-        StudyHub • Learn Anywhere 🚀
-
-    </div>
-
+</small>
 
 </div>
 
-
 </body>
 
-</html>
-        `,
+</html>`,
 
-        {
+{
 
-            status: 200,
+status:200,
 
-            headers: {
+headers:{
 
-                "Content-Type":
-                "text/html; charset=UTF-8"
+"Content-Type":"text/html"
 
-            }
+}
 
-        }
+}
+
+);
+
+}
+
+
+/* ==========================================================
+   PERIODIC CACHE CLEANUP
+========================================================== */
+
+setInterval(() => {
+
+    limitCache(IMAGE_CACHE,80);
+
+    limitCache(PAGE_CACHE,25);
+
+    limitCache(PDF_CACHE,30);
+
+},1000*60*30);
+
+
+/* ==========================================================
+   NOTIFY CLIENTS WHEN NEW SW IS ACTIVE
+========================================================== */
+
+async function notifyClients(){
+
+    const clientsList=await self.clients.matchAll();
+
+    clientsList.forEach(client=>{
+
+        client.postMessage({
+
+            type:"SW_UPDATED"
+
+        });
+
+    });
+
+}
+
+self.addEventListener("activate",event=>{
+
+    event.waitUntil(
+
+        notifyClients()
 
     );
 
+});
+
+
+/* ==========================================================
+   OPTIONAL NAVIGATION PRELOAD
+========================================================== */
+
+self.addEventListener("activate",event=>{
+
+event.waitUntil(
+
+(async()=>{
+
+if(self.registration.navigationPreload){
+
+await self.registration.navigationPreload.enable();
+
 }
+
+})()
+
+);
+
+});
+
+
+/* ==========================================================
+   INSTALL COMPLETE
+========================================================== */
+
+console.log(
+"🚀 StudyHub Service Worker Ready."
+);

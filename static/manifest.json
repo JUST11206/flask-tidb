@@ -4,7 +4,7 @@
     "short_name": "StudyHub",
     "description": "Free Notes, PDFs and Video Lectures for Students",
 
-    "start_url": "/dashboard",
+    "start_url": "/",
     "scope": "/",
 
     "display": "standalone",

@@ -28,27 +28,27 @@ app = Flask(__name__)
 app.secret_key = "secret@123"
 app.permanent_session_lifetime = timedelta(days=30)
 
-@app.after_request
-def add_header(response):
+# @app.after_request
+# def add_header(response):
 
-    auth_routes = {
-        "/",
-        "/login",
-        "/signup",
-        "/verify-otp",
-        "/logout",
-        "/admin",
-        "/admin_login",
-        "/admin_logout"
-    }
+#     auth_routes = {
+#         "/",
+#         "/login",
+#         "/signup",
+#         "/verify-otp",
+#         "/logout",
+#         "/admin",
+#         "/admin_login",
+#         "/admin_logout"
+#     }
 
-    if request.path in auth_routes:
-        response.headers["Cache-Control"] = "no-store"
+#     if request.path in auth_routes:
+#         response.headers["Cache-Control"] = "no-store"
 
-    else:
-        response.headers["Cache-Control"] = "public,max-age=300"
+#     else:
+#         response.headers["Cache-Control"] = "public,max-age=300"
 
-    return response
+#     return response
 
 app.config["PDF_FOLDER"] = os.path.join(
     app.root_path,
@@ -217,25 +217,32 @@ def dashboard():
     if "user" not in session:
         return redirect("/login")
 
-    with engine.connect() as conn:
+    popular_notes = []
+    recent_notes = []
 
-        popular_notes = conn.execute(
-            text("""
+    try:
+        with engine.connect() as conn:
+
+            popular_notes = conn.execute(
+                text("""
                 SELECT *
                 FROM notes
                 ORDER BY views DESC
                 LIMIT 3
-            """)
-        ).fetchall()
+                """)
+            ).fetchall()
 
-        recent_notes = conn.execute(
-            text("""
+            recent_notes = conn.execute(
+                text("""
                 SELECT *
                 FROM notes
                 ORDER BY created_at DESC
                 LIMIT 3
-            """)
-        ).fetchall()
+                """)
+            ).fetchall()
+
+    except Exception as e:
+        print("Dashboard Offline:", e)
 
     return render_template(
         "dashboard.html",
