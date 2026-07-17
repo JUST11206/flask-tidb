@@ -31,7 +31,7 @@ app.permanent_session_lifetime = timedelta(days=30)
 @app.after_request
 def add_header(response):
 
-    auth_routes = [
+    auth_routes = {
         "/",
         "/login",
         "/signup",
@@ -40,12 +40,13 @@ def add_header(response):
         "/admin",
         "/admin_login",
         "/admin_logout"
-    ]
+    }
 
     if request.path in auth_routes:
-        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-        response.headers["Pragma"] = "no-cache"
-        response.headers["Expires"] = "0"
+        response.headers["Cache-Control"] = "no-store"
+
+    else:
+        response.headers["Cache-Control"] = "public,max-age=300"
 
     return response
 

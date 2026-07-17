@@ -1,27 +1,16 @@
 const CACHE_NAME = "studyhub-v6";
 
-const APP_SHELL = [
+const APP_SHELL=[
 
-    "/dashboard",
+"/static/manifest.json",
 
-    "/notes",
+"/static/images/logo.png",
 
-    "/lectures",
+"/static/images/icon-192.png",
 
-    "/pdfs",
-
-    "/profile",
-
-    "/static/manifest.json",
-
-    "/static/images/logo.png",
-
-    "/static/images/icon-192.png",
-
-    "/static/images/icon-512.png"
+"/static/images/icon-512.png"
 
 ];
-
 // =====================================================
 // INSTALL
 // =====================================================
@@ -185,18 +174,14 @@ self.addEventListener("fetch", event => {
     // NETWORK FIRST
     // =================================================
 
-    if(request.mode === "navigate"){
+if(request.mode==="navigate"){
 
-        event.respondWith(
+    event.respondWith(
+        appShell(request)
+    );
 
-            networkFirstPage(request)
-
-        );
-
-        return;
-
-    }
-
+    return;
+}        
 
     // =================================================
     // IMAGES
@@ -292,79 +277,55 @@ self.addEventListener("fetch", event => {
 // =====================================================
 // NETWORK FIRST PAGE
 // =====================================================
+async function appShell(request){
 
-async function networkFirstPage(request){
+    const cache = await caches.open(CACHE_NAME);
+
+    const cached = await cache.match(request,{
+        ignoreSearch:true
+    });
+
+    if(cached){
+
+        fetch(request)
+
+        .then(response=>{
+
+            if(response.ok && !response.redirected){
+
+                cache.put(request,response.clone());
+
+            }
+
+        })
+
+        .catch(()=>{});
+
+        return cached;
+
+    }
 
     try{
 
-        const response = await fetch(request);
+        const response=await fetch(request);
 
+        if(response.ok){
 
-        if(
-            !response ||
-            !response.ok ||
-            response.redirected
-        ){
-
-            return response;
+            cache.put(request,response.clone());
 
         }
-
-
-        const cache = await caches.open(CACHE_NAME);
-
-
-        await cache.put(
-
-            request,
-
-            response.clone()
-
-        );
-
-
-        console.log(
-
-            "📄 Page saved offline:",
-
-            new URL(request.url).pathname
-
-        );
-
 
         return response;
 
     }
 
-    catch(error){
-
-        console.log(
-
-            "📡 Offline page request:",
-
-            request.url
-
-        );
-
-
-        const cachedPage = await caches.match(request);
-
-
-        if(cachedPage){
-
-            console.log("✅ Opening cached page");
-
-            return cachedPage;
-
-        }
-
+    catch{
 
         return offlinePage();
 
     }
 
 }
-
 
 // =====================================================
 // CACHE FIRST
