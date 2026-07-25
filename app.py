@@ -1,4 +1,4 @@
-#pip install sqlalchemy pymysql cryptography
+
 from flask import Flask, render_template, request, redirect, session, flash, send_from_directory ,url_for
 from sqlalchemy import create_engine, text
 from datetime import timedelta
@@ -27,28 +27,6 @@ def admin_required(f):
 app = Flask(__name__)
 app.secret_key = "secret@123"
 app.permanent_session_lifetime = timedelta(days=30)
-
-# @app.after_request
-# def add_header(response):
-
-#     auth_routes = {
-#         "/",
-#         "/login",
-#         "/signup",
-#         "/verify-otp",
-#         "/logout",
-#         "/admin",
-#         "/admin_login",
-#         "/admin_logout"
-#     }
-
-#     if request.path in auth_routes:
-#         response.headers["Cache-Control"] = "no-store"
-
-#     else:
-#         response.headers["Cache-Control"] = "public,max-age=300"
-
-#     return response
 
 app.config["PDF_FOLDER"] = os.path.join(
     app.root_path,
