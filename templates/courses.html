@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ category.name }} • StudyHub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --secondary:#7c3aed;
+
+    --green:#16a34a;
+    --red:#dc2626;
+
+    --bg:#f5f7ff;
+    --white:#ffffff;
+
+    --text:#111827;
+    --text-light:#6b7280;
+
+    --border:#e5e7eb;
+
+    --shadow:
+    0 15px 35px rgba(79,70,229,.12);
+
+    --radius:22px;
+
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+
+}
+
+/*=========================
+HEADER
+=========================*/
+
+.header{
+
+    position:sticky;
+    top:0;
+    z-index:999;
+
+    background:rgba(255,255,255,.88);
+
+    backdrop-filter:blur(18px);
+
+    border-bottom:1px solid rgba(229,231,235,.8);
+
+}
+
+.nav{
+
+    max-width:1400px;
+
+    margin:auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:16px 28px;
+
+}
+
+.logo{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    text-decoration:none;
+
+}
+
+.logo img{
+
+    width:48px;
+    height:48px;
+    object-fit:contain;
+
+}
+
+.logo h2{
+
+    color:#111827;
+    font-size:26px;
+    font-weight:800;
+
+}
+
+.nav-right{
+
+    display:flex;
+    gap:14px;
+    align-items:center;
+
+}
+
+.back-btn{
+
+    text-decoration:none;
+
+    background:#eef2ff;
+
+    color:var(--primary);
+
+    padding:12px 18px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.back-btn:hover{
+
+    background:var(--primary);
+    color:white;
+
+}
+
+/*=========================
+HERO
+=========================*/
+
+.hero{
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:
+    linear-gradient(
+    135deg,
+    #312e81,
+    #4f46e5,
+    #7c3aed);
+
+    color:white;
+
+    margin:30px auto;
+
+    width:calc(100% - 40px);
+    max-width:1400px;
+
+    border-radius:30px;
+
+    padding:70px;
+
+}
+
+.hero::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:420px;
+    height:420px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+
+    right:-120px;
+    top:-160px;
+
+}
+
+.hero::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.06);
+
+    left:-80px;
+    bottom:-120px;
+
+}
+
+.hero-content{
+
+    position:relative;
+    z-index:2;
+
+}
+
+.hero-badge{
+
+    display:inline-flex;
+
+    gap:8px;
+
+    align-items:center;
+
+    background:rgba(255,255,255,.18);
+
+    padding:10px 18px;
+
+    border-radius:100px;
+
+    margin-bottom:22px;
+
+    font-size:14px;
+    font-weight:600;
+
+}
+
+.hero h1{
+
+    font-size:52px;
+
+    font-weight:800;
+
+    margin-bottom:18px;
+
+    max-width:720px;
+
+}
+
+.hero p{
+
+    font-size:17px;
+
+    max-width:700px;
+
+    line-height:1.8;
+
+    color:#e9e9ff;
+
+}
+
+/*=========================
+STATS
+=========================*/
+
+.stats{
+
+    display:flex;
+    gap:20px;
+
+    margin-top:35px;
+
+    flex-wrap:wrap;
+
+}
+
+.stat{
+
+    min-width:170px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(10px);
+
+    padding:18px;
+
+    border-radius:18px;
+
+}
+
+.stat h3{
+
+    font-size:28px;
+    font-weight:800;
+
+}
+
+.stat p{
+
+    margin-top:4px;
+
+    color:#eef2ff;
+
+    font-size:14px;
+
+}
+
+/*=========================
+SEARCH
+=========================*/
+
+.search-section{
+
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:0 20px;
+
+}
+
+.search-box{
+
+    background:white;
+
+    box-shadow:var(--shadow);
+
+    border-radius:20px;
+
+    padding:18px 22px;
+
+    display:flex;
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.search-box input{
+
+    width:100%;
+
+    border:none;
+    outline:none;
+
+    font-size:16px;
+
+    background:transparent;
+
+    font-family:'Poppins',sans-serif;
+
+}
+
+.search-icon{
+
+    font-size:22px;
+
+}
+
+/*=========================
+SECTION
+=========================*/
+
+.section{
+
+    max-width:1400px;
+
+    margin:50px auto;
+
+    padding:0 20px;
+
+}
+
+.section-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+}
+
+.section-top h2{
+
+    font-size:34px;
+
+    font-weight:800;
+
+}
+
+.section-top p{
+
+    color:#6b7280;
+
+    margin-top:6px;
+
+}
+
+/*=========================
+FILTERS
+=========================*/
+
+.filters{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+}
+
+.filter{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    padding:10px 18px;
+
+    border-radius:50px;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.filter:hover{
+
+    background:var(--primary);
+
+    color:white;
+
+    border-color:var(--primary);
+
+}
+
+/*=========================
+COURSE GRID
+=========================*/
+
+.course-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:28px;
+
+}
+
+/*=========================
+CARD
+=========================*/
+
+.course-card{
+
+    background:white;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 8px 25px rgba(0,0,0,.06);
+
+    transition:.35s;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.course-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:
+    0 25px 50px rgba(79,70,229,.15);
+
+}
+
+.thumb{
+
+    position:relative;
+
+    overflow:hidden;
+
+    height:210px;
+
+}
+
+.thumb img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.4s;
+
+}
+
+.course-card:hover img{
+
+    transform:scale(1.08);
+
+}
+
+.price-tag{
+
+    position:absolute;
+
+    top:16px;
+    right:16px;
+
+    padding:8px 14px;
+
+    border-radius:100px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+.price-free{
+
+    background:#16a34a;
+
+}
+
+.price-paid{
+
+    background:#dc2626;
+
+}
+
+.card-body{
+
+    padding:24px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    flex:1;
+
+}
+
+.card-body h3{
+
+    font-size:24px;
+
+    line-height:1.4;
+
+    margin-bottom:12px;
+
+    color:#111827;
+
+}
+
+.card-body p{
+
+    color:#6b7280;
+
+    line-height:1.8;
+
+    font-size:14px;
+
+    margin-bottom:20px;
+
+}
+/*=========================
+COURSE META
+=========================*/
+
+.course-meta{
+
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+
+    margin-bottom:22px;
+
+}
+
+.meta{
+
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    font-size:13px;
+    font-weight:600;
+
+    color:#6b7280;
+
+    background:#f8fafc;
+
+    border:1px solid #eef2f7;
+
+    padding:8px 12px;
+
+    border-radius:30px;
+
+}
+
+.course-footer{
+
+    margin-top:auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:15px;
+
+}
+
+.level{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    background:#eef2ff;
+
+    color:#4f46e5;
+
+    padding:8px 14px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+.start-btn{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    text-decoration:none;
+
+    background:linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed);
+
+    color:white;
+
+    padding:13px 22px;
+
+    border-radius:14px;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.start-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 12px 25px rgba(79,70,229,.30);
+
+}
+
+/*=========================
+EMPTY
+=========================*/
+
+.empty{
+
+    grid-column:1/-1;
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:80px 20px;
+
+    text-align:center;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.05);
+
+}
+
+.empty h2{
+
+    margin:18px 0 10px;
+
+    font-size:32px;
+
+}
+
+.empty p{
+
+    color:#6b7280;
+
+    font-size:15px;
+
+}
+
+/*=========================
+TABLET
+=========================*/
+
+@media(max-width:1100px){
+
+.hero{
+
+padding:55px 40px;
+
+}
+
+.hero h1{
+
+font-size:42px;
+
+}
+
+.course-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+/*=========================
+MOBILE
+=========================*/
+
+@media(max-width:768px){
+
+.nav{
+
+padding:15px;
+
+}
+
+.logo h2{
+
+font-size:22px;
+
+}
+
+.hero{
+
+width:calc(100% - 24px);
+
+padding:35px 24px;
+
+margin:18px auto;
+
+border-radius:24px;
+
+}
+
+.hero h1{
+
+font-size:32px;
+
+line-height:1.3;
+
+}
+
+.hero p{
+
+font-size:15px;
+
+}
+
+.stats{
+
+gap:14px;
+
+}
+
+.stat{
+
+flex:1;
+
+min-width:130px;
+
+}
+
+.section{
+
+margin:35px auto;
+
+}
+
+.section-top{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+.section-top h2{
+
+font-size:28px;
+
+}
+
+.course-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.thumb{
+
+height:210px;
+
+}
+
+.search-box{
+
+padding:15px 18px;
+
+}
+
+}
+
+/*=========================
+SMALL MOBILE
+=========================*/
+
+@media(max-width:420px){
+
+.hero{
+
+padding:28px 18px;
+
+}
+
+.hero h1{
+
+font-size:28px;
+
+}
+
+.stat h3{
+
+font-size:22px;
+
+}
+
+.back-btn{
+
+padding:10px 14px;
+
+font-size:14px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="nav">
+
+<a href="/dashboard" class="logo">
+
+<img src="{{ url_for('static', filename='images/logo.png') }}">
+
+<h2>StudyHub</h2>
+
+</a>
+
+<div class="nav-right">
+
+<a href="/courses" class="back-btn">
+← Back
+</a>
+
+</div>
+
+</div>
+
+</header>
+
+<section class="hero">
+
+<div class="hero-content">
+
+<div class="hero-badge">
+🚀 Premium Learning Experience
+</div>
+
+<h1>
+{{ category.name }}
+</h1>
+
+<p>
+
+Choose your favourite course and start learning with
+high-quality video lectures, notes, and structured roadmaps.
+
+</p>
+
+<div class="stats">
+
+<div class="stat">
+
+<h3>{{ courses|length }}</h3>
+
+<p>Courses</p>
+
+</div>
+
+<div class="stat">
+
+<h3>100%</h3>
+
+<p>Practical Learning</p>
+
+</div>
+
+<div class="stat">
+
+<h3>24×7</h3>
+
+<p>Access</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="search-section">
+
+<div class="search-box">
+
+<div class="search-icon">🔍</div>
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search courses...">
+
+</div>
+
+</section>
+
+<section class="section">
+
+<div class="section-top">
+
+<div>
+
+<h2>Available Courses</h2>
+
+<p>
+Start with the course that matches your learning goals.
+</p>
+
+</div>
+
+<div class="filters">
+
+<div class="filter">All</div>
+
+<div class="filter">Free</div>
+
+<div class="filter">Premium</div>
+
+<div class="filter">Beginner</div>
+
+</div>
+
+</div>
+
+<div class="course-grid" id="courseGrid">
+
+{% for course in courses %}
+
+<div class="course-card">
+
+<div class="thumb">
+
+{% if course.thumbnail %}
+
+<img
+src="{{ url_for('static', filename='uploads/course_thumbnails/' + course.thumbnail) }}"
+alt="{{ course.title }}">
+
+{% else %}
+
+<img
+src="{{ url_for('static', filename='images/default-course.jpg') }}"
+alt="{{ course.title }}">
+
+{% endif %}
+
+{% if course.is_free %}
+
+<div class="price-tag price-free">
+FREE
+</div>
+
+{% else %}
+
+<div class="price-tag price-paid">
+₹ {{ course.price }}
+</div>
+
+{% endif %}
+
+</div>
+
+<div class="card-body">
+
+<h3>{{ course.title }}</h3>
+
+<p>{{ course.description }}</p>
+
+<div class="course-meta">
+
+<div class="meta">📺 Videos</div>
+
+<div class="meta">📄 Notes</div>
+
+<div class="meta">🎓 Certificate</div>
+
+</div>
+
+<div class="course-footer">
+
+    <div class="level">
+
+        {% if course.is_free %}
+            Beginner
+        {% else %}
+            Premium
+        {% endif %}
+
+    </div>
+
+    <a
+    href="/course/{{ course.id }}"
+    class="start-btn">
+
+        Start Learning →
+
+    </a>
+
+</div>
+
+</div>
+
+</div>
+
+{% else %}
+
+<div class="empty">
+
+    <div style="font-size:70px;">📚</div>
+
+    <h2>No Courses Available</h2>
+
+    <p>
+        Courses for this category will be added soon.
+    </p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</section>
+
+<script>
+
+const searchInput = document.getElementById("searchInput");
+
+searchInput.addEventListener("keyup", function(){
+
+    const value = this.value.toLowerCase();
+
+    const cards = document.querySelectorAll(".course-card");
+
+    cards.forEach(card=>{
+
+        const title = card.querySelector("h3").innerText.toLowerCase();
+
+        const desc = card.querySelector("p").innerText.toLowerCase();
+
+        if(title.includes(value) || desc.includes(value)){
+
+            card.style.display="flex";
+
+        }else{
+
+            card.style.display="none";
+
+        }
+
+    });
+
+});
+
+const filters = document.querySelectorAll(".filter");
+
+filters.forEach(filter=>{
+
+    filter.addEventListener("click",function(){
+
+        filters.forEach(btn=>btn.style.background="white");
+        filters.forEach(btn=>btn.style.color="#111827");
+        filters.forEach(btn=>btn.style.borderColor="#e5e7eb");
+
+        this.style.background="#4f46e5";
+        this.style.color="white";
+        this.style.borderColor="#4f46e5";
+
+        const type=this.innerText.toLowerCase();
+
+        document.querySelectorAll(".course-card").forEach(card=>{
+
+            if(type==="all"){
+
+                card.style.display="flex";
+                return;
+
+            }
+
+            const badge=card.querySelector(".level").innerText.toLowerCase();
+
+            if(type==="free"){
+
+                if(badge.includes("beginner")){
+
+                    card.style.display="flex";
+
+                }else{
+
+                    card.style.display="none";
+
+                }
+
+            }
+
+            else if(type==="premium"){
+
+                if(badge.includes("premium")){
+
+                    card.style.display="flex";
+
+                }else{
+
+                    card.style.display="none";
+
+                }
+
+            }
+
+            else{
+
+                if(badge.includes(type)){
+
+                    card.style.display="flex";
+
+                }else{
+
+                    card.style.display="none";
+
+                }
+
+            }
+
+        });
+
+    });
+
+});
+
+window.addEventListener("scroll",()=>{
+
+    document.querySelectorAll(".course-card").forEach(card=>{
+
+        const rect=card.getBoundingClientRect();
+
+        if(rect.top<window.innerHeight-80){
+
+            card.style.opacity="1";
+            card.style.transform="translateY(0)";
+
+        }
+
+    });
+
+});
+
+document.querySelectorAll(".course-card").forEach(card=>{
+
+    card.style.opacity="0";
+    card.style.transform="translateY(40px)";
+    card.style.transition="0.6s ease";
+
+});
+
+</script>
+
+</body>
+</html>

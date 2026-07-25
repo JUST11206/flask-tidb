@@ -301,6 +301,49 @@ body{
 
         </div>
 
+<div class="card">
+
+    <div class="icon">🎓</div>
+
+    <h3>Manage Courses</h3>
+
+    <p>
+        Add, edit and manage paid/free courses.
+    </p>
+
+    <div class="btn-group">
+
+        <a href="{{ url_for('add_course') }}" class="btn btn-green">
+            ➕ Add Course
+        </a>
+
+        <a href="{{ url_for('manage_courses') }}" class="btn btn-purple">
+            ⚙ Manage
+        </a>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <div class="icon">💳</div>
+
+    <h3>Manage Payments</h3>
+
+    <p>
+        Approve or reject course payment requests.
+    </p>
+
+    <div class="btn-group">
+
+        <a href="{{ url_for('manage_payments') }}" class="btn btn-blue">
+            💰 Manage Payments
+        </a>
+
+    </div>
+
+</div>
 
     </div>
 

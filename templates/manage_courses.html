@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Manage Courses • StudyHub</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+:root{
+
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+
+    --success:#16a34a;
+    --success-bg:#dcfce7;
+
+    --danger:#dc2626;
+    --danger-bg:#fee2e2;
+
+    --background:#f8fafc;
+    --border:#e2e8f0;
+    --text:#0f172a;
+    --muted:#64748b;
+
+}
+
+body{
+
+    background:var(--background);
+
+}
+
+.container{
+
+    max-width:1200px;
+
+    margin:auto;
+
+    padding:40px 25px;
+
+}
+
+.header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.header h1{
+
+    font-size:30px;
+
+}
+
+.header p{
+
+    margin-top:6px;
+
+    color:var(--muted);
+
+}
+
+.add-btn{
+
+    padding:12px 18px;
+
+    border-radius:10px;
+
+    background:var(--primary);
+
+    color:white;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+}
+
+.grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:22px;
+
+}
+
+.card{
+
+    overflow:hidden;
+
+    background:white;
+
+    border-radius:18px;
+
+    border:1px solid var(--border);
+
+    box-shadow:0 5px 20px rgba(15,23,42,.05);
+
+}
+
+.card img{
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    object-fit:cover;
+
+}
+
+.content{
+
+    padding:18px;
+
+}
+
+.badge{
+
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    margin-bottom:12px;
+
+}
+
+.free{
+
+    background:var(--success-bg);
+
+    color:var(--success);
+
+}
+
+.paid{
+
+    background:var(--danger-bg);
+
+    color:var(--danger);
+
+}
+
+.content h3{
+
+    margin-bottom:10px;
+
+}
+
+.price{
+
+    margin-bottom:18px;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    color:var(--primary);
+
+}
+
+.actions{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.edit-btn,
+.delete-btn{
+
+    flex:1;
+
+    padding:11px;
+
+    border:none;
+
+    border-radius:8px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+.edit-btn{
+
+    background:#eef2ff;
+
+    color:var(--primary);
+
+    text-decoration:none;
+
+    text-align:center;
+
+}
+
+.delete-btn{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+}
+
+.empty{
+
+    grid-column:1/-1;
+
+    text-align:center;
+
+    background:white;
+
+    padding:60px;
+
+    border-radius:18px;
+
+}
+
+.back{
+
+    display:block;
+
+    margin-top:35px;
+
+    text-align:center;
+
+    color:#64748b;
+
+    text-decoration:none;
+
+}
+
+@media(max-width:900px){
+
+.grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:650px){
+
+.grid{
+
+grid-template-columns:1fr;
+
+}
+
+.header{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+gap:15px;
+
+}
+
+.add-btn{
+
+width:100%;
+
+text-align:center;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<div>
+
+<h1>📚 Manage Courses</h1>
+
+<p>Create premium and free StudyHub courses.</p>
+
+</div>
+
+<a
+href="/add_course"
+class="add-btn">
+
++ Add Course
+
+</a>
+
+</div>
+
+<div class="grid">
+
+{% for course in courses %}
+
+<div class="card">
+
+{% if course.thumbnail %}
+
+<img
+src="{{ url_for('static', filename='uploads/course_thumbnails/' + course.thumbnail) }}">
+
+{% endif %}
+
+<div class="content">
+
+{% if course.is_free %}
+
+<span class="badge free">
+
+FREE
+
+</span>
+
+{% else %}
+
+<span class="badge paid">
+
+PREMIUM
+
+</span>
+
+{% endif %}
+
+<h3>
+
+{{ course.title }}
+
+</h3>
+
+<div class="price">
+
+₹ {{ course.price }}
+
+</div>
+
+<div class="actions">
+
+<a
+href="/edit_course/{{ course.id }}"
+class="edit-btn">
+
+✏ Edit
+
+</a>
+
+<form
+method="POST"
+action="/delete_course/{{ course.id }}"
+style="flex:1;">
+
+<button
+class="delete-btn"
+onclick="return confirm('Delete this course?')">
+
+🗑 Delete
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+{% else %}
+
+<div class="empty">
+
+<h2>
+
+No Courses Found 📚
+
+</h2>
+
+<p>
+
+Create your first course.
+
+</p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<a
+href="/admin"
+class="back">
+
+← Back to Admin Dashboard
+
+</a>
+
+</div>
+
+</body>
+
+</html>

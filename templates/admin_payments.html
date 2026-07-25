@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pending Payments</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+
+    background:#f5f7fb;
+    padding:40px;
+
+}
+
+.container{
+
+    max-width:1200px;
+    margin:auto;
+
+}
+
+h1{
+
+    text-align:center;
+    margin-bottom:30px;
+    color:#333;
+
+}
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+th{
+
+    background:#4f46e5;
+    color:#fff;
+    padding:15px;
+    text-align:center;
+
+}
+
+td{
+
+    padding:15px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+
+}
+
+tr:hover{
+
+    background:#f8f8f8;
+
+}
+
+.amount{
+
+    color:#16a34a;
+    font-weight:bold;
+
+}
+
+.view-btn{
+
+    display:inline-block;
+    padding:8px 15px;
+    text-decoration:none;
+    background:#2563eb;
+    color:white;
+    border-radius:6px;
+
+}
+
+.view-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+.approve-btn{
+
+    display:inline-block;
+    padding:10px 18px;
+    background:#16a34a;
+    color:#fff;
+    text-decoration:none;
+    border-radius:6px;
+    font-weight:bold;
+
+}
+
+.approve-btn:hover{
+
+    background:#15803d;
+
+}
+
+.no-data{
+
+    text-align:center;
+    background:white;
+    padding:40px;
+    border-radius:12px;
+
+}
+.reject-btn{
+
+display:inline-block;
+
+padding:10px 18px;
+
+background:#dc2626;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:6px;
+
+margin-left:8px;
+
+font-weight:bold;
+
+}
+
+.reject-btn:hover{
+
+background:#b91c1c;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💳 Pending Payment Requests</h1>
+
+{% if payments %}
+
+<table>
+
+<tr>
+
+<th>ID</th>
+<th>User</th>
+<th>Course</th>
+<th>Amount</th>
+<th>Screenshot</th>
+<th>Action</th>
+
+</tr>
+
+{% for p in payments %}
+
+<tr>
+
+<td>{{ p.id }}</td>
+
+<td>{{ p.username }}</td>
+
+<td>{{ p.title }}</td>
+
+<td class="amount">
+₹{{ p.amount }}
+</td>
+
+<td>
+
+<a
+class="view-btn"
+target="_blank"
+href="{{ url_for('static', filename='uploads/payments/' + p.screenshot) }}">
+
+View Screenshot
+
+</a>
+
+</td>
+<td>
+
+<a
+class="approve-btn"
+href="{{ url_for('approve_payment', id=p.id) }}">
+
+Approve
+
+</a>
+
+<a
+class="reject-btn"
+href="{{ url_for('reject_payment', id=p.id) }}">
+
+Reject
+
+</a>
+
+</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% else %}
+
+<div class="no-data">
+
+<h2>✅ No Pending Payments</h2>
+
+<p>All payment requests have been reviewed.</p>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+
+</html>

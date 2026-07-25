@@ -1,5 +1,5 @@
 #pip install sqlalchemy pymysql cryptography
-from flask import Flask, render_template, request, redirect, session, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, session, flash, send_from_directory ,url_for
 from sqlalchemy import create_engine, text
 from datetime import timedelta
 import os
@@ -134,9 +134,9 @@ def verify_otp():
 
                 # Auto login after verification
                 session.permanent = True
-                
                 session["user"] = session["username"]
                 session["email"] = session["email"]
+
 
                 # Remove OTP from session
                 session.pop("otp", None)
@@ -196,7 +196,8 @@ def login():
         if user:
 
             session.permanent = True
-
+            
+            session["user_id"] = user._mapping["id"]
             session["user"] = user.username
             session["email"] = user.email
 
@@ -210,7 +211,6 @@ def login():
         return redirect("/login")
 
     return render_template("login.html")
-
 @app.route("/dashboard")
 def dashboard():
 
@@ -220,9 +220,14 @@ def dashboard():
     popular_notes = []
     recent_notes = []
 
+    courses_count = 0
+    notes_count = 0
+    lectures_count = 0
+
     try:
         with engine.connect() as conn:
 
+            # Popular notes
             popular_notes = conn.execute(
                 text("""
                 SELECT *
@@ -232,6 +237,8 @@ def dashboard():
                 """)
             ).fetchall()
 
+
+            # Recent notes
             recent_notes = conn.execute(
                 text("""
                 SELECT *
@@ -241,14 +248,45 @@ def dashboard():
                 """)
             ).fetchall()
 
+
+            # Dashboard statistics
+            courses_count = conn.execute(
+                text("""
+                SELECT COUNT(*) 
+                FROM courses
+                """)
+            ).scalar()
+
+
+            notes_count = conn.execute(
+                text("""
+                SELECT COUNT(*) 
+                FROM notes
+                """)
+            ).scalar()
+
+
+            lectures_count = conn.execute(
+                text("""
+                SELECT COUNT(*) 
+                FROM lectures
+                """)
+            ).scalar()
+
+
     except Exception as e:
         print("Dashboard Offline:", e)
+
 
     return render_template(
         "dashboard.html",
         username=session["user"],
         popular_notes=popular_notes,
-        recent_notes=recent_notes
+        recent_notes=recent_notes,
+        total_courses=courses_count,
+        total_notes=notes_count,
+        total_lectures=lectures_count,
+        completed_courses=0
     )
 #This is 10 june 2026 
 
@@ -529,59 +567,585 @@ def admin_logout():
 
     return redirect("/")
 
-@app.route("/add_lecture", methods=["GET", "POST"])
+@app.route("/admin/payments")
 @admin_required
-def add_lecture():
+def admin_payments():
 
+    with engine.connect() as conn:
+
+        payments = conn.execute(text("""
+
+        SELECT
+        payment_requests.*,
+        users.username,
+        courses.title
+
+        FROM payment_requests
+
+        JOIN users
+        ON payment_requests.user_id=users.id
+
+        JOIN courses
+        ON payment_requests.course_id=courses.id
+
+        WHERE payment_requests.status='Pending'
+
+        ORDER BY payment_requests.id DESC
+
+        """)).fetchall()
+
+    return render_template(
+        "admin_payments.html",
+        payments=payments
+    )
+
+@app.route("/my-payments")
+def my_payments():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    with engine.connect() as conn:
+
+        payments = conn.execute(
+            text("""
+                SELECT
+                payment_requests.*,
+                courses.title
+
+                FROM payment_requests
+
+                JOIN courses
+                ON payment_requests.course_id = courses.id
+
+                WHERE payment_requests.user_id=:user
+
+                ORDER BY payment_requests.id DESC
+            """),
+            {
+                "user": session["user_id"]
+            }
+        ).fetchall()
+
+    return render_template(
+        "my_payments.html",
+        payments=payments
+    )
+
+@app.route("/add_course", methods=["GET", "POST"])
+@admin_required
+def add_course():
+
+    if request.method == "POST":
+
+        title = request.form["title"]
+        description = request.form["description"]
+        price = request.form["price"]
+        category_id = request.form["category_id"]
+
+        is_free = 1 if request.form.get("is_free") else 0
+
+        thumbnail = None
+
+        image = request.files.get("thumbnail")
+
+        if image and image.filename:
+
+            filename = secure_filename(image.filename)
+
+            folder = "static/uploads/course_thumbnails"
+
+            os.makedirs(folder, exist_ok=True)
+
+            image.save(os.path.join(folder, filename))
+
+            thumbnail = filename
+
+        with engine.connect() as conn:
+
+            conn.execute(
+                text("""
+                    INSERT INTO courses
+                    (
+                        title,
+                        description,
+                        thumbnail,
+                        price,
+                        is_free,
+                        category_id
+                    )
+                    VALUES
+                    (
+                        :title,
+                        :description,
+                        :thumbnail,
+                        :price,
+                        :is_free,
+                        :category_id
+                    )
+                """),
+                {
+                    "title": title,
+                    "description": description,
+                    "thumbnail": thumbnail,
+                    "price": price,
+                    "is_free": is_free,
+                    "category_id": category_id
+                }
+            )
+
+            conn.commit()
+
+        flash("Course Added Successfully!", "success")
+
+        return redirect("/manage_courses")
     with engine.connect() as conn:
 
         categories = conn.execute(
             text("""
                 SELECT *
                 FROM categories
-                ORDER BY id ASC
+                ORDER BY name
             """)
         ).fetchall()
 
+    return render_template(
+        "add_course.html",
+        categories=categories
+    )
+
+@app.route("/course/<int:id>")
+def course(id):
+
+    if "user" not in session:
+        return redirect("/login")
+
+
+    with engine.connect() as conn:
+
+        # Get Course
+        course = conn.execute(
+            text("""
+                SELECT *
+                FROM courses
+                WHERE id=:id
+            """),
+            {
+                "id": id
+            }
+        ).fetchone()
+
+
+        if not course:
+            return "Course not found",404
+
+
+        # Get Lectures
+        lectures = conn.execute(
+            text("""
+                SELECT *
+                FROM lectures
+                WHERE course_id=:id
+                ORDER BY id
+            """),
+            {
+                "id": id
+            }
+        ).fetchall()
+
+
+        # Get Category
+        category = conn.execute(
+            text("""
+                SELECT *
+                FROM categories
+                WHERE id=:category_id
+            """),
+            {
+                "category_id": course.category_id
+            }
+        ).fetchone()
+
+
+
+        # Check Course Purchase
+        purchased = False
+
+
+        if "user_id" in session:
+
+            purchase = conn.execute(
+                text("""
+                    SELECT id
+                    FROM purchased_courses
+                    WHERE user_id=:user
+                    AND course_id=:course
+                """),
+                {
+                    "user": session["user_id"],
+                    "course": id
+                }
+            ).fetchone()
+
+
+            if purchase:
+                purchased = True
+
+
+
+    return render_template(
+        "course_detail.html",
+        course=course,
+        lectures=lectures,
+        category=category,
+        purchased=purchased
+    )
+
+@app.route("/manage_courses")
+@admin_required
+def manage_courses():
+
+    with engine.connect() as conn:
+
+        courses = conn.execute(
+            text("""
+                SELECT *
+                FROM courses
+                ORDER BY id DESC
+            """)
+        ).fetchall()
+
+    return render_template(
+        "manage_courses.html",
+        courses=courses
+    )
+
+@app.route("/delete_course/<int:id>", methods=["POST"])
+@admin_required
+def delete_course(id):
+
+    with engine.connect() as conn:
+
+        conn.execute(
+            text("""
+                DELETE FROM courses
+                WHERE id=:id
+            """),
+            {
+                "id": id
+            }
+        )
+
+        conn.commit()
+
+    flash(
+        "Course deleted successfully!",
+        "success"
+    )
+
+    return redirect("/manage_courses")
+
+@app.route("/edit_course/<int:id>", methods=["GET", "POST"])
+@admin_required
+def edit_course(id):
 
     if request.method == "POST":
 
         title = request.form["title"]
-        youtube_url = request.form["youtube_url"]
+        description = request.form["description"]
+        price = request.form["price"]
+
+        is_free = 1 if request.form.get("is_free") else 0
+
+        with engine.connect() as conn:
+
+            conn.execute(
+                text("""
+                    UPDATE courses
+
+                    SET
+                        title=:title,
+                        description=:description,
+                        price=:price,
+                        is_free=:is_free
+
+                    WHERE id=:id
+                """),
+                {
+                    "title": title,
+                    "description": description,
+                    "price": price,
+                    "is_free": is_free,
+                    "id": id
+                }
+            )
+
+            conn.commit()
+
+        flash(
+            "Course updated successfully!",
+            "success"
+        )
+
+        return redirect("/manage_courses")
+
+
+    with engine.connect() as conn:
+
+        course = conn.execute(
+            text("""
+                SELECT *
+                FROM courses
+                WHERE id=:id
+            """),
+            {
+                "id": id
+            }
+        ).fetchone()
+
+
+    if not course:
+
+        return "Course not found",404
+
+
+    return render_template(
+        "edit_course.html",
+        course=course
+    )
+
+@app.route("/courses/<slug>")
+def category_courses(slug):
+
+    with engine.connect() as conn:
+
+        category = conn.execute(
+            text("""
+                SELECT *
+                FROM categories
+                WHERE slug=:slug
+            """),
+            {"slug": slug}
+        ).fetchone()
+
+        if not category:
+            return "Category not found",404
+
+        courses = conn.execute(
+            text("""
+                SELECT *
+                FROM courses
+                WHERE category_id=:category_id
+                ORDER BY id ASC
+            """),
+            {"category_id": category.id}
+        ).fetchall()
+
+    return render_template(
+        "courses.html",
+        category=category,
+        courses=courses
+    )
+
+@app.route("/watch/<int:id>")
+def watch(id):
+
+    if "user" not in session:
+        return redirect("/login")
+
+    with engine.connect() as conn:
+
+        # Get Lecture
+        lecture = conn.execute(
+            text("""
+                SELECT *
+                FROM lectures
+                WHERE id=:id
+            """),
+            {"id": id}
+        ).fetchone()
+
+        if not lecture:
+            return "Lecture Not Found",404
+
+        # Get Course
+        course = conn.execute(
+            text("""
+                SELECT *
+                FROM courses
+                WHERE id=:course
+            """),
+            {"course": lecture.course_id}
+        ).fetchone()
+
+        if not course:
+            return "Course Not Found",404
+
+        # FREE COURSE
+        # FREE COURSE OR FREE LECTURE
+        if course.is_free == 1 or lecture.is_free == 1:
+
+            return render_template(
+                "watch.html",
+                lecture=lecture,
+                course=course
+            )
+        # Check Purchase
+        purchase = conn.execute(
+            text("""
+                SELECT id
+                FROM purchased_courses
+                WHERE
+                    user_id=:user
+                AND
+                    course_id=:course
+            """),
+            {
+                "user": session["user_id"],
+                "course": course.id
+            }
+        ).fetchone()
+
+    if not purchase:
+
+        flash(
+            "Purchase this course first.",
+            "warning"
+        )
+
+        return redirect(url_for(
+    "buy_course",
+    id=course.id
+))
+
+    return render_template(
+        "watch.html",
+        lecture=lecture,
+        course=course
+    )
+
+@app.route("/add_lecture", methods=["GET", "POST"])
+@admin_required
+def add_lecture():
+
+    with engine.connect() as conn:
+
+        with engine.connect() as conn:
+
+
+
+            categories = conn.execute(
+                text("""
+                    SELECT *
+                    FROM categories
+                    ORDER BY name
+                """)
+            ).fetchall()
+
+            courses = conn.execute(
+                text("""
+                    SELECT
+                        id,
+                        title
+                    FROM courses
+                    ORDER BY title
+                """)
+            ).fetchall()
+            
+    if request.method == "POST":
+
+        title = request.form["title"]
+        description = request.form.get("description")
         category_id = request.form["category_id"]
+        course_id = request.form["course_id"]
 
+        video_type = request.form["video_type"]
 
-        # ================= YOUTUBE URL CONVERT =================
+        is_free = 1 if request.form.get("is_free") else 0
+        is_locked = 1 if request.form.get("is_locked") else 0
 
-        if "watch?v=" in youtube_url:
+        price = request.form.get("price") or 0
+        duration = request.form.get("duration")
 
-            video_id = (
-                youtube_url
-                .split("watch?v=")[1]
-                .split("&")[0]
+        youtube_url = None
+        video_file = None
+        thumbnail = None
+
+        # --------------------------
+        # YouTube Video
+        # --------------------------
+
+        if video_type == "youtube":
+
+            youtube_url = request.form.get("youtube_url")
+
+            if youtube_url:
+
+                if "watch?v=" in youtube_url:
+
+                    video_id = youtube_url.split("watch?v=")[1].split("&")[0]
+
+                    youtube_url = (
+                        "https://www.youtube.com/embed/" + video_id
+                    )
+
+                elif "youtu.be/" in youtube_url:
+
+                    video_id = youtube_url.split("youtu.be/")[1].split("?")[0]
+
+                    youtube_url = (
+                        "https://www.youtube.com/embed/" + video_id
+                    )
+
+        # --------------------------
+        # Upload MP4
+        # --------------------------
+
+        else:
+            video = request.files.get("video_file")
+
+            if video and video.filename:
+
+                filename = secure_filename(video.filename)
+
+                video_folder = "static/uploads/videos"
+
+                os.makedirs(video_folder, exist_ok=True)
+
+                video.save(
+                    os.path.join(
+                        video_folder,
+                        filename
+                    )
+                )
+
+                video_file = filename
+        # --------------------------
+        # Thumbnail
+        # --------------------------
+
+        thumb = request.files.get("thumbnail")
+
+        if thumb and thumb.filename:
+
+            thumb_name = secure_filename(thumb.filename)
+
+            thumb_folder = "static/uploads/thumbnails"
+
+            os.makedirs(thumb_folder, exist_ok=True)
+
+            thumb.save(
+                os.path.join(
+                    thumb_folder,
+                    thumb_name
+                )
             )
 
-            youtube_url = (
-                "https://www.youtube.com/embed/"
-                + video_id
-            )
+            thumbnail = thumb_name
 
-
-        elif "youtu.be/" in youtube_url:
-
-            video_id = (
-                youtube_url
-                .split("youtu.be/")[1]
-                .split("?")[0]
-            )
-
-            youtube_url = (
-                "https://www.youtube.com/embed/"
-                + video_id
-            )
-
-
-        # ================= INSERT LECTURE =================
+        # --------------------------
+        # Insert
+        # --------------------------
 
         with engine.connect() as conn:
 
@@ -590,26 +1154,52 @@ def add_lecture():
                     INSERT INTO lectures
                     (
                         title,
+                        description,
                         youtube_url,
-                        category_id
+                        video_type,
+                        video_file,
+                        thumbnail,
+                        category_id,
+                        course_id,
+                        is_free,
+                        is_locked,
+                        price,
+                        duration
                     )
 
                     VALUES
                     (
                         :title,
+                        :description,
                         :youtube_url,
-                        :category_id
+                        :video_type,
+                        :video_file,
+                        :thumbnail,
+                        :category_id,
+                        :course_id,
+                        :is_free,
+                        :is_locked,
+                        :price,
+                        :duration
                     )
                 """),
                 {
                     "title": title,
+                    "description": description,
                     "youtube_url": youtube_url,
-                    "category_id": category_id
+                    "video_type": video_type,
+                    "video_file": video_file,
+                    "thumbnail": thumbnail,
+                    "category_id": category_id,
+                    "course_id": course_id,
+                    "is_free": is_free,
+                    "is_locked": is_locked,
+                    "price": price,
+                    "duration": duration
                 }
             )
 
             conn.commit()
-
 
         flash(
             "Lecture added successfully!",
@@ -618,10 +1208,10 @@ def add_lecture():
 
         return redirect("/manage_lectures")
 
-
     return render_template(
         "add_lecture.html",
-        categories=categories
+        categories=categories,
+        courses=courses
     )
 
 @app.route("/manage_lectures")
@@ -635,8 +1225,17 @@ def manage_lectures():
                 SELECT
                     lectures.id,
                     lectures.title,
+                    lectures.description,
                     lectures.youtube_url,
+                    lectures.video_type,
+                    lectures.video_file,
+                    lectures.thumbnail,
+                    lectures.duration,
+                    lectures.price,
+                    lectures.is_free,
+                    lectures.is_locked,
                     lectures.category_id,
+
                     categories.name AS category_name,
                     categories.icon AS category_icon
 
@@ -653,7 +1252,6 @@ def manage_lectures():
         "manage_lectures.html",
         lectures=lectures
     )
-
 
 @app.route("/delete_lecture/<int:id>", methods=["POST"])
 @admin_required
@@ -684,6 +1282,7 @@ def edit_lecture(id):
         title = request.form["title"]
         youtube_url = request.form["youtube_url"]
         category_id = request.form["category_id"]
+        course_id = request.form["course_id"]
 
         # YouTube normal URL → embed URL
         if "watch?v=" in youtube_url:
@@ -712,7 +1311,8 @@ def edit_lecture(id):
 
                     SET title = :title,
                         youtube_url = :youtube_url,
-                        category_id = :category_id
+                        category_id = :category_id,
+                        course_id = :course_id
 
                     WHERE id = :id
                 """),
@@ -720,6 +1320,7 @@ def edit_lecture(id):
                     "title": title,
                     "youtube_url": youtube_url,
                     "category_id": category_id,
+                    "course_id": course_id,
                     "id": id
                 }
             )
@@ -755,7 +1356,15 @@ def edit_lecture(id):
                 ORDER BY id ASC
             """)
         ).fetchall()
-
+        courses = conn.execute(
+    text("""
+        SELECT
+            id,
+            title
+        FROM courses
+        ORDER BY title
+    """)
+).fetchall()
 
     if not lecture:
         return "Lecture not found", 404
@@ -764,8 +1373,10 @@ def edit_lecture(id):
     return render_template(
         "edit_lecture.html",
         lecture=lecture,
-        categories=categories
+        categories=categories,
+        courses=courses
     )
+
 
 @app.route("/lectures")
 def lect():
@@ -820,17 +1431,31 @@ def category_lectures(slug):
 
 
         lectures = conn.execute(
-            text("""
-                SELECT *
-                FROM lectures
-                WHERE category_id = :category_id
-                ORDER BY id ASC
-            """),
-            {
-                "category_id": category.id
-            }
-        ).fetchall()
+    text("""
+        SELECT
+            id,
+            title,
+            description,
+            youtube_url,
+            video_type,
+            video_file,
+            thumbnail,
+            duration,
+            price,
+            is_free,
+            is_locked,
+            category_id
 
+        FROM lectures
+
+        WHERE category_id = :category_id
+
+        ORDER BY id ASC
+    """),
+    {
+        "category_id": category.id
+    }
+).fetchall()
 
     return render_template(
         "category_lectures.html",
@@ -1196,6 +1821,266 @@ def downloads():
         "downloads.html",
         username=session["user"]
     )
+
+@app.route("/buy/<int:id>")
+def buy_course(id):
+
+    if "user" not in session:
+        return redirect("/login")
+
+    with engine.connect() as conn:
+
+        course=conn.execute(
+            text("""
+            SELECT *
+            FROM courses
+            WHERE id=:id
+            """),
+            {"id":id}
+        ).fetchone()
+
+    if not course:
+        return "Course Not Found",404
+
+    return render_template(
+        "payment.html",
+        course=course
+    )
+
+@app.route("/upload_payment",methods=["POST"])
+def upload_payment():
+
+    if "user" not in session:
+        return redirect("/login")
+
+    course_id=request.form["course_id"]
+    amount=request.form["amount"]
+
+    image=request.files["payment_image"]
+
+    filename=secure_filename(image.filename)
+
+    os.makedirs(
+        "static/uploads/payments",
+        exist_ok=True
+    )
+
+    image.save(
+        os.path.join(
+            "static/uploads/payments",
+            filename
+        )
+    )
+
+    with engine.connect() as conn:
+
+        existing = conn.execute(
+            text("""
+                SELECT id
+                FROM payment_requests
+                WHERE user_id=:user
+                AND course_id=:course
+                AND status='Pending'
+            """),
+            {
+                "user": session["user_id"],
+                "course": course_id
+            }
+        ).fetchone()
+
+        if existing:
+
+            flash(
+                "You have already submitted payment for this course. Please wait for admin approval.",
+                "error"
+            )
+
+            return redirect(
+    url_for("buy_course", id=course_id)
+)
+
+        # Agar pending payment nahi hai tabhi insert hoga
+
+        conn.execute(
+            text("""
+                INSERT INTO payment_requests
+                (
+                    user_id,
+                    course_id,
+                    amount,
+                    screenshot,
+                    status
+                )
+                VALUES
+                (
+                    :user,
+                    :course,
+                    :amount,
+                    :image,
+                    'Pending'
+                )
+            """),
+            {
+                "user": session["user_id"],
+                "course": course_id,
+                "amount": amount,
+                "image": filename
+            }
+        )
+
+        conn.commit()    
+    flash(
+        "Payment submitted successfully. Wait for admin approval.",
+        "success"
+    )
+
+    return redirect(
+    url_for("buy_course", id=course_id)
+)
+
+@app.route("/manage_payments")
+@admin_required
+def manage_payments():
+
+    with engine.connect() as conn:
+
+        payments = conn.execute(
+            text("""
+                SELECT
+                    pr.*,
+                    users.username,
+                    courses.title AS course_name
+
+                FROM payment_requests pr
+
+                JOIN users
+                    ON pr.user_id = users.id
+
+                JOIN courses
+                    ON pr.course_id = courses.id
+
+                ORDER BY pr.created_at DESC
+            """)
+        ).fetchall()
+
+    return render_template(
+        "admin_payments.html",
+        payments=payments
+    )
+
+@app.route("/approve_payment/<int:id>")
+@admin_required
+def approve_payment(id):
+
+    with engine.connect() as conn:
+
+        # Get payment details
+        payment = conn.execute(
+            text("""
+                SELECT *
+                FROM payment_requests
+                WHERE id=:id
+            """),
+            {
+                "id": id
+            }
+        ).fetchone()
+
+
+        if not payment:
+            return "Payment Not Found", 404
+
+
+        # Update payment status
+        conn.execute(
+            text("""
+                UPDATE payment_requests
+                SET status='Approved'
+                WHERE id=:id
+            """),
+            {
+                "id": id
+            }
+        )
+
+
+        # Check if course already purchased
+        existing = conn.execute(
+            text("""
+                SELECT id
+                FROM purchased_courses
+                WHERE user_id=:user
+                AND course_id=:course
+            """),
+            {
+                "user": payment.user_id,
+                "course": payment.course_id
+            }
+        ).fetchone()
+
+
+        # Insert only if not already purchased
+        if not existing:
+
+            conn.execute(
+                text("""
+                    INSERT INTO purchased_courses
+                    (
+                        user_id,
+                        course_id,
+                        amount
+                    )
+
+                    VALUES
+                    (
+                        :user,
+                        :course,
+                        :amount
+                    )
+                """),
+                {
+                    "user": payment.user_id,
+                    "course": payment.course_id,
+                    "amount": payment.amount
+                }
+            )
+
+
+        conn.commit()
+
+
+    flash(
+        "Course Unlocked Successfully!",
+        "success"
+    )
+
+    return redirect("/manage_payments")
+
+@app.route("/reject_payment/<int:id>")
+@admin_required
+def reject_payment(id):
+
+    with engine.connect() as conn:
+
+        conn.execute(
+            text("""
+                UPDATE payment_requests
+
+                SET status='Rejected'
+
+                WHERE id=:id
+            """),
+            {"id": id}
+        )
+
+        conn.commit()
+
+    flash(
+        "Payment Rejected!",
+        "warning"
+    )
+
+    return redirect("/manage_payments")
 
 if __name__ == "__main__":
     app.run(debug=True)

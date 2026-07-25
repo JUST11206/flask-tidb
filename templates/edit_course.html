@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Edit Course • StudyHub</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+:root{
+
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --background:#f8fafc;
+    --border:#e2e8f0;
+    --text:#0f172a;
+    --muted:#64748b;
+
+}
+
+body{
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:25px;
+
+    background:var(--background);
+
+}
+
+.form{
+
+    width:100%;
+    max-width:600px;
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:35px;
+
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+
+}
+
+h2{
+
+    text-align:center;
+
+    margin-bottom:8px;
+
+    color:var(--text);
+
+}
+
+.subtitle{
+
+    text-align:center;
+
+    color:var(--muted);
+
+    margin-bottom:30px;
+
+}
+
+label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+}
+
+input,
+textarea{
+
+    width:100%;
+
+    padding:13px;
+
+    margin-bottom:18px;
+
+    border:1px solid var(--border);
+
+    border-radius:10px;
+
+    font-size:15px;
+
+}
+
+textarea{
+
+    resize:vertical;
+
+    min-height:120px;
+
+}
+
+input[type=file]{
+
+    padding:10px;
+
+}
+
+.preview{
+
+    width:180px;
+
+    margin-bottom:20px;
+
+    border-radius:10px;
+
+    border:1px solid #ddd;
+
+}
+
+.check{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:20px;
+
+}
+
+.check input{
+
+    width:auto;
+
+    margin:0;
+
+}
+
+button{
+
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:var(--primary);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:var(--primary-dark);
+
+}
+
+.back{
+
+    display:block;
+
+    margin-top:18px;
+
+    text-align:center;
+
+    color:#64748b;
+
+    text-decoration:none;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="form">
+
+<h2>
+
+✏ Edit Course
+
+</h2>
+
+<p class="subtitle">
+
+Update your StudyHub course.
+
+</p>
+
+<form
+method="POST"
+enctype="multipart/form-data">
+
+<label>
+
+Course Title
+
+</label>
+
+<input
+type="text"
+name="title"
+value="{{ course.title }}"
+required>
+
+<label>
+
+Description
+
+</label>
+
+<textarea
+name="description">{{ course.description }}</textarea>
+
+{% if course.thumbnail %}
+
+<label>
+
+Current Thumbnail
+
+</label>
+
+<img
+src="{{ url_for('static', filename='uploads/course_thumbnails/' + course.thumbnail) }}"
+class="preview">
+
+{% endif %}
+
+<label>
+
+Change Thumbnail
+
+</label>
+
+<input
+type="file"
+name="thumbnail"
+accept="image/*">
+
+<label>
+
+Price (₹)
+
+</label>
+
+<input
+type="number"
+name="price"
+value="{{ course.price }}">
+
+<div class="check">
+
+<input
+type="checkbox"
+name="is_free"
+
+{% if course.is_free %}
+
+checked
+
+{% endif %}>
+
+<label>
+
+Free Course
+
+</label>
+
+</div>
+
+<button type="submit">
+
+💾 Update Course
+
+</button>
+
+</form>
+
+<a
+href="/manage_courses"
+class="back">
+
+← Back to Courses
+
+</a>
+
+</div>
+
+</body>
+
+</html>

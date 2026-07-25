@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Buy Course • StudyHub</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/payment.css') }}">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+:root{
+
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --bg:#f8fafc;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --border:#e2e8f0;
+
+}
+
+body{
+
+    background:var(--bg);
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:30px;
+
+}
+
+.container{
+
+    width:100%;
+
+    max-width:700px;
+
+}
+
+.payment-card{
+
+    background:var(--card);
+
+    border-radius:22px;
+
+    padding:35px;
+
+    text-align:center;
+
+    box-shadow:
+    0 15px 45px rgba(15,23,42,.10);
+
+}
+
+.payment-card h2{
+
+    color:var(--primary);
+
+    margin-bottom:10px;
+
+    font-size:32px;
+
+}
+
+.payment-card h4{
+
+    margin-bottom:15px;
+
+    font-size:24px;
+
+    color:var(--text);
+
+}
+
+.payment-card p{
+
+    color:var(--muted);
+
+    line-height:1.7;
+
+}
+
+.payment-amount{
+
+    margin:30px 0;
+
+    color:#16a34a;
+
+    font-size:45px;
+
+}
+
+#qrcode{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin:25px 0;
+
+}
+
+#qrcode img{
+
+    padding:12px;
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:15px;
+
+}
+
+.upi-box{
+
+    margin:20px 0;
+
+    padding:18px;
+
+    background:#eef2ff;
+
+    border-radius:15px;
+
+}
+
+.upi-box h5{
+
+    color:var(--primary);
+
+    margin-bottom:8px;
+
+}
+
+.upi-id{
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    color:#111827;
+
+}
+
+hr{
+
+    margin:30px 0;
+
+    border:none;
+
+    border-top:1px solid var(--border);
+
+}
+
+.upload-box{
+
+    text-align:left;
+
+    margin-bottom:20px;
+
+}
+
+.upload-box label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:bold;
+
+    color:var(--text);
+
+}
+
+.form-control{
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid var(--border);
+
+    border-radius:10px;
+
+    background:white;
+
+}
+
+.payment-btn{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:var(--primary);
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.payment-btn:hover{
+
+    background:var(--primary-dark);
+
+    transform:translateY(-2px);
+
+}
+
+.payment-note{
+
+    margin-top:30px;
+
+    padding:20px;
+
+    background:#f8fafc;
+
+    border:1px solid var(--border);
+
+    border-radius:15px;
+
+    text-align:left;
+
+}
+
+.payment-note h5{
+
+    margin-bottom:12px;
+
+    color:var(--primary);
+
+}
+
+.payment-note ul{
+
+    padding-left:20px;
+
+}
+
+.payment-note li{
+
+    margin-bottom:10px;
+
+    color:var(--muted);
+
+}
+
+@media(max-width:768px){
+
+    body{
+
+        padding:15px;
+
+    }
+
+    .payment-card{
+
+        padding:25px;
+
+    }
+
+    .payment-card h2{
+
+        font-size:28px;
+
+    }
+
+    .payment-card h4{
+
+        font-size:22px;
+
+    }
+
+    .payment-amount{
+
+        font-size:38px;
+
+    }
+
+    #qrcode canvas,
+    #qrcode img{
+
+        width:230px !important;
+
+        height:230px !important;
+
+    }
+
+}
+.flash{
+
+padding:15px;
+
+border-radius:10px;
+
+margin-bottom:20px;
+
+font-weight:bold;
+
+text-align:center;
+
+}
+
+.flash.success{
+
+background:#dcfce7;
+
+color:#166534;
+
+border:1px solid #86efac;
+
+}
+
+.flash.error{
+
+background:#fee2e2;
+
+color:#991b1b;
+
+border:1px solid #fca5a5;
+
+}
+</style>
+
+</head>
+<body>
+
+<!-- Your payment page -->
+
+<section class="container py-5">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-6">
+
+<div class="payment-card">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+
+{% for category, message in messages %}
+
+<div class="flash {{ category }}">
+{{ message }}
+</div>
+
+{% endfor %}
+
+{% endif %}
+{% endwith %}
+
+<h2>
+💳 Buy Course
+</h2>
+
+<h4>
+{{ course.title }}
+</h4>
+
+<p>
+
+{{ course.description }}
+
+</p>
+
+<h1 class="payment-amount">
+
+₹{{ course.price }}
+
+</h1>
+
+<div id="qrcode"></div>
+
+<div class="upi-box">
+
+<h5>
+
+UPI ID
+
+</h5>
+
+<p class="upi-id">
+
+7983813981@ybl
+
+</p>
+
+</div>
+
+<hr>
+
+<form
+action="{{ url_for('upload_payment') }}"
+method="POST"
+enctype="multipart/form-data">
+
+<input
+type="hidden"
+name="course_id"
+value="{{ course.id }}">
+
+<input
+type="hidden"
+name="amount"
+value="{{ course.price }}">
+
+<input
+type="hidden"
+name="course_name"
+value="{{ course.title }}">
+
+<div class="upload-box">
+
+<label>
+
+Upload Payment Screenshot
+
+</label>
+
+<input
+type="file"
+name="payment_image"
+accept="image/*"
+required
+class="form-control">
+
+</div>
+
+<button
+type="submit"
+class="payment-btn">
+
+✅ I've Paid
+
+</button>
+
+</form>
+
+<div class="payment-note">
+
+<h5>
+
+Instructions
+
+</h5>
+
+<ul>
+
+<li>Open any UPI App.</li>
+
+<li>Scan QR.</li>
+
+<li>Pay ₹{{ course.price }}</li>
+
+<li>Take screenshot.</li>
+
+<li>Upload screenshot.</li>
+
+<li>Wait for admin approval.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+
+const amount="{{ course.price }}";
+
+const course="{{ course.title }}";
+
+const merchant=encodeURIComponent("StudyHub");
+
+const upi="7983813981@ybl";
+
+const note=encodeURIComponent(course);
+
+const upiLink=
+`upi://pay?pa=${upi}&pn=${merchant}&am=${amount}&cu=INR&tn=${note}`;
+
+new QRCode(
+
+document.getElementById("qrcode"),
+
+{
+
+text:upiLink,
+
+width:280,
+
+height:280,
+
+correctLevel:QRCode.CorrectLevel.H
+
+}
+
+);
+
+</script>
+
+</body>
+</html>

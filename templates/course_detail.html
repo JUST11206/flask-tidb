@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>{{ course.title }} • StudyHub</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --secondary:#7c3aed;
+
+    --green:#16a34a;
+    --red:#dc2626;
+    --orange:#f59e0b;
+
+    --bg:#f5f7ff;
+    --card:#ffffff;
+    --border:#e5e7eb;
+
+    --text:#111827;
+    --muted:#6b7280;
+
+    --shadow:
+    0 18px 40px rgba(79,70,229,.12);
+
+    --radius:24px;
+
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    font-family:"Poppins",sans-serif;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+}
+
+a{
+    text-decoration:none;
+}
+
+img{
+    display:block;
+    width:100%;
+}
+
+/*=================================
+HEADER
+=================================*/
+
+.header{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
+
+    background:rgba(255,255,255,.9);
+
+    backdrop-filter:blur(18px);
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.nav{
+
+    max-width:1400px;
+
+    margin:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:16px 24px;
+
+}
+
+.logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.logo img{
+
+    width:46px;
+
+    height:46px;
+
+    object-fit:contain;
+
+}
+
+.logo span{
+
+    color:#111827;
+
+    font-size:24px;
+
+    font-weight:800;
+
+}
+
+.back-btn{
+
+    background:#eef2ff;
+
+    color:var(--primary);
+
+    padding:12px 20px;
+
+    border-radius:14px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.back-btn:hover{
+
+    background:var(--primary);
+
+    color:#fff;
+
+}
+
+/*=================================
+HERO
+=================================*/
+
+.hero{
+
+    width:calc(100% - 40px);
+
+    max-width:1400px;
+
+    margin:30px auto;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    position:relative;
+
+    background:
+    linear-gradient(
+    135deg,
+    #312e81,
+    #4f46e5,
+    #7c3aed);
+
+    color:white;
+
+    padding:60px;
+
+}
+
+.hero::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:380px;
+
+    height:380px;
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:50%;
+
+    top:-160px;
+
+    right:-100px;
+
+}
+
+.hero::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:220px;
+
+    height:220px;
+
+    background:rgba(255,255,255,.05);
+
+    border-radius:50%;
+
+    bottom:-120px;
+
+    left:-60px;
+
+}
+
+.hero-grid{
+
+    position:relative;
+
+    z-index:2;
+
+    display:grid;
+
+    grid-template-columns:
+    380px
+    1fr;
+
+    gap:45px;
+
+    align-items:center;
+
+}
+
+.course-image{
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 25px 50px rgba(0,0,0,.25);
+
+}
+
+.course-image img{
+
+    aspect-ratio:16/10;
+
+    object-fit:cover;
+
+}
+
+.hero-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.badges{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:22px;
+
+}
+
+.badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:10px 16px;
+
+    border-radius:100px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    background:rgba(255,255,255,.15);
+
+}
+
+.hero h1{
+
+    font-size:52px;
+
+    font-weight:800;
+
+    line-height:1.2;
+
+    margin-bottom:18px;
+
+}
+
+.hero p{
+
+    max-width:760px;
+
+    line-height:1.9;
+
+    color:#e7e7ff;
+
+    font-size:16px;
+
+}
+
+/*=================================
+COURSE STATS
+=================================*/
+
+.stats{
+
+    display:flex;
+
+    gap:18px;
+
+    flex-wrap:wrap;
+
+    margin-top:35px;
+
+}
+
+.stat{
+
+    min-width:160px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(15px);
+
+    padding:18px;
+
+    border-radius:18px;
+
+}
+
+.stat h3{
+
+    font-size:28px;
+
+    font-weight:800;
+
+}
+
+.stat p{
+
+    margin-top:4px;
+
+    font-size:14px;
+
+    color:#eef2ff;
+
+}
+
+/*=================================
+MAIN
+=================================*/
+
+.container{
+
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:10px 20px 70px;
+
+}
+
+.main-grid{
+
+    display:grid;
+
+    grid-template-columns:
+
+    minmax(0,2fr)
+
+    380px;
+
+    gap:30px;
+
+    align-items:start;
+
+}
+
+/*=================================
+LEFT COLUMN
+=================================*/
+
+.left{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:28px;
+
+}
+
+.card{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:28px;
+
+    box-shadow:var(--shadow);
+
+}
+
+.section-title{
+
+    font-size:28px;
+
+    font-weight:800;
+
+    margin-bottom:24px;
+
+}
+
+/*=================================
+WHAT YOU'LL LEARN
+=================================*/
+
+.learn-grid{
+
+    display:grid;
+
+    grid-template-columns:
+
+    repeat(2,1fr);
+
+    gap:18px;
+
+}
+
+.learn-item{
+
+    display:flex;
+
+    gap:12px;
+
+    align-items:flex-start;
+
+    background:#f8fafc;
+
+    padding:16px;
+
+    border-radius:16px;
+
+    border:1px solid #eef2f7;
+
+}
+
+.learn-icon{
+
+    width:36px;
+
+    height:36px;
+
+    border-radius:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#eef2ff;
+
+    color:var(--primary);
+
+    font-weight:700;
+
+    flex-shrink:0;
+
+}
+
+.learn-item span{
+
+    color:#374151;
+
+    line-height:1.6;
+
+}
+/*=================================
+RIGHT SIDEBAR
+=================================*/
+
+.sidebar{
+
+    position:sticky;
+
+    top:95px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}
+
+/*=================================
+PURCHASE CARD
+=================================*/
+
+.purchase-card{
+
+    background:#fff;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    box-shadow:var(--shadow);
+
+}
+
+.purchase-image img{
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    object-fit:cover;
+
+}
+
+.purchase-body{
+
+    padding:24px;
+
+}
+
+.price{
+
+    font-size:42px;
+
+    font-weight:800;
+
+    color:var(--primary);
+
+    margin-bottom:18px;
+
+}
+
+.free-course{
+
+    color:var(--green);
+
+    font-size:34px;
+
+    font-weight:800;
+
+    margin-bottom:18px;
+
+}
+
+.purchased{
+
+    color:var(--green);
+
+    font-size:28px;
+
+    font-weight:800;
+
+    margin-bottom:18px;
+
+}
+
+.buy-btn,
+.learn-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:100%;
+
+    padding:16px;
+
+    border-radius:16px;
+
+    color:white;
+
+    font-weight:700;
+
+    font-size:16px;
+
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--secondary));
+
+    transition:.35s;
+
+}
+
+.buy-btn:hover,
+.learn-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 16px 35px rgba(79,70,229,.25);
+
+}
+
+.purchase-features{
+
+    margin-top:22px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+
+}
+
+.purchase-features div{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    color:var(--muted);
+
+    font-size:15px;
+
+}
+
+/*=================================
+INFO CARD
+=================================*/
+
+.info-card{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:24px;
+
+    box-shadow:var(--shadow);
+
+}
+
+.info-card h3{
+
+    font-size:22px;
+
+    margin-bottom:18px;
+
+}
+
+.info-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 0;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.info-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.info-item span:first-child{
+
+    color:var(--muted);
+
+}
+
+.info-item span:last-child{
+
+    font-weight:700;
+
+}
+
+/*=================================
+LECTURE LIST
+=================================*/
+
+.lecture-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.lecture-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:18px;
+
+    border:1px solid var(--border);
+
+    border-radius:20px;
+
+    background:white;
+
+    transition:.3s;
+
+}
+
+.lecture-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+    0 12px 28px rgba(0,0,0,.08);
+
+}
+
+.lecture-number{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    background:#eef2ff;
+
+    color:var(--primary);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:700;
+
+    flex-shrink:0;
+
+}
+
+.lecture-thumb{
+
+    width:130px;
+
+    height:74px;
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+    flex-shrink:0;
+
+}
+
+.lecture-thumb img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.lecture-content{
+
+    flex:1;
+
+}
+
+.lecture-content h3{
+
+    font-size:18px;
+
+    margin-bottom:10px;
+
+}
+
+.lecture-meta{
+
+    display:flex;
+
+    gap:14px;
+
+    flex-wrap:wrap;
+
+    color:var(--muted);
+
+    font-size:13px;
+
+}
+
+.preview{
+
+    color:var(--green);
+
+    font-weight:700;
+
+}
+
+.locked{
+
+    color:var(--red);
+
+    font-weight:700;
+
+}
+
+.watch-btn{
+
+    padding:12px 20px;
+
+    border-radius:14px;
+
+    background:var(--primary);
+
+    color:white;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.watch-btn:hover{
+
+    background:var(--primary-dark);
+
+}
+
+.lock-btn{
+
+    padding:12px 20px;
+
+    border-radius:14px;
+
+    background:#fee2e2;
+
+    color:var(--red);
+
+    font-weight:700;
+
+}
+
+/*=================================
+EMPTY STATE
+=================================*/
+
+.empty{
+
+    text-align:center;
+
+    padding:60px 20px;
+
+    border:2px dashed var(--border);
+
+    border-radius:24px;
+
+    color:var(--muted);
+
+}
+
+/*=================================
+RESPONSIVE
+=================================*/
+
+@media(max-width:1200px){
+
+.main-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.sidebar{
+
+position:static;
+
+}
+
+}
+
+@media(max-width:900px){
+
+.hero{
+
+padding:40px 24px;
+
+}
+
+.hero-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.course-image{
+
+max-width:450px;
+
+margin:auto;
+
+}
+
+.hero h1{
+
+font-size:38px;
+
+}
+
+.learn-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.lecture-card{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+.lecture-thumb{
+
+width:100%;
+
+height:200px;
+
+}
+
+.watch-btn,
+.lock-btn{
+
+width:100%;
+
+text-align:center;
+
+display:flex;
+
+justify-content:center;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.nav{
+
+padding:14px 16px;
+
+}
+
+.logo span{
+
+font-size:20px;
+
+}
+
+.hero{
+
+width:calc(100% - 20px);
+
+margin:16px auto;
+
+padding:28px 18px;
+
+border-radius:22px;
+
+}
+
+.hero h1{
+
+font-size:30px;
+
+}
+
+.hero p{
+
+font-size:15px;
+
+}
+
+.stats{
+
+gap:12px;
+
+}
+
+.stat{
+
+flex:1;
+
+min-width:120px;
+
+}
+
+.card{
+
+padding:20px;
+
+}
+
+.section-title{
+
+font-size:24px;
+
+}
+
+.price{
+
+font-size:34px;
+
+}
+
+.free-course{
+
+font-size:28px;
+
+}
+
+}
+</style>
+
+</head>
+<body>
+
+<!-- =========================
+     HEADER
+========================== -->
+
+<header class="header">
+
+    <div class="nav">
+
+        <a href="{{ url_for('dashboard') }}" class="logo">
+
+            <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="StudyHub">
+
+            <span>StudyHub</span>
+
+        </a>
+
+        <a
+        href="{{ url_for('category_courses', slug=category.slug) }}"
+        class="back-btn">
+
+            ← Back to Courses
+
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================
+     HERO
+========================== -->
+
+<section class="hero">
+
+    <div class="hero-grid">
+
+        <!-- Course Thumbnail -->
+
+        <div class="course-image">
+
+            {% if course.thumbnail %}
+
+            <img
+            src="{{ url_for('static', filename='uploads/course_thumbnails/' + course.thumbnail) }}"
+            alt="{{ course.title }}">
+
+            {% else %}
+
+            <img
+            src="{{ url_for('static', filename='images/default-course.jpg') }}"
+            alt="{{ course.title }}">
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Course Details -->
+
+        <div class="hero-content">
+
+            <div class="badges">
+
+                {% if course.is_free %}
+
+                <span class="badge">
+                    🎉 Free Course
+                </span>
+
+                {% else %}
+
+                <span class="badge">
+                    💎 Premium
+                </span>
+
+                {% endif %}
+
+                <span class="badge">
+                    ⭐ 4.9 Rating
+                </span>
+
+                <span class="badge">
+                    👨‍🎓 12K+ Students
+                </span>
+
+            </div>
+
+
+            <h1>
+
+                {{ course.title }}
+
+            </h1>
+
+
+            <p>
+
+                {{ course.description }}
+
+            </p>
+
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <h3>
+
+                        {{ lectures|length }}
+
+                    </h3>
+
+                    <p>
+
+                        Lectures
+
+                    </p>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <h3>
+
+                        Beginner
+
+                    </h3>
+
+                    <p>
+
+                        Level
+
+                    </p>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <h3>
+
+                        Lifetime
+
+                    </h3>
+
+                    <p>
+
+                        Access
+
+                    </p>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <h3>
+
+                        Certificate
+
+                    </h3>
+
+                    <p>
+
+                        Included
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     MAIN CONTENT
+========================== -->
+
+<div class="container">
+
+    <div class="main-grid">
+
+
+        <!-- =========================
+             LEFT CONTENT
+        ========================== -->
+
+        <div class="left">
+
+
+            <!-- About -->
+
+            <div class="card">
+
+                <h2 class="section-title">
+
+                    📖 About This Course
+
+                </h2>
+
+                <p style="line-height:1.9;color:#6b7280;">
+
+                    {{ course.description }}
+
+                </p>
+
+            </div>
+
+
+
+            <!-- What You'll Learn -->
+
+            <div class="card">
+
+                <h2 class="section-title">
+
+                    🚀 What You'll Learn
+
+                </h2>
+
+                <div class="learn-grid">
+
+                    <div class="learn-item">
+
+                        <div class="learn-icon">
+
+                            ✓
+
+                        </div>
+
+                        <span>
+
+                            Build real-world projects from scratch.
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="learn-item">
+
+                        <div class="learn-icon">
+
+                            ✓
+
+                        </div>
+
+                        <span>
+
+                            Understand concepts step by step.
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="learn-item">
+
+                        <div class="learn-icon">
+
+                            ✓
+
+                        </div>
+
+                        <span>
+
+                            Master industry-level development skills.
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="learn-item">
+
+                        <div class="learn-icon">
+
+                            ✓
+
+                        </div>
+
+                        <span>
+
+                            Practice with assignments and notes.
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="learn-item">
+
+                        <div class="learn-icon">
+
+                            ✓
+
+                        </div>
+
+                        <span>
+
+                            Prepare for placements and interviews.
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="learn-item">
+
+                        <div class="learn-icon">
+
+                            ✓
+
+                        </div>
+
+                        <span>
+
+                            Lifetime access to all course content.
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+                        <!-- =========================
+                 COURSE CONTENT
+            ========================== -->
+
+            <div class="card">
+
+                <h2 class="section-title">
+
+                    📚 Course Lectures
+
+                </h2>
+
+                <div class="lecture-list">
+
+                    {% for lecture in lectures %}
+
+                    <div class="lecture-card">
+
+                        <!-- Lecture Number -->
+
+                        <div class="lecture-number">
+
+                            {{ loop.index }}
+
+                        </div>
+
+                        <!-- Thumbnail -->
+
+                        <div class="lecture-thumb">
+
+                            {% if lecture.thumbnail %}
+
+                            <img
+                            src="{{ url_for('static', filename='uploads/lecture_thumbnails/' + lecture.thumbnail) }}"
+                            alt="{{ lecture.title }}">
+
+                            {% else %}
+
+                            <img
+                            src="{{ url_for('static', filename='images/default-course.jpg') }}"
+                            alt="{{ lecture.title }}">
+
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Lecture Content -->
+
+                        <div class="lecture-content">
+
+                            <h3>
+
+                                {{ lecture.title }}
+
+                            </h3>
+
+                            <div class="lecture-meta">
+
+                                {% if lecture.duration %}
+
+                                <span>
+
+                                    ⏱ {{ lecture.duration }}
+
+                                </span>
+
+                                {% endif %}
+
+                                {% if lecture.is_free %}
+
+<span class="preview">
+
+    👁 Free Preview
+
+</span>
+
+{% endif %}
+
+
+{% if not purchased and not lecture.is_free %}
+
+<span class="locked">
+
+    🔒 Locked
+
+</span>
+
+{% endif %}
+                            </div>
+
+                        </div>
+
+                        <!-- Action -->
+
+                        {% if purchased or lecture.is_free %}
+
+<a
+href="{{ url_for('watch', id=lecture.id) }}"
+class="watch-btn">
+
+    ▶ Watch
+
+</a>
+
+{% else %}
+
+<span class="lock-btn">
+
+    🔒 Locked
+
+</span>
+
+{% endif %}
+                    </div>
+
+                    {% else %}
+
+                    <div class="empty">
+
+                        <h2>
+
+                            No Lectures Yet
+
+                        </h2>
+
+                        <p>
+
+                            Lectures will be available soon.
+
+                        </p>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             RIGHT SIDEBAR
+        ========================== -->
+
+        <aside class="sidebar">
+
+            <div class="purchase-card">
+
+                <div class="purchase-image">
+
+                    {% if course.thumbnail %}
+
+                    <img
+                    src="{{ url_for('static', filename='uploads/course_thumbnails/' + course.thumbnail) }}"
+                    alt="{{ course.title }}">
+
+                    {% else %}
+
+                    <img
+                    src="{{ url_for('static', filename='images/default-course.jpg') }}"
+                    alt="{{ course.title }}">
+
+                    {% endif %}
+
+                </div>
+
+                <div class="purchase-body">
+
+                    {% if course.is_free %}
+
+                    <div class="free-course">
+
+                        🎉 FREE
+
+                    </div>
+
+                    <a
+                    href="{{ url_for('watch', id=lectures[0].id) if lectures else '#' }}"
+                    class="learn-btn">
+
+                        Start Learning
+
+                    </a>
+
+                    {% elif purchased %}
+
+                    <div class="purchased">
+
+                        ✅ Purchased
+
+                    </div>
+
+                    <a
+                    href="{{ url_for('watch', id=lectures[0].id) if lectures else '#' }}"
+                    class="learn-btn">
+
+                        Continue Learning
+
+                    </a>
+
+                    {% else %}
+
+                    <div class="price">
+
+                        ₹ {{ course.price }}
+
+                    </div>
+
+                    <a
+                    href="{{ url_for('buy_course', id=course.id) }}"
+                    class="buy-btn">
+
+                        💳 Buy Course
+
+                    </a>
+
+                    {% endif %}
+
+                    <div class="purchase-features">
+
+                        <div>
+
+                            📺
+                            <span>{{ lectures|length }} Video Lectures</span>
+
+                        </div>
+
+                        <div>
+
+                            📄
+                            <span>Downloadable Notes</span>
+
+                        </div>
+
+                        <div>
+
+                            ♾
+                            <span>Lifetime Access</span>
+
+                        </div>
+
+                        <div>
+
+                            📱
+                            <span>Mobile & Desktop</span>
+
+                        </div>
+
+                        <div>
+
+                            🏆
+                            <span>Certificate of Completion</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="info-card">
+
+                <h3>
+
+                    Course Details
+
+                </h3>
+
+                <div class="info-item">
+
+                    <span>Category</span>
+
+                    <span>{{ category.name }}</span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span>Lectures</span>
+
+                    <span>{{ lectures|length }}</span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span>Access</span>
+
+                    <span>Lifetime</span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span>Language</span>
+
+                    <span>English</span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span>Certificate</span>
+
+                    <span>Yes</span>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+// Reveal animation
+
+const cards = document.querySelectorAll(
+'.card,.lecture-card,.purchase-card,.info-card'
+);
+
+const observer = new IntersectionObserver((entries)=>{
+
+    entries.forEach(entry=>{
+
+        if(entry.isIntersecting){
+
+            entry.target.style.opacity="1";
+            entry.target.style.transform="translateY(0)";
+
+        }
+
+    });
+
+},{
+    threshold:0.15
+});
+
+cards.forEach(card=>{
+
+    card.style.opacity="0";
+    card.style.transform="translateY(40px)";
+    card.style.transition="all .6s ease";
+
+    observer.observe(card);
+
+});
+
+
+// Smooth hover effect
+
+document.querySelectorAll(".lecture-card").forEach(card=>{
+
+    card.addEventListener("mouseenter",()=>{
+
+        card.style.borderColor="#4f46e5";
+
+    });
+
+    card.addEventListener("mouseleave",()=>{
+
+        card.style.borderColor="#e5e7eb";
+
+    });
+
+});
+
+
+// Sticky navbar shadow
+
+const header=document.querySelector(".header");
+
+window.addEventListener("scroll",()=>{
+
+    if(window.scrollY>20){
+
+        header.style.boxShadow="0 8px 30px rgba(0,0,0,.08)";
+
+    }else{
+
+        header.style.boxShadow="none";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

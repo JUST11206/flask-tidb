@@ -197,85 +197,273 @@ button:hover{
     </p>
 
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
 
 
-        <!-- LECTURE TITLE -->
+       <!-- Lecture Title -->
 
-        <label>
-            Lecture Title
-        </label>
+<label>
+    Lecture Title
+</label>
 
-        <input
-        type="text"
-        name="title"
-        value="{{ lecture.title }}"
-        placeholder="Lecture Title"
-        required>
-
+<input
+type="text"
+name="title"
+value="{{ lecture.title }}"
+required>
 
 
-        <!-- LEARNING PATH -->
+<!-- Description -->
 
-        <label>
-            Learning Path
-        </label>
+<label>
+    Description
+</label>
 
-        <select
-        name="category_id"
-        required>
-
-            <option value="">
-                Select Learning Path
-            </option>
-
-
-            {% for category in categories %}
-
-            <option
-            value="{{ category.id }}"
-
-            {% if category.id == lecture.category_id %}
-            selected
-            {% endif %}>
-
-                {{ category.icon }}
-                {{ category.name }}
-
-            </option>
-
-            {% endfor %}
+<textarea
+name="description"
+rows="4"
+style="
+width:100%;
+padding:13px;
+margin-bottom:18px;
+border:1px solid #cbd5e1;
+border-radius:10px;
+resize:vertical;
+">{{ lecture.description }}</textarea>
 
 
-        </select>
+<!-- Category -->
+
+<label>
+    Learning Path
+</label>
+
+<select
+name="category_id"
+required>
+
+{% for category in categories %}
+
+<option
+value="{{ category.id }}"
+{% if category.id==lecture.category_id %}
+selected
+{% endif %}
+>
+
+{{ category.icon }}
+{{ category.name }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+<label>
+    Course
+</label>
+
+<select
+name="course_id"
+required>
+
+    <option value="">
+        Select Course
+    </option>
+
+    {% for course in courses %}
+
+    <option
+    value="{{ course.id }}"
+
+    {% if course.id == lecture.course_id %}
+    selected
+    {% endif %}>
+
+        {{ course.title }}
+
+    </option>
+
+    {% endfor %}
+
+</select>
+
+<!-- Video Type -->
+
+<label>
+    Video Type
+</label>
+
+<select
+id="videoType"
+name="video_type">
+
+<option
+value="youtube"
+{% if lecture.video_type=="youtube" %}
+selected
+{% endif %}
+>
+YouTube
+</option>
+
+<option
+value="upload"
+{% if lecture.video_type=="upload" %}
+selected
+{% endif %}
+>
+Upload MP4
+</option>
+
+</select>
 
 
+<!-- Youtube -->
 
-        <!-- YOUTUBE URL -->
+<div
+id="youtubeBox">
 
-        <label>
-            YouTube Video URL
-        </label>
+<label>
+YouTube URL
+</label>
 
-        <input
-        type="url"
-        name="youtube_url"
-        value="{{ lecture.youtube_url }}"
-        placeholder="https://youtube.com/watch?v=..."
-        required>
+<input
+type="url"
+name="youtube_url"
+value="{{ lecture.youtube_url or '' }}">
 
-
-
-        <!-- UPDATE BUTTON -->
-
-        <button type="submit">
-
-            💾 Update Lecture
-
-        </button>
+</div>
 
 
-    </form>
+<!-- Upload -->
+
+<div
+id="uploadBox"
+{% if lecture.video_type=="youtube" %}
+style="display:none;"
+{% endif %}
+>
+
+<label>
+Replace MP4 Video
+</label>
+
+<input
+type="file"
+name="video_file"
+accept="video/mp4">
+
+{% if lecture.video_file %}
+
+<p
+style="
+margin-top:-10px;
+margin-bottom:15px;
+font-size:13px;
+color:#64748b;
+">
+
+Current:
+{{ lecture.video_file }}
+
+</p>
+
+{% endif %}
+
+</div>
+
+
+<!-- Thumbnail -->
+
+<label>
+Thumbnail
+</label>
+
+<input
+type="file"
+name="thumbnail"
+accept="image/*">
+
+{% if lecture.thumbnail %}
+
+<img
+src="{{ url_for('static', filename='uploads/thumbnails/' + lecture.thumbnail) }}"
+style="
+width:140px;
+margin-bottom:20px;
+border-radius:8px;
+display:block;
+">
+
+{% endif %}
+
+
+<label>
+Duration
+</label>
+
+<input
+type="text"
+name="duration"
+value="{{ lecture.duration or '' }}">
+
+
+<label>
+Price (₹)
+</label>
+
+<input
+type="number"
+name="price"
+value="{{ lecture.price }}">
+
+
+<div
+style="
+display:flex;
+gap:20px;
+margin-bottom:20px;
+">
+
+<label>
+
+<input
+type="checkbox"
+name="is_free"
+{% if lecture.is_free %}
+checked
+{% endif %}
+>
+
+Free
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+name="is_locked"
+{% if lecture.is_locked %}
+checked
+{% endif %}
+>
+
+Locked
+
+</label>
+
+</div>
+
+
+<button type="submit">
+
+💾 Update Lecture
+
+</button>
+</form>
 
 
     <a
@@ -289,7 +477,39 @@ button:hover{
 
 </div>
 
+<script>
 
+const type=document.getElementById("videoType");
+
+const youtube=document.getElementById("youtubeBox");
+
+const upload=document.getElementById("uploadBox");
+
+function toggleVideo(){
+
+    if(type.value==="youtube"){
+
+        youtube.style.display="block";
+
+        upload.style.display="none";
+
+    }
+
+    else{
+
+        youtube.style.display="none";
+
+        upload.style.display="block";
+
+    }
+
+}
+
+toggleVideo();
+
+type.addEventListener("change",toggleVideo);
+
+</script>
 </body>
 
 </html>

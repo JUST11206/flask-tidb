@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>{{ lecture.title }} • StudyHub</title>
+
+<link rel="icon"
+type="image/png"
+href="{{ url_for('static', filename='images/logo.png') }}">
+
+<meta name="theme-color" content="#4f46e5">
+
+<style>
+
+/*==================================================
+                    RESET
+==================================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --primary-light:#eef2ff;
+
+    --success:#22c55e;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+
+    --text:#0f172a;
+    --muted:#64748b;
+
+    --border:#e2e8f0;
+
+    --bg:#f8fafc;
+
+    --card:#ffffff;
+
+    --shadow:
+    0 10px 35px rgba(15,23,42,.08);
+
+    --radius:22px;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    font-family:
+    Arial,
+    sans-serif;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    min-height:100vh;
+
+}
+
+a{
+
+    text-decoration:none;
+    color:inherit;
+
+}
+
+img{
+
+    max-width:100%;
+
+    display:block;
+
+}
+
+button{
+
+    cursor:pointer;
+
+    border:none;
+
+    font-family:inherit;
+
+}
+
+/*==================================================
+                    HEADER
+==================================================*/
+
+.header{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
+
+    height:72px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 28px;
+
+    background:
+    rgba(255,255,255,.92);
+
+    backdrop-filter:blur(18px);
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    font-size:23px;
+
+    font-weight:800;
+
+    color:var(--primary);
+
+}
+
+.logo img{
+
+    width:42px;
+
+    height:42px;
+
+    object-fit:contain;
+
+}
+
+.header-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+}
+
+.back-btn{
+
+    padding:11px 18px;
+
+    border-radius:12px;
+
+    background:var(--primary-light);
+
+    color:var(--primary);
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.back-btn:hover{
+
+    background:var(--primary);
+
+    color:#fff;
+
+}
+
+.profile{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:linear-gradient(
+        135deg,
+        #6366f1,
+        #7c3aed
+    );
+
+    color:#fff;
+
+    font-weight:bold;
+
+}
+
+/*==================================================
+                    PAGE
+==================================================*/
+
+.page{
+
+    width:100%;
+
+    max-width:1500px;
+
+    margin:auto;
+
+    padding:32px;
+
+}
+
+/*==================================================
+                PLAYER LAYOUT
+==================================================*/
+
+.player-layout{
+
+    display:grid;
+
+    grid-template-columns:
+
+    minmax(0,1fr)
+
+    360px;
+
+    gap:28px;
+
+    align-items:start;
+
+}
+
+/*==================================================
+                VIDEO SECTION
+==================================================*/
+
+.video-section{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}
+
+.player-card{
+
+    overflow:hidden;
+
+    border-radius:var(--radius);
+
+    background:#000;
+
+    box-shadow:var(--shadow);
+
+}
+
+.video-frame{
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    background:#000;
+
+}
+
+.video-frame iframe,
+.video-frame video{
+
+    width:100%;
+
+    height:100%;
+
+    border:none;
+
+    display:block;
+
+}
+
+.info-card{
+
+    background:var(--card);
+
+    border-radius:var(--radius);
+
+    padding:28px;
+
+    box-shadow:var(--shadow);
+
+}
+
+.badges{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:10px;
+
+    margin-bottom:16px;
+
+}
+
+.badge{
+
+    padding:7px 14px;
+
+    border-radius:30px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+
+.badge.course{
+
+    background:#eef2ff;
+
+    color:#4f46e5;
+
+}
+
+.badge.free{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+}
+
+.badge.lock{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+}
+
+.info-card h1{
+
+    font-size:34px;
+
+    line-height:1.3;
+
+    margin-bottom:14px;
+
+}
+
+.description{
+
+    color:var(--muted);
+
+    line-height:1.8;
+
+    font-size:15px;
+
+}
+/*==================================================
+                PLAYLIST SIDEBAR
+==================================================*/
+
+.sidebar{
+
+    position:sticky;
+
+    top:92px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:22px;
+
+}
+
+.sidebar-card{
+
+    background:var(--card);
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    overflow:hidden;
+
+}
+
+.sidebar-title{
+
+    padding:20px 22px;
+
+    border-bottom:1px solid var(--border);
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.sidebar-title h3{
+
+    font-size:18px;
+
+}
+
+.sidebar-title span{
+
+    font-size:13px;
+
+    color:var(--muted);
+
+}
+
+.playlist{
+
+    max-height:600px;
+
+    overflow-y:auto;
+
+}
+
+.playlist::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.playlist::-webkit-scrollbar-thumb{
+
+    background:#d1d5db;
+
+    border-radius:20px;
+
+}
+
+.playlist-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:18px 20px;
+
+    border-bottom:1px solid #f1f5f9;
+
+    transition:.25s;
+
+}
+
+.playlist-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.playlist-item:hover{
+
+    background:#f8fafc;
+
+}
+
+.playlist-item.active{
+
+    background:var(--primary-light);
+
+}
+
+.play-icon{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#eef2ff;
+
+    color:var(--primary);
+
+    font-weight:bold;
+
+    flex-shrink:0;
+
+}
+
+.playlist-item.active .play-icon{
+
+    background:var(--primary);
+
+    color:#fff;
+
+}
+
+.play-content{
+
+    flex:1;
+
+}
+
+.play-content h4{
+
+    font-size:15px;
+
+    margin-bottom:5px;
+
+    line-height:1.4;
+
+}
+
+.play-content p{
+
+    font-size:12px;
+
+    color:var(--muted);
+
+}
+
+.lock-icon{
+
+    font-size:18px;
+
+    color:#94a3b8;
+
+}
+
+/*==================================================
+                COURSE PROGRESS
+==================================================*/
+
+.progress-card{
+
+    padding:22px;
+
+}
+
+.progress-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:16px;
+
+}
+
+.progress-top h4{
+
+    font-size:17px;
+
+}
+
+.progress-top span{
+
+    color:var(--primary);
+
+    font-weight:700;
+
+}
+
+.progress{
+
+    width:100%;
+
+    height:10px;
+
+    background:#e5e7eb;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+}
+
+.progress div{
+
+    width:45%;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #4f46e5,
+        #7c3aed
+    );
+
+}
+
+.progress-text{
+
+    margin-top:12px;
+
+    font-size:13px;
+
+    color:var(--muted);
+
+}
+
+/*==================================================
+            PREVIOUS / NEXT BUTTONS
+==================================================*/
+
+.navigation{
+
+    margin-top:24px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+}
+
+.nav-btn{
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:15px;
+
+    border-radius:16px;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.prev{
+
+    background:#eef2ff;
+
+    color:var(--primary);
+
+}
+
+.prev:hover{
+
+    background:#dbe4ff;
+
+}
+
+.next{
+
+    background:var(--primary);
+
+    color:#fff;
+
+}
+
+.next:hover{
+
+    background:var(--primary-dark);
+
+}
+
+/*==================================================
+                NOTES CARD
+==================================================*/
+
+.notes-card{
+
+    margin-top:22px;
+
+    background:var(--card);
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    padding:24px;
+
+}
+
+.notes-card h3{
+
+    margin-bottom:10px;
+
+}
+
+.notes-card p{
+
+    color:var(--muted);
+
+    line-height:1.7;
+
+    margin-bottom:20px;
+
+}
+
+.download-btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:13px 22px;
+
+    border-radius:12px;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.download-btn:hover{
+
+    background:var(--primary-dark);
+
+}
+
+/*==================================================
+                RESPONSIVE
+==================================================*/
+
+@media(max-width:1200px){
+
+    .player-layout{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .sidebar{
+
+        position:static;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .header{
+
+        padding:0 16px;
+
+        height:65px;
+
+    }
+
+    .logo{
+
+        font-size:20px;
+
+    }
+
+    .logo img{
+
+        width:38px;
+
+        height:38px;
+
+    }
+
+    .page{
+
+        padding:18px;
+
+    }
+
+    .info-card{
+
+        padding:22px;
+
+    }
+
+    .info-card h1{
+
+        font-size:26px;
+
+    }
+
+    .navigation{
+
+        flex-direction:column;
+
+    }
+
+    .sidebar-title{
+
+        padding:16px 18px;
+
+    }
+
+    .playlist-item{
+
+        padding:16px;
+
+    }
+
+}
+
+@media(max-width:480px){
+
+    .page{
+
+        padding:14px;
+
+    }
+
+    .info-card{
+
+        padding:18px;
+
+    }
+
+    .description{
+
+        font-size:14px;
+
+    }
+
+}
+.progress{
+    width:100%;
+    height:10px;
+    background:#e5e7eb;
+    border-radius:30px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    width:var(--progress);
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        #4f46e5,
+        #7c3aed
+    );
+    border-radius:30px;
+    transition:width .4s ease;
+}
+</style>
+
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="header">
+
+    <a href="/dashboard" class="logo">
+
+        <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="StudyHub">
+
+        StudyHub
+
+    </a>
+
+    <div class="header-actions">
+
+        <a
+        href="/course/{{ course.id }}"
+        class="back-btn">
+
+            ← Back to Course
+
+        </a>
+
+        <div class="profile">
+
+            {{ session['name'][0]|upper if session.get('name') else 'S' }}
+
+        </div>
+
+    </div>
+
+</header>
+
+<!-- ================= PAGE ================= -->
+
+<main class="page">
+
+<div class="player-layout">
+
+<!-- ================= LEFT ================= -->
+
+<section class="video-section">
+
+<!-- ================= VIDEO ================= -->
+
+<div class="player-card">
+
+<div class="video-frame">
+
+{% if lecture.video_type=="youtube" %}
+
+<iframe
+
+src="{{ lecture.youtube_url }}"
+
+title="{{ lecture.title }}"
+
+loading="lazy"
+
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+
+allowfullscreen>
+
+</iframe>
+
+{% else %}
+
+<video
+
+controls
+
+controlsList="nodownload"
+
+preload="metadata">
+
+<source
+
+src="{{ url_for('static', filename='uploads/videos/' + lecture.video_file) }}"
+
+type="video/mp4">
+
+Your browser does not support HTML5 video.
+
+</video>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<!-- ================= LECTURE INFO ================= -->
+
+<div class="info-card">
+
+<div class="badges">
+
+<span class="badge course">
+
+📚 {{ course.title }}
+
+</span>
+
+{% if lecture.is_free %}
+
+<span class="badge free">
+
+FREE
+
+</span>
+
+{% endif %}
+
+{% if lecture.is_locked %}
+
+<span class="badge lock">
+
+LOCKED
+
+</span>
+
+{% endif %}
+
+</div>
+
+<h1>
+
+{{ lecture.title }}
+
+</h1>
+
+<p class="description">
+
+{{ lecture.description or "No description available for this lecture." }}
+
+</p>
+
+<!-- ================= NAVIGATION ================= -->
+
+<div class="navigation">
+
+{% if previous_lecture %}
+
+<a
+
+href="{{ url_for('watch', id=previous_lecture.id) }}"
+
+class="nav-btn prev">
+
+⬅ Previous Lecture
+
+</a>
+
+{% else %}
+
+<div class="nav-btn prev"
+
+style="opacity:.5;pointer-events:none;">
+
+⬅ First Lecture
+
+</div>
+
+{% endif %}
+
+{% if next_lecture %}
+
+<a
+
+href="{{ url_for('watch', id=next_lecture.id) }}"
+
+class="nav-btn next">
+
+Next Lecture ➜
+
+</a>
+
+{% else %}
+
+<div class="nav-btn next"
+
+style="opacity:.5;pointer-events:none;">
+
+Course Completed ✔
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<!-- ================= NOTES ================= -->
+
+<div class="notes-card">
+
+<h3>
+
+📄 Lecture Resources
+
+</h3>
+
+<p>
+
+Download notes, source code and additional resources related to this lecture.
+
+</p>
+
+{% if lecture.notes_file %}
+
+<a
+
+href="{{ url_for('static', filename='uploads/notes/' + lecture.notes_file) }}"
+
+class="download-btn"
+
+download>
+
+⬇ Download Notes
+
+</a>
+
+{% else %}
+
+<div
+
+class="download-btn"
+
+style="background:#cbd5e1;cursor:not-allowed;">
+
+No Notes Available
+
+</div>
+
+{% endif %}
+
+</div>
+
+</section>
+<!-- ================= RIGHT SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <!-- ================= PLAYLIST ================= -->
+
+    <div class="sidebar-card">
+
+        <div class="sidebar-title">
+
+            <h3>
+                📋 Course Content
+            </h3>
+
+            <span>
+                {{ lectures|length }} Lectures
+            </span>
+
+        </div>
+
+        <div class="playlist">
+
+            {% for item in lectures %}
+
+            <a
+
+            href="{{ url_for('watch', id=item.id) if not item.is_locked else '#' }}"
+
+            class="playlist-item {% if item.id==lecture.id %}active{% endif %}">
+
+                <div class="play-icon">
+
+                    {% if item.is_locked %}
+
+                        🔒
+
+                    {% elif item.id==lecture.id %}
+
+                        ▶
+
+                    {% else %}
+
+                        {{ loop.index }}
+
+                    {% endif %}
+
+                </div>
+
+                <div class="play-content">
+
+                    <h4>
+
+                        {{ item.title }}
+
+                    </h4>
+
+                    <p>
+
+                        {% if item.duration %}
+
+                            ⏱ {{ item.duration }}
+
+                        {% else %}
+
+                            Video Lecture
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+                {% if item.is_locked %}
+
+                    <div class="lock-icon">
+
+                        🔒
+
+                    </div>
+
+                {% endif %}
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- ================= PROGRESS ================= -->
+
+    <div class="sidebar-card progress-card">
+
+        <div class="progress-top">
+
+            <h4>
+
+                📈 Course Progress
+
+            </h4>
+
+            <span>
+
+                {{ progress or 0 }}%
+
+            </span>
+
+        </div>
+
+        <div class="progress">
+
+            <div
+class="progress-fill"
+style="--progress: {{ progress|default(0) }}%;">
+</div>
+
+        </div>
+
+        <p class="progress-text">
+
+            Keep learning consistently to complete this course.
+
+        </p>
+
+    </div>
+
+    <!-- ================= COURSE INFO ================= -->
+
+    <div class="sidebar-card progress-card">
+
+        <div class="progress-top">
+
+            <h4>
+
+                📚 Course
+
+            </h4>
+
+        </div>
+
+        <p class="progress-text">
+
+            <strong>{{ course.title }}</strong>
+
+        </p>
+
+        <p class="progress-text">
+
+            {{ lectures|length }} Total Lectures
+
+        </p>
+
+        {% if course.is_free %}
+
+        <p class="progress-text" style="color:#16a34a;font-weight:bold;">
+
+            ✅ Free Course
+
+        </p>
+
+        {% else %}
+
+        <p class="progress-text">
+
+            💎 Premium Course
+
+        </p>
+
+        {% endif %}
+
+    </div>
+
+</aside>
+
+</div>
+
+</main>
+
+</body>
+
+</html>
