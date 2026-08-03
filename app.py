@@ -195,76 +195,238 @@ def dashboard():
     if "user" not in session:
         return redirect("/login")
 
-    popular_notes = []
+    username = session.get("user")
+    user_id = session.get("user_id")
+
+    # If old session doesn't have user_id,
+    # recover it from the logged-in email.
+    if not user_id and session.get("email"):
+
+        try:
+
+            with engine.connect() as conn:
+
+                user = conn.execute(
+                    text("""
+                        SELECT id
+                        FROM users
+                        WHERE email = :email
+                    """),
+                    {
+                        "email": session["email"]
+                    }
+                ).fetchone()
+
+                if user:
+                    user_id = user._mapping["id"]
+                    session["user_id"] = user_id
+
+        except Exception as e:
+
+            print("USER ID RECOVERY ERROR:", repr(e))
+
+
+    # Default values
+    total_courses = 0
+    total_notes = 0
+    total_lectures = 0
+
+    purchased_courses_count = 0
+    completed_courses = 0
+
+    learning_progress = 0
+    watched_lectures = 0
+
+    certificates = 0
+    study_hours = 0
+
+    featured_courses = []
     recent_notes = []
 
-    courses_count = 0
-    notes_count = 0
-    lectures_count = 0
+    last_course = None
+
 
     try:
+
         with engine.connect() as conn:
 
-            # Popular notes
-            popular_notes = conn.execute(
+            # ==========================================
+            # TOTAL COURSES
+            # ==========================================
+
+            total_courses = conn.execute(
                 text("""
-                SELECT *
-                FROM notes
-                ORDER BY views DESC
-                LIMIT 3
+                    SELECT COUNT(*)
+                    FROM courses
+                """)
+            ).scalar() or 0
+
+
+            # ==========================================
+            # TOTAL NOTES
+            # ==========================================
+
+            total_notes = conn.execute(
+                text("""
+                    SELECT COUNT(*)
+                    FROM notes
+                """)
+            ).scalar() or 0
+
+
+            # ==========================================
+            # TOTAL LECTURES
+            # ==========================================
+
+            total_lectures = conn.execute(
+                text("""
+                    SELECT COUNT(*)
+                    FROM lectures
+                """)
+            ).scalar() or 0
+
+
+            # ==========================================
+            # FEATURED COURSES
+            # ==========================================
+
+            featured_courses = conn.execute(
+                text("""
+                    SELECT
+                        c.id,
+                        c.title,
+                        c.description,
+                        c.thumbnail,
+                        c.price,
+                        c.is_free,
+                        c.category_id,
+
+                        cat.name AS category_name,
+
+                        (
+                            SELECT COUNT(*)
+                            FROM lectures l
+                            WHERE l.course_id = c.id
+                        ) AS lecture_count
+
+                    FROM courses c
+
+                    LEFT JOIN categories cat
+                        ON c.category_id = cat.id
+
+                    ORDER BY c.id DESC
+
+                    LIMIT 8
                 """)
             ).fetchall()
 
 
-            # Recent notes
+            # ==========================================
+            # RECENT NOTES
+            # ==========================================
+
             recent_notes = conn.execute(
                 text("""
-                SELECT *
-                FROM notes
-                ORDER BY created_at DESC
-                LIMIT 3
+                    SELECT
+                        id,
+                        title,
+                        subject,
+                        content
+                    FROM notes
+                    ORDER BY id DESC
+                    LIMIT 5
                 """)
             ).fetchall()
 
 
-            # Dashboard statistics
-            courses_count = conn.execute(
-                text("""
-                SELECT COUNT(*) 
-                FROM courses
-                """)
-            ).scalar()
+            # ==========================================
+            # USER PURCHASED COURSES
+            # ==========================================
+
+            if user_id:
+
+                purchased_courses_count = conn.execute(
+                    text("""
+                        SELECT COUNT(*)
+                        FROM purchased_courses
+                        WHERE user_id = :user_id
+                    """),
+                    {
+                        "user_id": user_id
+                    }
+                ).scalar() or 0
 
 
-            notes_count = conn.execute(
-                text("""
-                SELECT COUNT(*) 
-                FROM notes
-                """)
-            ).scalar()
+                # ======================================
+                # LAST PURCHASED COURSE
+                # ======================================
 
+                last_course = conn.execute(
+                    text("""
+                        SELECT
+                            c.id,
+                            c.title,
+                            c.description,
+                            c.thumbnail,
+                            c.price,
+                            c.is_free,
 
-            lectures_count = conn.execute(
-                text("""
-                SELECT COUNT(*) 
-                FROM lectures
-                """)
-            ).scalar()
+                            (
+                                SELECT COUNT(*)
+                                FROM lectures l
+                                WHERE l.course_id = c.id
+                            ) AS lecture_count
+
+                        FROM purchased_courses pc
+
+                        INNER JOIN courses c
+                            ON c.id = pc.course_id
+
+                        WHERE pc.user_id = :user_id
+
+                        ORDER BY pc.id DESC
+
+                        LIMIT 1
+                    """),
+                    {
+                        "user_id": user_id
+                    }
+                ).fetchone()
 
 
     except Exception as e:
-        print("Dashboard Offline:", e)
+
+        print("=" * 60)
+        print("DASHBOARD DB ERROR:", repr(e))
+        print("=" * 60)
 
 
     return render_template(
         "dashboard.html",
-        username=session["user"],
-        popular_notes=popular_notes,
+
+        username=username,
+
+        # Statistics
+        total_courses=total_courses,
+        total_notes=total_notes,
+        total_lectures=total_lectures,
+
+        # User
+        purchased_courses_count=purchased_courses_count,
+
+        # Progress
+        completed_courses=completed_courses,
+        watched_lectures=watched_lectures,
+        learning_progress=learning_progress,
+
+        # Achievements
+        certificates=certificates,
+        study_hours=study_hours,
+
+        # Dashboard content
+        featured_courses=featured_courses,
         recent_notes=recent_notes,
-        total_courses=courses_count,
-        total_notes=notes_count,
-        total_lectures=lectures_count,
-        completed_courses=0
+        last_course=last_course
     )
 #This is 10 june 2026 
 
@@ -1034,7 +1196,6 @@ def add_lecture():
 
         title = request.form["title"]
         description = request.form.get("description")
-        category_id = request.form["category_id"]
         course_id = request.form["course_id"]
 
         video_type = request.form["video_type"]
@@ -1042,7 +1203,7 @@ def add_lecture():
         is_free = 1 if request.form.get("is_free") else 0
         is_locked = 1 if request.form.get("is_locked") else 0
 
-        price = request.form.get("price") or 0
+        
         duration = request.form.get("duration")
 
         youtube_url = None
@@ -1108,7 +1269,7 @@ def add_lecture():
 
             thumb_name = secure_filename(thumb.filename)
 
-            thumb_folder = "static/uploads/thumbnails"
+            thumb_folder = "static/uploads/lecture_thumbnails"
 
             os.makedirs(thumb_folder, exist_ok=True)
 
@@ -1137,11 +1298,11 @@ def add_lecture():
                         video_type,
                         video_file,
                         thumbnail,
-                        category_id,
+                       
                         course_id,
                         is_free,
                         is_locked,
-                        price,
+                       
                         duration
                     )
 
@@ -1153,11 +1314,11 @@ def add_lecture():
                         :video_type,
                         :video_file,
                         :thumbnail,
-                        :category_id,
+                       
                         :course_id,
                         :is_free,
                         :is_locked,
-                        :price,
+                       
                         :duration
                     )
                 """),
@@ -1168,11 +1329,11 @@ def add_lecture():
                     "video_type": video_type,
                     "video_file": video_file,
                     "thumbnail": thumbnail,
-                    "category_id": category_id,
+                   
                     "course_id": course_id,
                     "is_free": is_free,
                     "is_locked": is_locked,
-                    "price": price,
+                    
                     "duration": duration
                 }
             )
@@ -1357,36 +1518,40 @@ def edit_lecture(id):
 
 
 @app.route("/lectures")
-def lect():
+def lectures():
+
+    if "user" not in session:
+        return redirect("/login")
 
     with engine.connect() as conn:
 
-        categories = conn.execute(
+        courses = conn.execute(
             text("""
                 SELECT
-                    categories.*,
-                    COUNT(lectures.id) AS lecture_count
+    c.*,
+    cat.name AS category_name,
+    cat.slug AS category_slug,
 
-                FROM categories
+    (
+        SELECT COUNT(*)
+        FROM lectures l
+        WHERE l.course_id = c.id
+    ) AS lecture_count
 
-                LEFT JOIN lectures
-                ON categories.id = lectures.category_id
+FROM courses c
 
-                GROUP BY
-                    categories.id,
-                    categories.name,
-                    categories.slug,
-                    categories.icon,
-                    categories.description
+LEFT JOIN categories cat
+ON c.category_id = cat.id
 
-                ORDER BY categories.id ASC
-            """)
+ORDER BY c.id DESC;
+""")
         ).fetchall()
 
     return render_template(
         "lectures.html",
-        categories=categories
+        courses=courses
     )
+
 @app.route("/lectures/<slug>")
 def category_lectures(slug):
 

@@ -214,28 +214,6 @@ button:hover{
         resize:vertical;
     "></textarea>
 
-
-    <label>
-        Learning Path
-    </label>
-
-
-    <select name="category_id" required>
-
-        <option value="">
-            Select Learning Path
-        </option>
-
-        {% for category in categories %}
-
-        <option value="{{ category.id }}">
-            {{ category.icon }} {{ category.name }}
-        </option>
-
-        {% endfor %}
-
-    </select>
-
     <label>
     Course
 </label>
@@ -333,24 +311,6 @@ required>
     name="duration"
     placeholder="Example: 25 min">
 
-
-    <label>
-        Price (₹)
-    </label>
-
-    <input
-    type="number"
-    name="price"
-    value="0">
-
-
-    <div
-    style="
-    display:flex;
-    gap:20px;
-    margin-bottom:18px;
-    ">
-
         <label>
 
             <input
@@ -371,7 +331,6 @@ required>
 
         </label>
 
-    </div>
 
 
     <button type="submit">

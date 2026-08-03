@@ -1,44 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
   <title>StudyHub • Dashboard</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}" />
-  <meta name="theme-color" content="#4f46e5" />
-
-  <!-- ============================================================ -->
-  <!--  CSS  –  fully self‑contained, replaceable                   -->
-  <!-- ============================================================ -->
+<link rel="icon" 
+type="image/png" 
+href="{{ url_for('static', filename='images/logo.png') }}">
   <style>
     /* ----- reset & base ----- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-    }
-    html {
-      scroll-behavior: smooth;
+      font-family: Arial, Helvetica, sans-serif;
     }
     :root {
       --primary: #4f46e5;
       --primary-dark: #4338ca;
-      --secondary: #7c3aed;
-      --success: #16a34a;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --card: #ffffff;
-      --bg: #f8fafc;
-      --shadow: 0 10px 30px rgba(15, 23, 42, .07);
+      --bg: #f5f7fb;
+      --card: #fff;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
     }
     body {
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.5;
+      overflow-x: hidden;
     }
     a {
       text-decoration: none;
@@ -48,80 +38,114 @@
       display: block;
       max-width: 100%;
     }
-    button {
-      font-family: inherit;
-      cursor: pointer;
-      border: none;
-      background: none;
-    }
-
-    /* ----- container & headings ----- */
     .container {
-      max-width: 1380px;
-      margin: 0 auto;
+      max-width: 1450px;
+      margin: auto;
       padding: 28px;
     }
-    .section-heading {
+
+    /* ----- sidebar (desktop) ----- */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 255px;
+      height: 100vh;
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 25px;
+      overflow: auto;
+      z-index: 1000;
+    }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 45px;
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .sidebar-logo img {
+      width: 42px;
+      height: 42px;
+      background: #4f46e5;
+      border-radius: 12px;
+      padding: 4px;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      transition: .25s;
+      color: var(--text);
+    }
+    .sidebar a:hover {
+      background: #EEF2FF;
+      color: var(--primary);
+    }
+    .sidebar a.active {
+      background: linear-gradient(135deg,#4f46e5,#7c3aed);
+      color: #fff;
+    }
+
+    /* ----- main content ----- */
+    .main-content {
+      margin-left: 255px;
+      min-height: 100vh;
+    }
+
+    /* ----- header ----- */
+    .header {
+      height: 74px;
+      background: #fff;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .section-heading h2 {
-      font-size: 28px;
-      margin-bottom: 4px;
-    }
-    .section-heading p {
-      color: var(--muted);
-    }
-    .view-all {
-      font-weight: 700;
-      color: var(--primary);
-      transition: .2s;
-    }
-    .view-all:hover {
-      color: var(--primary-dark);
-    }
-    .empty-box {
-      padding: 30px 20px;
-      text-align: center;
-      color: var(--muted);
-      background: #f1f5f9;
-      border-radius: 20px;
-    }
-
-    /* ----- header (sticky) ----- */
-    .header {
+      padding: 0 35px;
+      border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
       z-index: 999;
-      height: 74px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 30px;
-      background: rgba(255, 255, 255, .92);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border);
     }
-    .logo {
+    .header-logo {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 24px;
-      font-weight: 800;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: bold;
       color: var(--primary);
     }
-    .logo img {
-      width: 42px;
-      height: 42px;
+    .header-logo img {
+      width: 38px;
+      height: 38px;
+      background: #4f46e5;
+      border-radius: 10px;
+      padding: 4px;
     }
+    .logo-area{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:24px;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+.logo-area img{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    object-fit:cover;
+}
     .header-right {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
     }
     .search {
       position: relative;
@@ -130,158 +154,136 @@
     .search input {
       width: 100%;
       height: 46px;
-      padding-left: 46px;
-      padding-right: 16px;
-      border-radius: 14px;
       border: 1px solid var(--border);
-      background: white;
-      font-size: 15px;
+      border-radius: 14px;
+      padding-left: 45px;
+      padding-right: 15px;
       outline: none;
-      transition: .3s;
+      background: white;
     }
     .search input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(79, 70, 229, .08);
     }
     .search-icon {
       position: absolute;
-      left: 16px;
+      left: 15px;
       top: 13px;
+      color: #9ca3af;
       font-size: 18px;
-      color: #94a3b8;
     }
     .profile {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      width: 42px;
+      height: 42px;
+      background: var(--primary);
+      color: #fff;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      font-weight: bold;
       font-size: 18px;
-      font-weight: 700;
-      color: white;
+    }
+
+    /* ----- section headings ----- */
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .section-heading h2 {
+      font-size: 30px;
+    }
+    .section-heading p {
+      margin-top: 5px;
+      color: var(--muted);
+    }
+    .view-all {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* ----- cards / panels ----- */
+    .stat-card,
+    .course-card,
+    .continue-card,
+    .goal-card,
+    .panel {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
     }
 
     /* ----- hero ----- */
     .hero {
-      margin-top: 30px;
-      padding: 48px;
-      border-radius: 30px;
-      position: relative;
-      background: linear-gradient(135deg, #312e81, #4f46e5, #7c3aed);
-      color: white;
-      box-shadow: 0 25px 45px rgba(79, 70, 229, .22);
-      overflow: hidden;
-    }
-    .hero::before {
-      content: "";
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      right: -120px;
-      top: -180px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, .08);
-    }
-    .hero::after {
-      content: "";
-      position: absolute;
-      width: 240px;
-      height: 240px;
-      left: -70px;
-      bottom: -140px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, .05);
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 700px;
-    }
-    .hero-badge {
-      display: inline-block;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .15);
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 20px;
+      background: linear-gradient(135deg,#4f46e5,#7c3aed);
+      padding: 55px;
+      border-radius: 24px;
+      color: #fff;
+      margin-bottom: 45px;
     }
     .hero h1 {
-      font-size: 46px;
-      line-height: 1.2;
-      margin-bottom: 16px;
-      letter-spacing: -1px;
+      font-size: 45px;
+      margin: 18px 0;
     }
     .hero p {
       font-size: 17px;
-      line-height: 1.8;
-      color: #e0e7ff;
-      max-width: 620px;
+      line-height: 1.7;
+      max-width: 650px;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 8px 18px;
+      background: rgba(255,255,255,.15);
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: bold;
     }
     .hero-buttons {
+      margin-top: 28px;
       display: flex;
       gap: 15px;
-      margin-top: 30px;
       flex-wrap: wrap;
     }
     .primary-btn {
-      padding: 14px 24px;
-      border-radius: 14px;
-      background: white;
-      color: #4f46e5;
-      font-weight: 700;
-      transition: .3s;
-    }
-    .primary-btn:hover {
-      transform: translateY(-3px);
+      background: #fff;
+      color: var(--primary);
+      padding: 14px 25px;
+      border-radius: 12px;
+      font-weight: bold;
     }
     .secondary-btn {
-      padding: 14px 24px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, .25);
-      color: white;
-      background: rgba(255, 255, 255, .08);
-      transition: .3s;
-    }
-    .secondary-btn:hover {
-      background: rgba(255, 255, 255, .15);
+      border: 1px solid rgba(255,255,255,.4);
+      padding: 14px 25px;
+      border-radius: 12px;
+      color: #fff;
     }
 
-    /* ----- stats ----- */
-    .stats-section {
-      margin: 35px 0;
-    }
+    /* ----- stats grid ----- */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4,1fr);
       gap: 20px;
+      margin: 40px 0;
     }
     .stat-card {
-      background: white;
-      border-radius: 22px;
-      padding: 24px;
+      padding: 25px;
       display: flex;
       align-items: center;
       gap: 18px;
-      box-shadow: var(--shadow);
-      transition: .3s;
-    }
-    .stat-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 45px rgba(79, 70, 229, .12);
     }
     .stat-icon {
-      width: 65px;
-      height: 65px;
-      border-radius: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
+      width: 62px;
+      height: 62px;
       background: #eef2ff;
-      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 18px;
+      font-size: 28px;
     }
     .stat-card h2 {
       font-size: 30px;
@@ -291,792 +293,1136 @@
       color: var(--muted);
     }
 
-    /* ----- continue learning ----- */
-    .continue-section {
-      margin: 55px 0;
-    }
+    /* ----- continue card ----- */
     .continue-card {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 40px;
+      gap: 30px;
       padding: 35px;
-      background: white;
-      border-radius: 28px;
-      box-shadow: var(--shadow);
+      margin: 45px 0;
       flex-wrap: wrap;
     }
     .continue-left {
       flex: 1;
-      min-width: 240px;
+      min-width: 260px;
     }
-    .continue-badge {
-      display: inline-block;
-      padding: 8px 14px;
-      border-radius: 30px;
-      background: #eef2ff;
-      color: #4f46e5;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 15px;
+    .continue-right {
+      display: flex;
+      align-items: center;
     }
-    .continue-card h2 {
-      font-size: 34px;
-      margin-bottom: 15px;
-    }
-    .continue-card p {
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 25px;
+    .continue-btn {
+      background: var(--primary);
+      color: #fff;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-weight: bold;
+      white-space: nowrap;
     }
     .progress-bar {
       height: 10px;
-      background: #e2e8f0;
-      border-radius: 20px;
+      background: #e5e7eb;
+      border-radius: 30px;
+      margin: 18px 0;
       overflow: hidden;
-      margin-bottom: 12px;
     }
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #4f46e5, #7c3aed);
-      border-radius: 20px;
+      background: linear-gradient(90deg,#4f46e5,#7c3aed);
+      width: 0%;
     }
     .progress-text {
       display: flex;
       justify-content: space-between;
-      font-size: 13px;
+      font-size: 14px;
       color: var(--muted);
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .continue-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px 30px;
-      border-radius: 14px;
-      background: #4f46e5;
-      color: white;
-      font-weight: 700;
-      transition: .3s;
-    }
-    .continue-btn:hover {
-      background: #4338ca;
-      transform: translateY(-3px);
     }
 
-    /* ----- quick actions ----- */
-    .quick-actions {
-      margin-top: 60px;
-    }
-    .action-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 22px;
-    }
-    .action-card {
-      background: white;
-      padding: 28px;
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      transition: .3s;
-    }
-    .action-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 45px rgba(79, 70, 229, .12);
-    }
-    .action-icon {
-      font-size: 42px;
-      margin-bottom: 18px;
-    }
-    .action-card h3 {
-      margin-bottom: 10px;
-    }
-    .action-card p {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    /* ----- featured courses ----- */
-    .featured-section {
-      margin-top: 70px;
-    }
+    /* ----- course grid (featured) ----- */
     .course-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 24px;
+      margin-bottom: 40px;
     }
     .course-card {
-      background: white;
-      border-radius: 24px;
       overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: .35s;
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
     }
     .course-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 45px rgba(79, 70, 229, .12);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
     }
     .course-image {
       position: relative;
-      aspect-ratio: 16/9;
+      height: 160px;
+      background: #eef2ff;
       overflow: hidden;
-      background: #e2e8f0;
     }
     .course-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: .4s;
-    }
-    .course-card:hover .course-image img {
-      transform: scale(1.08);
     }
     .course-label {
       position: absolute;
-      top: 15px;
-      left: 15px;
-      padding: 7px 14px;
+      top: 12px;
+      right: 12px;
+      background: #4f46e5;
+      color: #fff;
+      padding: 4px 14px;
       border-radius: 30px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: bold;
     }
     .course-label.free {
-      background: #dcfce7;
-      color: #16a34a;
+      background: #10b981;
     }
     .course-label.premium {
-      background: #4f46e5;
-      color: white;
+      background: #f59e0b;
     }
     .course-content {
-      padding: 22px;
+      padding: 18px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
     }
     .course-category {
-      display: inline-block;
-      padding: 6px 12px;
-      background: #eef2ff;
-      color: #4f46e5;
-      border-radius: 30px;
-      font-size: 11px;
-      font-weight: 700;
-      margin-bottom: 12px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
     .course-content h3 {
-      font-size: 22px;
-      margin-bottom: 12px;
+      font-size: 18px;
+      margin: 8px 0 6px;
     }
     .course-content p {
+      font-size: 14px;
       color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 22px;
+      flex: 1;
     }
     .course-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--muted);
     }
     .course-arrow {
-      width: 42px;
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: #4f46e5;
-      color: white;
       font-size: 20px;
-    }
-
-    /* ----- categories ----- */
-    .categories-section {
-      margin-top: 80px;
-    }
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 22px;
-    }
-    .category-box {
-      background: white;
-      padding: 28px;
-      border-radius: 22px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      transition: .3s;
-    }
-    .category-box:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 45px rgba(79, 70, 229, .12);
-    }
-    .category-emoji {
-      font-size: 46px;
-      margin-bottom: 18px;
-    }
-    .category-box h3 {
-      margin-bottom: 10px;
-    }
-    .category-box p {
-      color: var(--muted);
+      color: var(--primary);
     }
 
     /* ----- learning hub (2 columns) ----- */
     .learning-hub {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 28px;
-      margin-top: 70px;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 50px 0;
     }
+    .hub-left {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    .hub-right {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* panels */
     .panel {
-      background: white;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-      margin-bottom: 25px;
+      padding: 24px;
     }
     .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
     .panel-header h2 {
-      font-size: 24px;
+      font-size: 20px;
     }
     .panel-header a {
-      color: #4f46e5;
-      font-weight: 700;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 14px;
     }
+
     .activity-item {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 16px 0;
-      border-bottom: 1px solid #edf2f7;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
     }
     .activity-item:last-child {
-      border: none;
+      border-bottom: none;
     }
     .activity-icon {
-      width: 55px;
-      height: 55px;
-      border-radius: 16px;
-      background: #eef2ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
+      font-size: 26px;
+      width: 40px;
+      text-align: center;
     }
     .activity-content h4 {
-      margin-bottom: 5px;
+      font-size: 16px;
     }
     .activity-content p {
+      font-size: 13px;
       color: var(--muted);
-      font-size: 14px;
     }
+
     .notes-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
     }
     .note-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px;
+      padding: 14px 16px;
+      background: #f9fafb;
       border-radius: 16px;
-      background: #f8fafc;
-      transition: .3s;
+      transition: 0.15s;
     }
     .note-item:hover {
       background: #eef2ff;
     }
     .note-item h4 {
-      margin-bottom: 5px;
+      font-size: 16px;
     }
     .note-item p {
       font-size: 13px;
       color: var(--muted);
     }
 
+    /* goal card */
     .goal-card {
-      background: white;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-      margin-bottom: 25px;
+      padding: 28px 24px;
       text-align: center;
     }
     .goal-icon {
-      font-size: 46px;
-      margin-bottom: 18px;
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+    .goal-card h2 {
+      font-size: 22px;
+      margin-bottom: 6px;
     }
     .goal-card h1 {
-      font-size: 56px;
-      margin: 15px 0;
-      color: #4f46e5;
+      font-size: 42px;
+      color: var(--primary);
+    }
+    .goal-card p {
+      color: var(--muted);
+      margin: 8px 0 16px;
     }
     .goal-progress {
       height: 12px;
       background: #e5e7eb;
       border-radius: 30px;
       overflow: hidden;
-      margin-top: 25px;
+      margin-top: 4px;
     }
     .goal-fill {
       height: 100%;
-      background: linear-gradient(90deg, #4f46e5, #7c3aed);
-      border-radius: 30px;
+      background: linear-gradient(90deg,#4f46e5,#7c3aed);
+      width: 0%;
     }
     .mini-stat {
       display: flex;
       justify-content: space-between;
-      padding: 15px 0;
-      border-bottom: 1px solid #edf2f7;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
     }
     .mini-stat:last-child {
-      border: none;
+      border-bottom: none;
+    }
+    .mini-stat strong {
+      color: var(--text);
     }
 
-    /* ----- recommended ----- */
-    .recommend-section {
-      margin-top: 70px;
-    }
-    .recommend-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 22px;
-    }
-    .recommend-card {
-      background: white;
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: .35s;
-    }
-    .recommend-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 45px rgba(79, 70, 229, .12);
-    }
-    .recommend-image {
-      aspect-ratio: 16/10;
-      overflow: hidden;
-      background: #e2e8f0;
-    }
-    .recommend-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: .4s;
-    }
-    .recommend-card:hover .recommend-image img {
-      transform: scale(1.08);
-    }
-    .recommend-content {
-      padding: 18px;
-    }
-    .recommend-tag {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 20px;
-      background: #eef2ff;
-      color: #4f46e5;
-      font-size: 11px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .recommend-content h3 {
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-    .recommend-content p {
+    .empty-box {
+      padding: 30px 10px;
+      text-align: center;
       color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-    .recommend-footer {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    /* ----- tips ----- */
-    .tips-section {
-      margin-top: 70px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-    }
-    .tip-card {
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      color: white;
-      padding: 30px;
-      border-radius: 24px;
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-    }
-    .tip-icon {
-      font-size: 40px;
-      flex-shrink: 0;
     }
 
     /* ----- footer ----- */
     .footer {
-      margin-top: 80px;
-      padding: 40px;
-      background: #0f172a;
-      color: white;
-      border-radius: 30px 30px 0 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 30px;
+      margin-top: 70px;
+      background: #fff;
+      border-top: 1px solid #e5e7eb;
+      padding: 45px 20px;
+      text-align: center;
     }
+    .footer-content img {
+  width:60px;
+  margin:auto;
+  margin-bottom:15px;
+  border-radius:16px;
+}
     .footer h2 {
-      margin-bottom: 8px;
+      color: #4f46e5;
+      margin-bottom: 10px;
     }
     .footer p {
-      color: #cbd5e1;
+      color: #64748b;
+      margin-bottom: 25px;
     }
     .footer-links {
       display: flex;
+      justify-content: center;
       gap: 25px;
       flex-wrap: wrap;
+      margin-bottom: 25px;
     }
     .footer-links a {
-      color: #cbd5e1;
+      font-weight: 600;
+      color: #4f46e5;
       transition: .3s;
     }
     .footer-links a:hover {
-      color: white;
+      color: #4338ca;
+    }
+    .footer-copy {
+      font-size: 14px;
+      color: #9ca3af;
     }
 
-    /* ----- animations (fade-up) ----- */
-    @keyframes fadeUp {
-      0% { opacity: 0; transform: translateY(25px); }
-      100% { opacity: 1; transform: translateY(0); }
+    /* ----- mobile nav (hidden on desktop) ----- */
+    .mobile-nav {
+      display: none;
     }
-    .hero,
-    .stat-card,
-    .continue-card,
-    .action-card,
-    .course-card,
-    .category-box,
-    .panel,
-    .goal-card,
-    .recommend-card,
-    .tip-card {
-      animation: fadeUp .55s ease both;
+    /* ==========================
+   PWA MOBILE DESIGN
+========================== */
+
+@media (max-width:720px){
+
+    body{
+        font-size:14px;
+        padding-bottom:80px;
     }
 
-    /* ----- scrollbar ----- */
-    ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: #edf2f7; }
-    ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 20px; }
-    ::-webkit-scrollbar-thumb:hover { background: #4338ca; }
 
-    /* ----- tablet ----- */
-    @media (max-width: 1100px) {
-      .hero { padding: 36px; }
-      .hero h1 { font-size: 38px; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .action-grid { grid-template-columns: repeat(2, 1fr); }
-      .course-grid { grid-template-columns: repeat(2, 1fr); }
-      .category-grid { grid-template-columns: repeat(2, 1fr); }
-      .recommend-grid { grid-template-columns: repeat(2, 1fr); }
-      .learning-hub { grid-template-columns: 1fr; }
+    /* Sidebar */
+    .sidebar{
+        display:none;
     }
 
-    /* ----- mobile ----- */
-    @media (max-width: 768px) {
-      .container { padding: 18px; }
-      .header { padding: 0 16px; height: 66px; }
-      .logo { font-size: 20px; }
-      .logo img { width: 36px; height: 36px; }
-      .search { display: none; }
-      .hero { padding: 28px 22px; border-radius: 24px; }
-      .hero h1 { font-size: 30px; }
-      .hero p { font-size: 15px; }
-      .hero-buttons { flex-direction: column; }
-      .primary-btn,
-      .secondary-btn { width: 100%; text-align: center; }
-      .stats-grid { grid-template-columns: 1fr; gap: 16px; }
-      .continue-card { flex-direction: column; align-items: flex-start; padding: 24px; }
-      .continue-card h2 { font-size: 28px; }
-      .progress-text { flex-direction: column; gap: 8px; }
-      .action-grid { grid-template-columns: 1fr; }
-      .course-grid { grid-template-columns: 1fr; }
-      .category-grid { grid-template-columns: 1fr; }
-      .recommend-grid { grid-template-columns: 1fr; }
-      .tips-section { grid-template-columns: 1fr; }
-      .footer { flex-direction: column; align-items: flex-start; padding: 28px; }
-      .footer-links { gap: 16px; }
-      .section-heading { flex-direction: column; align-items: flex-start; gap: 10px; }
-      .panel { padding: 22px; }
-      .goal-card { padding: 24px; }
+
+    .main-content{
+        margin-left:0;
+        padding-bottom:90px;
     }
-    @media (max-width: 420px) {
-      .hero h1 { font-size: 26px; }
-      .hero { padding: 22px 18px; }
-      .stat-card { padding: 18px; }
-      .action-card { padding: 22px; }
-      .course-content { padding: 18px; }
-      .category-box { padding: 22px; }
-      .goal-card h1 { font-size: 42px; }
-      .panel-header h2 { font-size: 21px; }
+
+
+    /* Mobile Header */
+    .header{
+
+        display:flex;
+
+        height:65px;
+
+        padding:0 16px;
+
+        position:sticky;
+
+        top:0;
+
+        background:white;
+
+        z-index:999;
+
     }
+
+
+    .header-logo{
+        font-size:19px;
+    }
+
+
+    .header-logo img{
+
+        width:34px;
+        height:34px;
+
+    }
+
+
+    .header-right{
+
+        gap:10px;
+
+    }
+
+
+    .search{
+
+        width:auto;
+
+    }
+
+
+    .search input{
+
+        width:45px;
+
+        height:40px;
+
+        padding-left:35px;
+
+    }
+
+
+    .profile{
+
+        width:38px;
+
+        height:38px;
+
+        font-size:15px;
+
+    }
+
+
+
+    /* Container */
+
+    .container{
+
+        padding:14px;
+
+    }
+
+
+
+    /* Hero */
+
+    .hero{
+
+        padding:22px;
+
+        border-radius:18px;
+
+        margin-bottom:25px;
+
+    }
+
+
+    .hero h1{
+
+        font-size:27px;
+
+        line-height:1.3;
+
+    }
+
+
+    .hero p{
+
+        font-size:14px;
+
+    }
+
+
+    .hero-buttons{
+
+        flex-direction:column;
+
+    }
+
+
+    .primary-btn,
+    .secondary-btn{
+
+        width:100%;
+
+        text-align:center;
+
+    }
+
+
+
+/* Mobile Horizontal Stats */
+
+.stats-grid{
+
+    display:flex;
+    gap:12px;
+
+    overflow-x:auto;
+
+    margin:20px 0;
+
+    padding-bottom:8px;
+
+    scrollbar-width:none;
+
+}
+
+
+.stats-grid::-webkit-scrollbar{
+    display:none;
+}
+
+
+
+.stat-card{
+
+    flex:0 0 155px;
+
+    height:78px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:12px;
+
+    background:#fff;
+
+    border-radius:16px;
+
+    border:1px solid var(--border);
+
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+
+    transition:.2s;
+
+}
+
+
+
+.stat-card:active{
+
+    transform:scale(.96);
+
+}
+
+
+
+.stat-icon{
+
+    width:42px;
+
+    height:42px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#eef2ff;
+
+    border-radius:12px;
+
+    font-size:20px;
+
+}
+
+
+
+.stat-card h2{
+
+    font-size:20px;
+
+    margin:0;
+
+}
+
+
+
+.stat-card p{
+
+    font-size:11px;
+
+    color:var(--muted);
+
+    white-space:nowrap;
+
+}
+    /* Continue Learning */
+
+    .continue-card{
+
+        padding:20px;
+
+        margin:25px 0;
+
+        gap:20px;
+
+        border-radius:18px;
+
+    }
+
+
+    .continue-btn{
+
+        width:100%;
+
+        text-align:center;
+
+    }
+
+
+
+
+    /* Courses */
+
+    .course-grid{
+
+        grid-template-columns:1fr;
+
+        gap:16px;
+
+    }
+
+
+    .course-image{
+
+        height:170px;
+
+    }
+
+
+
+    .course-card{
+
+        border-radius:18px;
+
+    }
+
+
+
+
+
+    /* Notes */
+
+    .note-item{
+
+        padding:12px;
+
+        border-radius:14px;
+
+    }
+
+
+
+
+    /* Panels */
+
+    .learning-hub{
+
+        grid-template-columns:1fr;
+
+        gap:18px;
+
+        margin:30px 0;
+
+    }
+
+
+    .panel{
+
+        padding:18px;
+
+        border-radius:18px;
+
+    }
+
+
+
+
+    /* Goal */
+
+    .goal-card{
+
+        padding:20px;
+
+    }
+
+
+    .goal-card h1{
+
+        font-size:35px;
+
+    }
+
+
+
+
+    /* Footer */
+
+    .footer{
+
+        margin-top:40px;
+
+        padding-bottom:100px;
+
+    }
+
+
+
+
+
+    /* Bottom App Navigation */
+
+    .mobile-nav{
+
+        display:flex;
+
+        height:65px;
+
+        position:fixed;
+
+
+        bottom:0;
+
+        left:0;
+
+        right:0;
+
+
+        background:white;
+
+
+        border-top:1px solid #e5e7eb;
+
+
+        justify-content:space-around;
+
+        align-items:center;
+
+
+        z-index:9999;
+
+
+        padding-bottom:env(safe-area-inset-bottom);
+
+    }
+
+
+    .mobile-nav a span{
+
+        font-size:22px;
+
+    }
+
+}
   </style>
 </head>
-
 <body>
-  <!-- ========== HEADER ========== -->
+
+<div class="sidebar">
+  <div class="logo-area">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" 
+         alt="StudyHub Logo">
+
+   <div> StudyHub</div>
+</div>
+  <a href="/dashboard" class="active">🏠 Dashboard</a>
+  <a href="/lectures">📚 My Courses</a>
+  <a href="/notes">📝 Notes</a>
+  <a href="/pdfs">📄 PDFs</a>
+  <a href="/profile">👤 Profile</a>
+  <a href="/profile">⚙️ Settings</a>
+</div>
+
+<div class="main-content">
+
+  <!-- header -->
   <header class="header">
-    <div class="logo">
-      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudyHub" />
-      <span>StudyHub</span>
-    </div>
-    <div class="header-right">
+   <div class="header-logo">
+
+  <img src="{{ url_for('static', filename='images/logo.png') }}" 
+       alt="StudyHub Logo">
+
+  <span>StudyHub</span>
+
+</div>
+ <div class="header-right">
       <div class="search">
         <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Search courses, notes..." />
+        <input type="text" placeholder="Search courses, notes...">
       </div>
-      <div class="profile">S</div>
+      <div class="profile">JD</div>
     </div>
   </header>
 
   <div class="container">
-    <!-- ========== HERO ========== -->
+
+    <!-- hero -->
     <section class="hero">
-      <div class="hero-content">
-        <div class="hero-badge">🌟 New courses added</div>
-        <h1>Welcome back, Student</h1>
-        <p>Continue your learning journey with expert-led courses, notes, and PDFs — all in one place.</p>
-        <div class="hero-buttons">
-          <a href="/lectures" class="primary-btn">📚 Explore Courses</a>
-          <a href="/notes" class="secondary-btn">📝 Browse Notes</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== STATS ========== -->
-    <section class="stats-section">
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-icon">📚</div><div><h2>{{ total_courses or 0 }}</h2><p>Courses</p></div></div>
-        <div class="stat-card"><div class="stat-icon">🎬</div><div><h2>{{ total_lectures or 0 }}</h2><p>Lectures</p></div></div>
-        <div class="stat-card"><div class="stat-icon">📄</div><div><h2>{{ total_notes or 0 }}</h2><p>Notes</p></div></div>
-        <div class="stat-card"><div class="stat-icon">🏆</div><div><h2>{{ completed_courses or 0 }}</h2><p>Completed</p></div></div>
-      </div>
-    </section>
-
-    <!-- ========== CONTINUE LEARNING ========== -->
-    <section class="continue-section">
-      <div class="section-heading">
-        <div><h2>Continue Learning</h2><p>Resume where you left off.</p></div>
-        <a href="/lectures" class="view-all">View All →</a>
-      </div>
-      <div class="continue-card">
-        <div class="continue-left">
-          <div class="continue-badge">🚀 Continue Course</div>
-          <h2>{{ last_course.title if last_course else "Start Your First Course" }}</h2>
-          <p>{% if last_course %}Continue learning from your last watched lecture.{% else %}Choose a course and begin your learning journey.{% endif %}</p>
-          <div class="progress-fill"
-     style="width: {{ learning_progress|default(0) }}%;">
+     <div class="hero-badge">
+   Welcome back, {{ username }}
 </div>
-          <div class="progress-text">
-            <span>{{ learning_progress or 0 }}% Completed</span>
-            <span>{{ watched_lectures or 0 }}/{{ total_lectures or 0 }} Lectures</span>
-          </div>
-        </div>
-        <div class="continue-right">
-          {% if last_course %}
-            <a href="/course/{{ last_course.id }}" class="continue-btn">▶ Continue</a>
-          {% else %}
-            <a href="/lectures" class="continue-btn">🚀 Explore Courses</a>
-          {% endif %}
-        </div>
+      <h1>Continue Your Learning Journey</h1>
+      <p>Explore new courses, track your progress, and achieve your goals with StudyHub.</p>
+      <div class="hero-buttons">
+        <a href="/lectures" class="primary-btn">📖 Start Learning</a>
+        <a href="/lectures" class="secondary-btn">📋 Browse Courses</a>
       </div>
     </section>
+<section class="stats-section">
 
-    <!-- ========== QUICK ACTIONS ========== -->
-    <section class="quick-actions">
-      <div class="section-heading"><div><h2>Quick Access</h2><p>Everything in one place.</p></div></div>
-      <div class="action-grid">
-        <a href="/lectures" class="action-card"><div class="action-icon">🎥</div><h3>Video Lectures</h3><p>Watch premium recorded lectures.</p></a>
-        <a href="/notes" class="action-card"><div class="action-icon">📝</div><h3>Study Notes</h3><p>Download handwritten notes.</p></a>
-        <a href="/pdfs" class="action-card"><div class="action-icon">📄</div><h3>PDF Library</h3><p>Access all PDFs anytime.</p></a>
-        <a href="/profile" class="action-card"><div class="action-icon">👤</div><h3>My Profile</h3><p>Track your learning progress.</p></a>
-      </div>
-    </section>
+<div class="stats-grid">
 
-    <!-- ========== FEATURED COURSES ========== -->
-    <section class="featured-section">
-      <div class="section-heading">
-        <div><h2>🔥 Featured Courses</h2><p>Most popular courses on StudyHub.</p></div>
-        <a href="/lectures" class="view-all">Browse All →</a>
-      </div>
-      <div class="course-grid">
-        {% for course in featured_courses %}
-        <a href="/course/{{ course.id }}" class="course-card">
-          <div class="course-image">
-            {% if course.thumbnail %}
-              <img src="{{ url_for('static', filename='uploads/course_thumbnails/' + course.thumbnail) }}" alt="{{ course.title }}" />
-            {% else %}
-              <img src="{{ url_for('static', filename='images/default-course.jpg') }}" alt="course" />
-            {% endif %}
-            {% if course.is_free %}
-              <div class="course-label free">FREE</div>
-            {% else %}
-              <div class="course-label premium">₹ {{ course.price }}</div>
-            {% endif %}
-          </div>
-          <div class="course-content">
-            <div class="course-category">{{ course.category_name }}</div>
-            <h3>{{ course.title }}</h3>
-            <p>{{ course.description[:90] }}...</p>
-            <div class="course-footer">
-              <span>🎬 {{ course.lecture_count }}</span>
-              <div class="course-arrow">→</div>
-            </div>
-          </div>
-        </a>
-        {% endfor %}
-      </div>
-    </section>
 
-    <!-- ========== CATEGORIES ========== -->
-    <section class="categories-section">
-      <div class="section-heading"><div><h2>📂 Explore Categories</h2><p>Choose your favourite technology.</p></div></div>
-      <div class="category-grid">
-        {% for category in categories %}
-        <a href="/courses/{{ category.slug }}" class="category-box">
-          <div class="category-emoji">
-            {% if category.slug=="web-development" %}💻
-            {% elif category.slug=="python" %}🐍
-            {% elif category.slug=="ai-engineer" %}🤖
-            {% elif category.slug=="dsa" %}🧩
-            {% elif category.slug=="data-science" %}📊
-            {% elif category.slug=="cyber-security" %}🔐
-            {% elif category.slug=="database" %}🗄️
-            {% elif category.slug=="app-development" %}📱
-            {% else %}📚{% endif %}
-          </div>
-          <h3>{{ category.name }}</h3>
-          <p>{{ category.lecture_count }} Lectures</p>
-        </a>
-        {% endfor %}
-      </div>
-    </section>
+<a href="/lectures" class="stat-card">
 
-    <!-- ========== LEARNING HUB ========== -->
-    <section class="learning-hub">
-      <div class="hub-left">
-        <!-- recent activity -->
-        <div class="panel">
-          <div class="panel-header"><h2>🕒 Recent Activity</h2><a href="/profile">View All →</a></div>
-          <div class="activity-list">
-            {% for item in recent_activity %}
-            <div class="activity-item">
-              <div class="activity-icon">{% if item.type=="lecture" %}🎥{% elif item.type=="note" %}📝{% elif item.type=="pdf" %}📄{% else %}📚{% endif %}</div>
-              <div class="activity-content"><h4>{{ item.title }}</h4><p>{{ item.time }}</p></div>
-            </div>
-            {% else %}
-            <div class="empty-box">No recent activity yet.</div>
-            {% endfor %}
-          </div>
-        </div>
-        <!-- latest notes -->
-        <div class="panel">
-          <div class="panel-header"><h2>📄 Latest Notes</h2><a href="/notes">View All →</a></div>
-          <div class="notes-list">
-            {% for note in latest_notes %}
-            <a href="/notes/{{ note.id }}" class="note-item">
-              <div><h4>{{ note.title }}</h4><p>{{ note.subject }}</p></div>
-              <div>⬇</div>
-            </a>
-            {% else %}
-            <div class="empty-box">No notes uploaded.</div>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-      <div class="hub-right">
-        <!-- daily goal -->
-        <div class="goal-card">
-          <div class="goal-icon">🎯</div>
-          <h2>Daily Goal</h2>
-          <h1>{{ learning_progress or 0 }}%</h1>
-          <p>Complete today's learning target.</p>
-        <div class="goal-progress">
-    <div class="goal-fill" style="width: {{ learning_progress }}%;"></div>
+    <div class="stat-icon">📚</div>
+
+    <div>
+        <h2>{{ total_courses }}</h2>
+        <p>Total Courses</p>
+    </div>
+
+</a>
+
+
+
+<a href="/lectures" class="stat-card">
+
+    <div class="stat-icon">🎥</div>
+
+    <div>
+        <h2>{{ total_lectures }}</h2>
+        <p>Video Lectures</p>
+    </div>
+
+</a>
+
+
+
+<a href="/notes" class="stat-card">
+
+    <div class="stat-icon">📄</div>
+
+    <div>
+        <h2>{{ total_notes }}</h2>
+        <p>Study Notes</p>
+    </div>
+
+</a>
+
+
+
+<a href="/lectures" class="stat-card">
+
+    <div class="stat-icon">🛒</div>
+
+    <div>
+        <h2>{{ purchased_courses_count }}</h2>
+        <p>My Courses</p>
+    </div>
+
+</a>
+
+
 </div>
-        </div>
-        <!-- achievements -->
-        <div class="goal-card">
-          <div class="goal-icon">🏆</div>
-          <h2>Achievements</h2>
-          <div class="mini-stat"><span>Completed Courses</span><strong>{{ completed_courses or 0 }}</strong></div>
-          <div class="mini-stat"><span>Certificates</span><strong>{{ certificates or 0 }}</strong></div>
-          <div class="mini-stat"><span>Study Hours</span><strong>{{ study_hours or 0 }}</strong></div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ========== RECOMMENDED ========== -->
-    <section class="recommend-section">
-      <div class="section-heading">
-        <div><h2>⭐ Recommended For You</h2><p>Continue your learning journey.</p></div>
-        <a href="/lectures" class="view-all">Explore →</a>
-      </div>
-      <div class="recommend-grid">
-        {% for course in recommended_courses %}
-        <a href="/course/{{ course.id }}" class="recommend-card">
-          <div class="recommend-image">
-            {% if course.thumbnail %}
-              <img src="{{ url_for('static', filename='uploads/course_thumbnails/' + course.thumbnail) }}" alt="{{ course.title }}" />
-            {% else %}
-              <img src="{{ url_for('static', filename='images/default-course.jpg') }}" alt="course" />
-            {% endif %}
-          </div>
-          <div class="recommend-content">
-            <div class="recommend-tag">{{ course.category_name }}</div>
-            <h3>{{ course.title }}</h3>
-            <p>{{ course.description[:70] }}...</p>
-            <div class="recommend-footer"><span>🎬 {{ course.lecture_count }} Lectures</span><span>→</span></div>
-          </div>
-        </a>
-        {% else %}
-        <div class="empty-box">No recommendations available.</div>
-        {% endfor %}
-      </div>
-    </section>
+</section>
 
-    <!-- ========== TIPS ========== -->
-    <section class="tips-section">
-      <div class="tip-card">
-        <div class="tip-icon">💡</div>
-        <div><h3>Study Tip</h3><p>Watch one lecture every day and revise your notes within 24 hours to improve long-term retention.</p></div>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🔥</div>
-        <div><h3>Stay Consistent</h3><p>Learning for 30 minutes every day is more effective than studying for several hours only once a week.</p></div>
-      </div>
-    </section>
+    <!-- continue learning -->
+    {% if last_course %}
 
-    <!-- ========== FOOTER ========== -->
-    <footer class="footer">
-      <div><h2>StudyHub</h2><p>Learn. Build. Grow.</p></div>
-      <div class="footer-links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/lectures">Courses</a>
-        <a href="/notes">Notes</a>
-        <a href="/pdfs">PDFs</a>
-        <a href="/profile">Profile</a>
-      </div>
-    </footer>
+<section class="continue-section">
+
+  <div class="section-heading">
+
+    <div>
+      <h2>Continue Learning</h2>
+      <p>Resume your purchased course.</p>
+    </div>
+
+    <a href="/lectures" class="view-all">
+      View All →
+    </a>
+
   </div>
+
+
+  <div class="continue-card">
+
+    <div class="continue-left">
+
+      <div
+        class="continue-badge"
+        style="font-weight:bold;color:var(--primary);margin-bottom:6px;"
+      >
+        🚀 Continue Course
+      </div>
+
+
+      <h2 style="margin:4px 0 8px;">
+        {{ last_course.title }}
+      </h2>
+
+
+      <p>
+        {{ last_course.description or "Continue learning from where you stopped." }}
+      </p>
+
+
+      <div class="progress-bar">
+
+        <div
+          class="progress-fill"
+          style="width: {{ learning_progress }}%;"
+        ></div>
+
+      </div>
+
+
+      <div class="progress-text">
+
+        <span>
+          {{ learning_progress }}% Completed
+        </span>
+
+        <span>
+          {{ watched_lectures }} /
+          {{ last_course.lecture_count }}
+          Lectures
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="continue-right">
+
+      <a
+        href="/course/{{ last_course.id }}"
+        class="continue-btn"
+      >
+        ▶ Continue Learning
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+{% else %}
+
+<section class="continue-section">
+
+  <div class="section-heading">
+
+    <div>
+      <h2>Continue Learning</h2>
+      <p>Start learning from a StudyHub course.</p>
+    </div>
+
+  </div>
+
+
+  <div class="continue-card">
+
+    <div class="continue-left">
+
+      <div
+        class="continue-badge"
+        style="font-weight:bold;color:var(--primary);margin-bottom:6px;"
+      >
+        📚 No Course Yet
+      </div>
+
+      <h2 style="margin:4px 0 8px;">
+        Start Your Learning Journey
+      </h2>
+
+      <p>
+        Browse available courses and start learning.
+      </p>
+
+    </div>
+
+
+    <div class="continue-right">
+
+      <a href="/lectures" class="continue-btn">
+        📚 Browse Courses
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+{% endif %}
+
+
+    <!-- featured courses -->
+<div class="course-grid">
+
+  {% for course in featured_courses %}
+
+  <a
+    href="/course/{{ course.id }}"
+    class="course-card"
+  >
+
+    <div class="course-image">
+
+      {% if course.thumbnail %}
+
+        <img
+          src="{{ url_for('static', filename='uploads/course_thumbnails/' + course.thumbnail) }}"
+          alt="{{ course.title }}"
+        >
+
+      {% else %}
+
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='400' height='200' fill='%234f46e5'/%3E%3Ctext x='200' y='120' font-size='30' text-anchor='middle' fill='white' font-family='Arial'%3EStudyHub%3C/text%3E%3C/svg%3E"
+          alt="StudyHub"
+        >
+
+      {% endif %}
+
+
+      {% if course.is_free %}
+
+        <div class="course-label free">
+          FREE
+        </div>
+
+      {% else %}
+
+        <div class="course-label premium">
+          ₹{{ course.price }}
+        </div>
+
+      {% endif %}
+
+    </div>
+
+
+    <div class="course-content">
+
+      <span class="course-category">
+        {{ course.category_name or "StudyHub" }}
+      </span>
+
+
+      <h3>
+        {{ course.title }}
+      </h3>
+
+
+      <p>
+        {{ course.description or "Learn with StudyHub." }}
+      </p>
+
+
+      <div class="course-footer">
+
+        <span>
+          🎥 {{ course.lecture_count }} Lectures
+        </span>
+
+        <div class="course-arrow">
+          →
+        </div>
+
+      </div>
+
+    </div>
+
+  </a>
+
+  {% else %}
+
+  <div class="empty-box">
+    No courses available yet.
+  </div>
+
+  {% endfor %}
+
+</div>
+
+
+      <div class="notes-list">
+
+  {% for note in recent_notes %}
+
+  <a href="/notes/{{ note.id }}" class="note-item">
+    <div>
+      <h4>{{ note.title }}</h4>
+      <p>{{ note.subject }}</p>
+    </div>
+    <strong>→</strong>
+  </a>
+
+  {% else %}
+
+  <div class="empty-box">
+    No notes available yet.
+  </div>
+
+  {% endfor %}
+
+</div>
+
+<div class="goal-card">
+
+  <div class="goal-icon">🏆</div>
+
+  <h2>Achievements</h2>
+
+
+  <div class="mini-stat">
+    <span>Purchased Courses</span>
+    <strong>{{ purchased_courses_count }}</strong>
+  </div>
+
+
+  <div class="mini-stat">
+    <span>Certificates</span>
+    <strong>{{ certificates }}</strong>
+  </div>
+
+
+  <div class="mini-stat">
+    <span>Study Hours</span>
+    <strong>{{ study_hours }}</strong>
+  </div>
+
+
+  <div class="mini-stat">
+    <span>Learning Progress</span>
+    <strong>{{ learning_progress }}%</strong>
+  </div>
+
+</div>
+  </div> <!-- end container -->
+</div> <!-- end main-content -->
+
+<!-- mobile nav -->
+<nav class="mobile-nav">
+  <a href="/dashboard" class="active"><span>🏠</span><small>Home</small></a>
+  <a href="/lectures"><span>🎥</span><small>Courses</small></a>
+  <a href="/pdfs"><span>📄</span><small>PDFs</small></a>
+  <a href="/profile"><span>👤</span><small>Profile</small></a>
+</nav>
+
 </body>
 </html>
