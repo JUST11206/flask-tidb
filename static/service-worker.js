@@ -5,7 +5,7 @@
    Version : v7
 ========================================================== */
 
-const CACHE_VERSION = "studyhub-v7";
+const CACHE_VERSION = "studyhub-v8";
 
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const PAGE_CACHE = `${CACHE_VERSION}-pages`;
@@ -181,19 +181,86 @@ self.addEventListener("fetch", event => {
     /* ------------------------------------------
        HTML Pages
     ------------------------------------------ */
+/* ------------------------------------------
+   HTML Pages
+------------------------------------------ */
 
-    if (request.mode === "navigate") {
+if (request.mode === "navigate") {
 
-        event.respondWith(
+    event.respondWith(
 
-            networkFirstPage(request)
+        cacheFirstPage(request)
 
+    );
+
+    return;
+
+}
+
+/* ==========================================================
+   CACHE FIRST PAGE
+========================================================== */
+
+async function cacheFirstPage(request){
+
+    const cache = await caches.open(PAGE_CACHE);
+
+
+    const cached = await cache.match(request);
+
+
+    if(cached){
+
+        console.log(
+            "📱 Offline page loaded:",
+            request.url
         );
 
-        return;
+        return cached;
 
     }
 
+
+
+    try{
+
+
+        const response = await fetch(request);
+
+
+
+        if(
+            response &&
+            response.ok
+        ){
+
+            cache.put(
+                request,
+                response.clone()
+            );
+
+        }
+
+
+        return response;
+
+
+    }
+
+    catch(error){
+
+
+        console.log(
+            "No internet and no cache"
+        );
+
+
+        return offlinePage();
+
+
+    }
+
+}
 
     /* ------------------------------------------
        Images
@@ -367,7 +434,7 @@ async function networkFirstPage(request) {
             !networkResponse.redirected
         ) {
 
-            cache.put(
+          await  cache.put(
                 request,
                 networkResponse.clone()
             );

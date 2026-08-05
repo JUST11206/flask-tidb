@@ -3,392 +3,391 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>{{ course.title }} • StudyHub</title>
-
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>{{ course.title }} • StudyHub</title>
 
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 
-<style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
 
-:root{
+        :root {
 
-    --primary:#5b21b6;
-    --primary-light:#ede9fe;
+            --primary: #5b21b6;
+            --primary-light: #ede9fe;
 
-    --bg:#f7f7fb;
+            --bg: #f7f7fb;
 
-    --white:#ffffff;
+            --white: #ffffff;
 
-    --text:#111827;
+            --text: #111827;
 
-    --muted:#6b7280;
+            --muted: #6b7280;
 
-    --border:#e5e7eb;
+            --border: #e5e7eb;
 
-    --green:#16a34a;
+            --green: #16a34a;
 
-    --red:#dc2626;
+            --red: #dc2626;
 
-}
-
-
-body{
-
-    font-family:"Poppins",sans-serif;
-
-    background:var(--bg);
-
-    color:var(--text);
-
-}
+        }
 
 
-a{
+        body {
 
-    text-decoration:none;
+            font-family: "Poppins", sans-serif;
 
-}
+            background: var(--bg);
+
+            color: var(--text);
+
+        }
+
+
+        a {
+
+            text-decoration: none;
+
+        }
 
 
 
-img{
+        img {
 
-    width:100%;
+            width: 100%;
 
-    display:block;
+            display: block;
 
-}
+        }
 
 
 
-/* =====================
+        /* =====================
 HEADER
 ===================== */
 
 
-.header{
+        .header {
 
-    background:white;
+            background: white;
 
-    border-bottom:1px solid var(--border);
+            border-bottom: 1px solid var(--border);
 
-    position:sticky;
+            position: sticky;
 
-    top:0;
+            top: 0;
 
-    z-index:100;
+            z-index: 100;
 
-}
-
-
-
-.nav{
-
-    max-width:1200px;
-
-    margin:auto;
-
-    padding:15px 20px;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-}
+        }
 
 
 
-.logo{
+        .nav {
 
-    display:flex;
+            max-width: 1200px;
 
-    align-items:center;
+            margin: auto;
 
-    gap:10px;
+            padding: 15px 20px;
 
-}
+            display: flex;
 
+            justify-content: space-between;
 
+            align-items: center;
 
-.logo img{
-
-    width:42px;
-
-    height:42px;
-
-}
+        }
 
 
 
-.logo span{
+        .logo {
 
-    font-size:22px;
+            display: flex;
 
-    font-weight:700;
+            align-items: center;
 
-    color:#111;
+            gap: 10px;
 
-}
-
-
-
-.back-btn{
-
-    padding:10px 18px;
-
-    background:#f3f4f6;
-
-    color:#374151;
-
-    border-radius:10px;
-
-    font-weight:600;
-
-}
+        }
 
 
 
-/* =====================
+        .logo img {
+
+            width: 42px;
+
+            height: 42px;
+
+        }
+
+
+
+        .logo span {
+
+            font-size: 22px;
+
+            font-weight: 700;
+
+            color: #111;
+
+        }
+
+
+
+        .back-btn {
+
+            padding: 10px 18px;
+
+            background: #f3f4f6;
+
+            color: #374151;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+
+        }
+
+
+
+        /* =====================
 MAIN CONTAINER
 ===================== */
 
 
-.container{
+        .container {
 
-    max-width:1200px;
+            max-width: 1200px;
 
-    margin:auto;
+            margin: auto;
 
-    padding:30px 20px;
+            padding: 30px 20px;
 
-}
+        }
 
 
 
-/* =====================
+        /* =====================
 COURSE TOP SECTION
 ===================== */
 
 
-.course-header{
+        .course-header {
 
-    background:white;
+            background: white;
 
-    border-radius:20px;
+            border-radius: 20px;
 
-    padding:30px;
+            padding: 30px;
 
-    display:grid;
+            display: grid;
 
-    grid-template-columns:360px 1fr;
+            grid-template-columns: 360px 1fr;
 
-    gap:35px;
+            gap: 35px;
 
-    border:1px solid var(--border);
+            border: 1px solid var(--border);
 
-}
+        }
 
 
 
-.course-image{
+        .course-image {
 
-    border-radius:18px;
+            border-radius: 18px;
 
-    overflow:hidden;
+            overflow: hidden;
 
-}
+        }
 
 
 
-.course-image img{
+        .course-image img {
 
-    aspect-ratio:16/10;
+            aspect-ratio: 16/10;
 
-    object-fit:cover;
+            object-fit: cover;
 
-}
+        }
 
 
 
-.course-info h1{
+        .course-info h1 {
 
-    font-size:38px;
+            font-size: 38px;
 
-    line-height:1.3;
+            line-height: 1.3;
 
-    margin-bottom:15px;
+            margin-bottom: 15px;
 
-}
+        }
 
 
 
-.course-info p{
+        .course-info p {
 
-    color:var(--muted);
+            color: var(--muted);
 
-    line-height:1.8;
+            line-height: 1.8;
 
-}
+        }
 
 
 
-.badge{
+        .badge {
 
-    display:inline-block;
+            display: inline-block;
 
-    margin-bottom:15px;
+            margin-bottom: 15px;
 
-    padding:7px 15px;
+            padding: 7px 15px;
 
-    border-radius:50px;
+            border-radius: 50px;
 
-    background:var(--primary-light);
+            background: var(--primary-light);
 
-    color:var(--primary);
+            color: var(--primary);
 
-    font-size:14px;
+            font-size: 14px;
 
-    font-weight:600;
+            font-weight: 600;
 
-}
+        }
 
 
 
-.course-stats{
+        .course-stats {
 
-    display:flex;
+            display: flex;
 
-    gap:15px;
+            gap: 15px;
 
-    margin-top:25px;
+            margin-top: 25px;
 
-    flex-wrap:wrap;
+            flex-wrap: wrap;
 
-}
+        }
 
 
 
-.stat{
+        .stat {
 
-    background:#f9fafb;
+            background: #f9fafb;
 
-    padding:15px 20px;
+            padding: 15px 20px;
 
-    border-radius:12px;
+            border-radius: 12px;
 
-    border:1px solid var(--border);
+            border: 1px solid var(--border);
 
-}
+        }
 
 
 
-.stat h3{
+        .stat h3 {
 
-    font-size:20px;
+            font-size: 20px;
 
-}
+        }
 
 
 
-.stat span{
+        .stat span {
 
-    font-size:13px;
+            font-size: 13px;
 
-    color:var(--muted);
+            color: var(--muted);
 
-}
+        }
 
 
 
-/* =====================
+        /* =====================
 CONTENT GRID
 ===================== */
 
 
-.content-grid{
+        .content-grid {
 
-    margin-top:30px;
+            margin-top: 30px;
 
-    display:grid;
+            display: grid;
 
-    grid-template-columns:1fr 330px;
+            grid-template-columns: 1fr 330px;
 
-    gap:25px;
+            gap: 25px;
 
-}
-
-
-
-/* LEFT */
-
-
-.card{
-
-    background:white;
-
-    padding:25px;
-
-    border-radius:18px;
-
-    border:1px solid var(--border);
-
-    margin-bottom:25px;
-
-}
+        }
 
 
 
-.card h2{
-
-    font-size:24px;
-
-    margin-bottom:18px;
-
-}
+        /* LEFT */
 
 
+        .card {
 
-.description{
+            background: white;
 
-    color:var(--muted);
+            padding: 25px;
 
-    line-height:1.9;
+            border-radius: 18px;
 
-}
+            border: 1px solid var(--border);
+
+            margin-bottom: 25px;
+
+        }
 
 
 
-/* =====================
+        .card h2 {
+
+            font-size: 24px;
+
+            margin-bottom: 18px;
+
+        }
+
+
+
+        .description {
+
+            color: var(--muted);
+
+            line-height: 1.9;
+
+        }
+
+
+
+        /* =====================
 LECTURES
 ===================== */
 
+/* =====================
+LECTURE CARD
+===================== */
 
 .lecture{
 
     display:flex;
-
     align-items:center;
-
     gap:15px;
 
     padding:15px;
@@ -402,11 +401,9 @@ LECTURES
 }
 
 
-
 .number{
 
     width:42px;
-
     height:42px;
 
     border-radius:50%;
@@ -416,12 +413,12 @@ LECTURES
     color:var(--primary);
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     font-weight:700;
+
+    flex-shrink:0;
 
 }
 
@@ -430,19 +427,20 @@ LECTURES
 .thumb{
 
     width:120px;
-
     height:70px;
 
     border-radius:10px;
 
     overflow:hidden;
 
-}
+    flex-shrink:0;
 
+}
 
 
 .thumb img{
 
+    width:100%;
     height:100%;
 
     object-fit:cover;
@@ -455,6 +453,8 @@ LECTURES
 
     flex:1;
 
+    min-width:0;
+
 }
 
 
@@ -462,6 +462,12 @@ LECTURES
 .lecture-info h3{
 
     font-size:16px;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
 
 }
 
@@ -477,11 +483,9 @@ LECTURES
 
 
 
-.watch{
 
-    background:var(--primary);
-
-    color:white;
+.watch,
+.lock{
 
     padding:10px 18px;
 
@@ -489,8 +493,19 @@ LECTURES
 
     font-weight:600;
 
+    white-space:nowrap;
+
 }
 
+
+
+.watch{
+
+    background:var(--primary);
+
+    color:white;
+
+}
 
 
 .lock{
@@ -499,89 +514,127 @@ LECTURES
 
     color:var(--red);
 
-    padding:10px 18px;
-
-    border-radius:10px;
-
-    font-weight:600;
-
 }
 
 
-
-
-/* =====================
+        /* =====================
 RIGHT CARD
 ===================== */
 
 
-.buy-card{
+        .buy-card {
 
-    background:white;
+            background: white;
 
-    border-radius:18px;
+            border-radius: 18px;
 
-    padding:25px;
+            padding: 25px;
 
-    border:1px solid var(--border);
+            border: 1px solid var(--border);
 
-    position:sticky;
+            position: sticky;
 
-    top:90px;
+            top: 90px;
 
-}
-
-
-
-.price{
-
-    font-size:38px;
-
-    font-weight:700;
-
-    margin-bottom:20px;
-
-}
+        }
 
 
 
-.buy-btn{
+        .price {
 
-    display:block;
+            font-size: 38px;
 
-    text-align:center;
+            font-weight: 700;
 
-    padding:15px;
+            margin-bottom: 20px;
 
-    border-radius:12px;
-
-    background:var(--primary);
-
-    color:white;
-
-    font-weight:700;
-
-}
+        }
 
 
 
-.features{
+        .buy-btn {
 
-    margin-top:25px;
+            display: block;
 
-}
+            text-align: center;
+
+            padding: 15px;
+
+            border-radius: 12px;
+
+            background: var(--primary);
+
+            color: white;
+
+            font-weight: 700;
+
+        }
 
 
 
-.features div{
+        .features {
 
-    padding:12px 0;
+            margin-top: 25px;
 
-    border-bottom:1px solid var(--border);
+        }
 
-    color:#374151;
 
-}
+
+        .features div {
+
+            padding: 12px 0;
+
+            border-bottom: 1px solid var(--border);
+
+            color: #374151;
+
+        }
+
+
+        /* =====================
+MOBILE RESPONSIVE
+===================== */
+
+
+        @media(max-width:1000px) {
+
+
+            .course-header {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .course-image {
+
+                max-width: 500px;
+
+                margin: auto;
+
+            }
+
+
+
+            .content-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+
+            .buy-card {
+
+                position: static;
+
+            }
+
+
+        }
+
+
+
 
 
 /* =====================
@@ -589,249 +642,319 @@ MOBILE RESPONSIVE
 ===================== */
 
 
-@media(max-width:1000px){
+@media(max-width:768px){
 
 
-.course-header{
+    .nav{
 
-    grid-template-columns:1fr;
+        padding:12px 15px;
+
+    }
+
+
+    .logo img{
+
+        width:36px;
+        height:36px;
+
+    }
+
+
+    .logo span{
+
+        font-size:19px;
+
+    }
+
+
+    .back-btn{
+
+        padding:8px 12px;
+        font-size:13px;
+
+    }
+
+
+
+    .container{
+
+        padding:20px 12px;
+
+    }
+
+
+
+    .course-header{
+
+        padding:18px;
+
+        border-radius:15px;
+
+    }
+
+
+
+    .course-info h1{
+
+        font-size:28px;
+
+        line-height:1.3;
+
+    }
+
+
+
+    .course-info p{
+
+        font-size:14px;
+
+        line-height:1.7;
+
+    }
+
+
+
+    .course-stats{
+
+        gap:10px;
+
+    }
+
+
+
+    .stat{
+
+        flex:1;
+
+        min-width:100px;
+
+        padding:12px;
+
+    }
+
+
+
+    .stat h3{
+
+        font-size:17px;
+
+    }
+
+
+
+    .card{
+
+        padding:18px;
+
+        border-radius:15px;
+
+    }
+
+
+
+    .card h2{
+
+        font-size:21px;
+
+    }
+
+
+
+    /* =====================
+       LECTURE CARD
+    ===================== */
+
+
+    .lecture{
+
+        display:grid;
+
+        grid-template-columns:40px 90px 1fr;
+
+        gap:10px;
+
+        padding:12px;
+
+        align-items:center;
+
+    }
+
+
+
+    .number{
+
+        width:36px;
+
+        height:36px;
+
+        font-size:14px;
+
+    }
+
+
+
+    .thumb{
+
+        width:90px;
+
+        height:55px;
+
+    }
+
+
+
+    .lecture-info h3{
+
+        font-size:14px;
+
+        line-height:1.4;
+
+    }
+
+
+
+    .meta{
+
+        font-size:11px;
+
+    }
+
+
+
+    .watch,
+    .lock{
+
+        grid-column:2 / 4;
+
+        width:100%;
+
+        text-align:center;
+
+        padding:9px;
+
+        font-size:13px;
+
+    }
+
+
+
+    .price{
+
+        font-size:32px;
+
+    }
+
+
+
+    .buy-btn{
+
+        padding:13px;
+
+    }
+
 
 }
 
 
-.course-image{
 
-    max-width:500px;
 
-    margin:auto;
+
+
+/* Small phones */
+
+@media(max-width:400px){
+
+
+
+    .course-info h1{
+
+        font-size:24px;
+
+    }
+
+
+
+    .course-stats{
+
+        flex-direction:column;
+
+    }
+
+
+
+    .stat{
+
+        width:100%;
+
+    }
+
+
+
+    .lecture{
+
+        grid-template-columns:35px 75px 1fr;
+
+        gap:8px;
+
+    }
+
+
+
+    .thumb{
+
+        width:75px;
+
+        height:48px;
+
+    }
+
+
+
+    .lecture-info h3{
+
+        font-size:13px;
+
+    }
+
+
+
+    .watch,
+    .lock{
+
+        grid-column:1/-1;
+
+    }
+
+
 
 }
 
-
-
-.content-grid{
-
-    grid-template-columns:1fr;
-
-}
-
-
-
-.buy-card{
-
-    position:static;
-
-}
-
-
-}
-
-
-
-
-
-@media(max-width:700px){
-
-
-
-.nav{
-
-    padding:12px 15px;
-
-}
-
-
-
-.logo img{
-
-    width:36px;
-
-    height:36px;
-
-}
-
-
-
-.logo span{
-
-    font-size:19px;
-
-}
-
-
-
-.back-btn{
-
-    padding:8px 12px;
-
-    font-size:13px;
-
-}
-
-
-
-
-
-
-.container{
-
-    padding:20px 12px;
-
-}
-
-
-
-
-
-
-.course-header{
-
-    padding:18px;
-
-    border-radius:15px;
-
-}
-
-
-
-
-
-
-.course-info h1{
-
-    font-size:28px;
-
-}
-
-
-
-
-
-.course-info p{
-
-    font-size:14px;
-
-}
-
-
-
-
-
-.course-stats{
-
-    gap:10px;
-
-}
-
-
-
-
-
-.stat{
-
-    flex:1;
-
-    min-width:100px;
-
-    padding:12px;
-
-}
-
-
-
-.stat h3{
-
-    font-size:17px;
-
-}
-
-
-
-
-
-.card{
-
-    padding:18px;
-
-    border-radius:15px;
-
-}
-
-
-
-
-
-.card h2{
-
-    font-size:21px;
-
-}
-
-
-
-
-
+      @media(max-width:400px){
 
 
 .lecture{
 
+    grid-template-columns:35px 75px 1fr;
 
-    display:grid;
-
-    grid-template-columns:45px 90px 1fr;
-
-    gap:10px;
-
-    align-items:center;
+    gap:8px;
 
 }
-
-
-
-
-
-.number{
-
-    width:38px;
-
-    height:38px;
-
-}
-
-
-
 
 
 .thumb{
 
-    width:90px;
+    width:75px;
 
-    height:55px;
+    height:48px;
 
 }
-
-
-
 
 
 .lecture-info h3{
 
-    font-size:14px;
+    font-size:13px;
 
 }
-
-
-
-
-
-.meta{
-
-    font-size:12px;
-
-}
-
-
-
 
 
 .watch,
@@ -839,641 +962,458 @@ MOBILE RESPONSIVE
 
     grid-column:1/-1;
 
-    text-align:center;
-
-    width:100%;
-
-}
-
-
-
-
-
-
-.price{
-
-    font-size:32px;
-
-}
-
-
-
-.buy-btn{
-
-    padding:13px;
-
 }
 
 
 
 }
-
-
-
-
-
-@media(max-width:400px){
-
-
-
-.course-info h1{
-
-    font-size:24px;
-
-}
-
-
-
-.course-stats{
-
-    flex-direction:column;
-
-}
-
-
-
-.stat{
-
-    width:100%;
-
-}
-
-
-
-
-
-.lecture{
-
-    grid-template-columns:40px 75px 1fr;
-
-}
-
-
-
-.thumb{
-
-    width:75px;
-
-    height:50px;
-
-}
-
-
-
-}
-
-</style>
+    </style>
 
 </head>
+
 <body>
 
 
-<!-- =====================
+    <!-- =====================
 HEADER
 ===================== -->
 
 
-<header class="header">
+    <header class="header">
 
-<div class="nav">
-
-
-<a href="{{ url_for('dashboard') }}" class="logo">
-
-<img 
-src="{{ url_for('static', filename='images/logo.png') }}"
-alt="StudyHub">
-
-<span>StudyHub</span>
-
-</a>
+        <div class="nav">
 
 
+            <a href="{{ url_for('dashboard') }}" class="logo">
 
-<a 
-href="{{ url_for('category_courses', slug=category.slug) }}"
-class="back-btn">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudyHub">
 
-← Back
+                <span>StudyHub</span>
 
-</a>
+            </a>
 
 
-</div>
+            <a href="/lectures" class="back-btn">
+                ← Back
+            </a>
 
-</header>
+        </div>
+
+    </header>
 
 
 
 
 
-<div class="container">
+    <div class="container">
 
 
 
 
 
-<!-- =====================
+        <!-- =====================
 COURSE HEADER
 ===================== -->
 
 
-<section class="course-header">
+        <section class="course-header">
 
 
 
-<div class="course-image">
+            <div class="course-image">
 
 
-{% if course.thumbnail %}
+                {% if course.thumbnail %}
 
-<img
-src="/static/uploads/course_thumbnails/{{ course.thumbnail }}"
-alt="{{ course.title }}">
+                <img src="/static/uploads/course_thumbnails/{{ course.thumbnail }}" alt="{{ course.title }}">
 
 
-{% else %}
+                {% else %}
 
 
 
-<img
-src="{{ url_for('static', filename='images/default-course.jpg') }}"
-alt="{{ course.title }}">
+                <img src="{{ url_for('static', filename='images/default-course.jpg') }}" alt="{{ course.title }}">
 
 
 
-{% endif %}
+                {% endif %}
 
 
-</div>
+            </div>
 
 
 
 
 
-<div class="course-info">
+            <div class="course-info">
 
 
 
-{% if course.is_free %}
+                {% if course.is_free %}
 
 
-<div class="badge">
+                <div class="badge">
 
-🎉 Free Course
+                    🎉 Free Course
 
-</div>
+                </div>
 
 
-{% else %}
+                {% else %}
 
 
-<div class="badge">
+                <div class="badge">
 
-💎 Premium Course
+                    💎 Premium Course
 
-</div>
+                </div>
 
 
-{% endif %}
+                {% endif %}
 
 
 
 
 
-<h1>
+                <h1>
 
-{{ course.title }}
+                    {{ course.title }}
 
-</h1>
+                </h1>
 
 
 
 
 
-<p>
+                <p>
 
-{{ course.description }}
+                    {{ course.description }}
 
-</p>
+                </p>
 
 
 
 
 
-<div class="course-stats">
+                <div class="course-stats">
 
 
 
-<div class="stat">
+                    <div class="stat">
 
-<h3>
+                        <h3>
 
-{{ lectures|length }}
+                            {{ lectures|length }}
 
-</h3>
+                        </h3>
 
-<span>
+                        <span>
 
-Lectures
+                            Lectures
 
-</span>
+                        </span>
 
-</div>
+                    </div>
 
 
 
 
-</div>
+                </div>
 
 
 
-</div>
+            </div>
 
 
-</section>
+        </section>
 
-<div class="card">
+        <div class="card">
 
-<h2>
+            <h2>
 
-📚 Course Content
+                📚 Course Content
 
-</h2>
+            </h2>
 
-{% for lecture in lectures %}
+            {% for lecture in lectures %}
 
-<div class="lecture">
+            <div class="lecture">
 
-<div class="number">
+                <div class="number">
 
-{{ loop.index }}
+                    {{ loop.index }}
 
-</div>
+                </div>
 
-<div class="thumb">
+                <div class="thumb">
 
 
-{% if lecture.thumbnail %}
+                    {% if lecture.thumbnail %}
 
-<img
+                    <img src="/static/uploads/lecture_thumbnails/{{ lecture.thumbnail }}" alt="{{ lecture.title }}">
 
-src="/static/uploads/lecture_thumbnails/{{ lecture.thumbnail }}"
 
-alt="{{ lecture.title }}">
+                    {% else %}
 
 
-{% else %}
+                    <img src="{{ url_for('static', filename='images/default-course.jpg') }}" alt="{{ lecture.title }}">
 
 
-<img
 
-src="{{ url_for('static', filename='images/default-course.jpg') }}"
+                    {% endif %}
 
-alt="{{ lecture.title }}">
 
 
+                </div>
 
-{% endif %}
+                <div class="lecture-info">
 
 
+                    <h3>
 
-</div>
+                        {{ lecture.title }}
 
-<div class="lecture-info">
+                    </h3>
 
 
-<h3>
 
-{{ lecture.title }}
 
-</h3>
+                    <div class="meta">
 
 
+                        {% if lecture.duration %}
 
+                        ⏱ {{ lecture.duration }}
 
-<div class="meta">
+                        {% endif %}
 
 
-{% if lecture.duration %}
 
-⏱ {{ lecture.duration }}
+                        {% if lecture.is_free %}
 
-{% endif %}
+                        &nbsp; • &nbsp;
 
+                        Free Preview
 
+                        {% endif %}
 
-{% if lecture.is_free %}
 
-&nbsp; • &nbsp;
 
-Free Preview
+                        {% if not purchased and not lecture.is_free %}
 
-{% endif %}
+                        &nbsp; • &nbsp;
 
+                        🔒 Locked
 
+                        {% endif %}
 
-{% if not purchased and not lecture.is_free %}
 
-&nbsp; • &nbsp;
 
-🔒 Locked
+                    </div>
 
-{% endif %}
 
 
+                </div>
 
-</div>
 
 
+                {% if purchased or lecture.is_free %}
 
-</div>
 
 
+                <a href="{{ url_for('watch', id=lecture.id) }}" class="watch">
 
-{% if purchased or lecture.is_free %}
 
+                    ▶ Watch
 
 
-<a
+                </a>
 
-href="{{ url_for('watch', id=lecture.id) }}"
 
-class="watch">
 
 
-▶ Watch
 
+                {% else %}
 
-</a>
 
 
 
 
+                <span class="lock">
 
-{% else %}
 
+                    🔒 Locked
 
 
+                </span>
 
 
-<span class="lock">
 
 
-🔒 Locked
 
+                {% endif %}
 
-</span>
+            </div>
 
 
+            {% else %}
 
 
+            <div style="text-align:center;padding:40px;color:#6b7280;">
 
-{% endif %}
 
-</div>
+                <h3>
 
+                    No Lectures Available
 
-{% else %}
+                </h3>
 
 
-<div style="text-align:center;padding:40px;color:#6b7280;">
+                <p>
 
+                    Content will be added soon.
 
-<h3>
+                </p>
 
-No Lectures Available
 
-</h3>
+            </div>
 
 
-<p>
 
-Content will be added soon.
 
-</p>
 
+            {% endfor %}
 
-</div>
 
 
 
 
 
-{% endfor %}
 
+        </div>
 
 
 
 
 
 
-</div>
+    </div>
 
 
 
 
 
 
-</div>
 
 
 
 
+    <!-- RIGHT SIDEBAR -->
 
 
 
+    <aside>
 
 
 
-<!-- RIGHT SIDEBAR -->
 
 
+        <div class="buy-card">
 
-<aside>
 
 
 
 
+            {% if course.is_free %}
 
-<div class="buy-card">
 
 
 
+            <div class="price">
 
+                FREE
 
-{% if course.is_free %}
+            </div>
 
 
 
 
-<div class="price">
 
-FREE
+            <a href="{{ url_for('watch', id=lectures[0].id) if lectures else '#' }}" class="buy-btn">
 
-</div>
 
+                Start Learning
 
 
+            </a>
 
 
-<a
 
-href="{{ url_for('watch', id=lectures[0].id) if lectures else '#' }}"
 
-class="buy-btn">
 
+            {% elif purchased %}
 
-Start Learning
 
 
-</a>
 
 
+            <div class="price">
 
+                ✅ Owned
 
+            </div>
 
-{% elif purchased %}
 
 
 
 
+            <a href="{{ url_for('watch', id=lectures[0].id) if lectures else '#' }}" class="buy-btn">
 
-<div class="price">
 
-✅ Owned
+                Continue Learning
 
-</div>
 
+            </a>
 
 
 
 
-<a
 
-href="{{ url_for('watch', id=lectures[0].id) if lectures else '#' }}"
+            {% else %}
 
-class="buy-btn">
 
 
-Continue Learning
 
 
-</a>
+            <div class="price">
 
+                ₹ {{ course.price }}
 
+            </div>
 
 
 
-{% else %}
 
 
+            <a href="{{ url_for('buy_course', id=course.id) }}" class="buy-btn">
 
 
+                💳 Buy Course
 
-<div class="price">
 
-₹ {{ course.price }}
+            </a>
 
-</div>
 
 
 
 
+            {% endif %}
 
-<a
 
-href="{{ url_for('buy_course', id=course.id) }}"
-
-class="buy-btn">
-
-
-💳 Buy Course
-
-
-</a>
-
-
-
-
-
-{% endif %}
-
-
-
-
-
-
-
-<div class="features">
-
-
-
-<div>
-
-📺 {{ lectures|length }} Video Lectures
-
-</div>
-
-
-
-<div>
-
-📄 Course Notes
-
-</div>
-
-
-
-
-<div>
-
-♾ Lifetime Access
-
-</div>
-
-
-
-
-<div>
-
-📱 Mobile + Desktop
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-</div>
-
-
-
-
-
-</aside>
-
-
-
-
-
-</div>
-
-
-
-
-
-
-
-</div>
-
-
-
+        </div>
+    </aside>
+    </div>
+    </div>
 </body>
 
 </html>

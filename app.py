@@ -291,35 +291,28 @@ def dashboard():
             # ==========================================
 
             featured_courses = conn.execute(
-                text("""
-                    SELECT
-                        c.id,
-                        c.title,
-                        c.description,
-                        c.thumbnail,
-                        c.price,
-                        c.is_free,
-                        c.category_id,
+            text("""
+                SELECT
+                    c.id,
+                    c.title,
+                    c.description,
+                    c.thumbnail,
+                    c.price,
+                    c.is_free,
 
-                        cat.name AS category_name,
+                    (
+                        SELECT COUNT(*)
+                        FROM lectures l
+                        WHERE l.course_id = c.id
+                    ) AS lecture_count
 
-                        (
-                            SELECT COUNT(*)
-                            FROM lectures l
-                            WHERE l.course_id = c.id
-                        ) AS lecture_count
+                FROM courses c
 
-                    FROM courses c
+                ORDER BY c.id DESC
 
-                    LEFT JOIN categories cat
-                        ON c.category_id = cat.id
-
-                    ORDER BY c.id DESC
-
-                    LIMIT 8
-                """)
-            ).fetchall()
-
+                LIMIT 8
+            """)
+        ).fetchall()
 
             # ==========================================
             # RECENT NOTES
@@ -403,8 +396,10 @@ def dashboard():
 
     return render_template(
         "dashboard.html",
-
         username=username,
+        
+        
+
 
         # Statistics
         total_courses=total_courses,
@@ -496,55 +491,13 @@ def signup():
 
     return render_template("signup.html")
 
-
-#this is a search bar 
-@app.route("/search")
-def search():
-
-    query = request.args.get("q", "").lower()
-
-    data = [
-        {"title":"Python Notes", "url":"/notes/python", "type":"📚 Notes"},
-        {"title":"Python PDF", "url":"/pdf", "type":"📄 PDF"},
-        {"title":"Python Full Course", "url":"/lectures", "type":"🎥 Lecture"},
-
-        {"title":"Web Development Notes", "url":"/notes/web", "type":"📚 Notes"},
-        {"title":"Web Development Lecture", "url":"/lectures", "type":"🎥 Lecture"},
-        {"title":"Web Development PDF", "url":"/pdf", "type":"📄 PDF"},
-
-        {"title":"DBMS Notes", "url":"/notes/sql", "type":"📚 Notes"},
-        {"title":"DBMS Lecture", "url":"/lectures", "type":"🎥 Lecture"},
-
-        {"title":"PHP Notes", "url":"/notes/php", "type":"📚 Notes"},
-
-        {"title":"DSA Notes", "url":"/notes/dsa", "type":"📚 Notes"},
-
-        {"title":"C Language Course", "url":"/lectures", "type":"🎥 Lecture"},
-        {"title":"Java Tutorial", "url":"/lectures", "type":"🎥 Lecture"},
-        {"title":"C++", "url":"/lectures", "type":"🎥 Lecture"}
-    ]
-
-    results = []
-
-    for item in data:
-        words = query.split()
-
-        if any(word in item["title"].lower() for word in words):
-            results.append(item)
-
-    return render_template(
-        "search_result.html",
-        query=query,
-        results=results
-    )
-
-
 # Logout
 @app.route("/logout")
 def logout():
 
     session.clear()
     return redirect("/login")
+
 
 #sidebar section
 @app.route("/notes")
@@ -779,31 +732,50 @@ def add_course():
     if request.method == "POST":
 
         title = request.form["title"]
-        description = request.form["description"]
-        price = request.form["price"]
-        category_id = request.form["category_id"]
+
+        description = request.form.get("description")
+
+        price = request.form.get("price",0)
+
 
         is_free = 1 if request.form.get("is_free") else 0
 
+
         thumbnail = None
+
 
         image = request.files.get("thumbnail")
 
+
         if image and image.filename:
+
 
             filename = secure_filename(image.filename)
 
+
             folder = "static/uploads/course_thumbnails"
+
 
             os.makedirs(folder, exist_ok=True)
 
-            image.save(os.path.join(folder, filename))
+
+            image.save(
+                os.path.join(
+                    folder,
+                    filename
+                )
+            )
+
 
             thumbnail = filename
 
+
+
         with engine.connect() as conn:
 
+
             conn.execute(
+
                 text("""
                     INSERT INTO courses
                     (
@@ -811,47 +783,53 @@ def add_course():
                         description,
                         thumbnail,
                         price,
-                        is_free,
-                        category_id
+                        is_free
                     )
+
                     VALUES
                     (
                         :title,
                         :description,
                         :thumbnail,
                         :price,
-                        :is_free,
-                        :category_id
+                        :is_free
                     )
+
                 """),
+
                 {
-                    "title": title,
-                    "description": description,
-                    "thumbnail": thumbnail,
-                    "price": price,
-                    "is_free": is_free,
-                    "category_id": category_id
+
+                    "title":title,
+
+                    "description":description,
+
+                    "thumbnail":thumbnail,
+
+                    "price":price,
+
+                    "is_free":is_free
+
                 }
+
             )
+
 
             conn.commit()
 
-        flash("Course Added Successfully!", "success")
+
+
+        flash(
+            "Course Added Successfully!",
+            "success"
+        )
+
 
         return redirect("/manage_courses")
-    with engine.connect() as conn:
 
-        categories = conn.execute(
-            text("""
-                SELECT *
-                FROM categories
-                ORDER BY name
-            """)
-        ).fetchall()
+
 
     return render_template(
-        "add_course.html",
-        categories=categories
+        "add_course.html"
     )
 
 @app.route("/course/<int:id>")
@@ -893,21 +871,6 @@ def course(id):
             }
         ).fetchall()
 
-
-        # Get Category
-        category = conn.execute(
-            text("""
-                SELECT *
-                FROM categories
-                WHERE id=:category_id
-            """),
-            {
-                "category_id": course.category_id
-            }
-        ).fetchone()
-
-
-
         # Check Course Purchase
         purchased = False
 
@@ -937,7 +900,6 @@ def course(id):
         "course_detail.html",
         course=course,
         lectures=lectures,
-        category=category,
         purchased=purchased
     )
 
@@ -1054,39 +1016,6 @@ def edit_course(id):
         course=course
     )
 
-@app.route("/courses/<slug>")
-def category_courses(slug):
-
-    with engine.connect() as conn:
-
-        category = conn.execute(
-            text("""
-                SELECT *
-                FROM categories
-                WHERE slug=:slug
-            """),
-            {"slug": slug}
-        ).fetchone()
-
-        if not category:
-            return "Category not found",404
-
-        courses = conn.execute(
-            text("""
-                SELECT *
-                FROM courses
-                WHERE category_id=:category_id
-                ORDER BY id ASC
-            """),
-            {"category_id": category.id}
-        ).fetchall()
-
-    return render_template(
-        "courses.html",
-        category=category,
-        courses=courses
-    )
-
 @app.route("/watch/<int:id>")
 def watch(id):
 
@@ -1118,6 +1047,18 @@ def watch(id):
             {"course": lecture.course_id}
         ).fetchone()
 
+        lectures = conn.execute(
+            text("""
+                SELECT *
+                FROM lectures
+                WHERE course_id=:course
+                ORDER BY id
+            """),
+            {
+                "course": course.id
+            }
+        ).fetchall()
+
         if not course:
             return "Course Not Found",404
 
@@ -1128,7 +1069,8 @@ def watch(id):
             return render_template(
                 "watch.html",
                 lecture=lecture,
-                course=course
+                course=course,
+                lectures=lectures
             )
         # Check Purchase
         purchase = conn.execute(
@@ -1161,41 +1103,33 @@ def watch(id):
     return render_template(
         "watch.html",
         lecture=lecture,
-        course=course
+        course=course,
+        lectures=lectures
     )
 
 @app.route("/add_lecture", methods=["GET", "POST"])
 @admin_required
 def add_lecture():
 
+    # Get courses for dropdown
     with engine.connect() as conn:
 
-        with engine.connect() as conn:
+        courses = conn.execute(
+            text("""
+                SELECT
+                    id,
+                    title
+                FROM courses
+                ORDER BY title
+            """)
+        ).fetchall()
 
 
-
-            categories = conn.execute(
-                text("""
-                    SELECT *
-                    FROM categories
-                    ORDER BY name
-                """)
-            ).fetchall()
-
-            courses = conn.execute(
-                text("""
-                    SELECT
-                        id,
-                        title
-                    FROM courses
-                    ORDER BY title
-                """)
-            ).fetchall()
-            
     if request.method == "POST":
 
         title = request.form["title"]
         description = request.form.get("description")
+
         course_id = request.form["course_id"]
 
         video_type = request.form["video_type"]
@@ -1203,20 +1137,22 @@ def add_lecture():
         is_free = 1 if request.form.get("is_free") else 0
         is_locked = 1 if request.form.get("is_locked") else 0
 
-        
         duration = request.form.get("duration")
+
 
         youtube_url = None
         video_file = None
         thumbnail = None
 
-        # --------------------------
+
+        # ==========================
         # YouTube Video
-        # --------------------------
+        # ==========================
 
         if video_type == "youtube":
 
             youtube_url = request.form.get("youtube_url")
+
 
             if youtube_url:
 
@@ -1225,23 +1161,29 @@ def add_lecture():
                     video_id = youtube_url.split("watch?v=")[1].split("&")[0]
 
                     youtube_url = (
-                        "https://www.youtube.com/embed/" + video_id
+                        "https://www.youtube.com/embed/"
+                        + video_id
                     )
+
 
                 elif "youtu.be/" in youtube_url:
 
                     video_id = youtube_url.split("youtu.be/")[1].split("?")[0]
 
                     youtube_url = (
-                        "https://www.youtube.com/embed/" + video_id
+                        "https://www.youtube.com/embed/"
+                        + video_id
                     )
 
-        # --------------------------
-        # Upload MP4
-        # --------------------------
 
-        else:
+        # ==========================
+        # Upload MP4 Video
+        # ==========================
+
+        elif video_type == "upload":
+
             video = request.files.get("video_file")
+
 
             if video and video.filename:
 
@@ -1249,7 +1191,11 @@ def add_lecture():
 
                 video_folder = "static/uploads/videos"
 
-                os.makedirs(video_folder, exist_ok=True)
+                os.makedirs(
+                    video_folder,
+                    exist_ok=True
+                )
+
 
                 video.save(
                     os.path.join(
@@ -1258,20 +1204,33 @@ def add_lecture():
                     )
                 )
 
+
                 video_file = filename
-        # --------------------------
-        # Thumbnail
-        # --------------------------
+
+
+
+        # ==========================
+        # Thumbnail Upload
+        # ==========================
 
         thumb = request.files.get("thumbnail")
 
+
         if thumb and thumb.filename:
 
-            thumb_name = secure_filename(thumb.filename)
+            thumb_name = secure_filename(
+                thumb.filename
+            )
+
 
             thumb_folder = "static/uploads/lecture_thumbnails"
 
-            os.makedirs(thumb_folder, exist_ok=True)
+
+            os.makedirs(
+                thumb_folder,
+                exist_ok=True
+            )
+
 
             thumb.save(
                 os.path.join(
@@ -1280,11 +1239,14 @@ def add_lecture():
                 )
             )
 
+
             thumbnail = thumb_name
 
-        # --------------------------
-        # Insert
-        # --------------------------
+
+
+        # ==========================
+        # Insert Lecture
+        # ==========================
 
         with engine.connect() as conn:
 
@@ -1298,11 +1260,9 @@ def add_lecture():
                         video_type,
                         video_file,
                         thumbnail,
-                       
                         course_id,
                         is_free,
                         is_locked,
-                       
                         duration
                     )
 
@@ -1314,11 +1274,9 @@ def add_lecture():
                         :video_type,
                         :video_file,
                         :thumbnail,
-                       
                         :course_id,
                         :is_free,
                         :is_locked,
-                       
                         :duration
                     )
                 """),
@@ -1329,27 +1287,29 @@ def add_lecture():
                     "video_type": video_type,
                     "video_file": video_file,
                     "thumbnail": thumbnail,
-                   
                     "course_id": course_id,
                     "is_free": is_free,
                     "is_locked": is_locked,
-                    
                     "duration": duration
                 }
             )
 
             conn.commit()
 
+
+
         flash(
             "Lecture added successfully!",
             "success"
         )
 
+
         return redirect("/manage_lectures")
+
+
 
     return render_template(
         "add_lecture.html",
-        categories=categories,
         courses=courses
     )
 
@@ -1370,22 +1330,21 @@ def manage_lectures():
                     lectures.video_file,
                     lectures.thumbnail,
                     lectures.duration,
-                    lectures.price,
                     lectures.is_free,
                     lectures.is_locked,
-                    lectures.category_id,
+                    lectures.course_id,
 
-                    categories.name AS category_name,
-                    categories.icon AS category_icon
+                    courses.title AS course_name
 
                 FROM lectures
 
-                LEFT JOIN categories
-                ON lectures.category_id = categories.id
+                LEFT JOIN courses
+                ON lectures.course_id = courses.id
 
                 ORDER BY lectures.id DESC
             """)
         ).fetchall()
+
 
     return render_template(
         "manage_lectures.html",
@@ -1420,7 +1379,6 @@ def edit_lecture(id):
 
         title = request.form["title"]
         youtube_url = request.form["youtube_url"]
-        category_id = request.form["category_id"]
         course_id = request.form["course_id"]
 
         # YouTube normal URL → embed URL
@@ -1450,7 +1408,6 @@ def edit_lecture(id):
 
                     SET title = :title,
                         youtube_url = :youtube_url,
-                        category_id = :category_id,
                         course_id = :course_id
 
                     WHERE id = :id
@@ -1458,7 +1415,6 @@ def edit_lecture(id):
                 {
                     "title": title,
                     "youtube_url": youtube_url,
-                    "category_id": category_id,
                     "course_id": course_id,
                     "id": id
                 }
@@ -1488,13 +1444,7 @@ def edit_lecture(id):
         ).fetchone()
 
 
-        categories = conn.execute(
-            text("""
-                SELECT *
-                FROM categories
-                ORDER BY id ASC
-            """)
-        ).fetchall()
+        
         courses = conn.execute(
     text("""
         SELECT
@@ -1512,10 +1462,8 @@ def edit_lecture(id):
     return render_template(
         "edit_lecture.html",
         lecture=lecture,
-        categories=categories,
         courses=courses
     )
-
 
 @app.route("/lectures")
 def lectures():
@@ -1523,87 +1471,30 @@ def lectures():
     if "user" not in session:
         return redirect("/login")
 
+
     with engine.connect() as conn:
 
         courses = conn.execute(
             text("""
                 SELECT
-    c.*,
-    cat.name AS category_name,
-    cat.slug AS category_slug,
+                    c.*,
 
-    (
-        SELECT COUNT(*)
-        FROM lectures l
-        WHERE l.course_id = c.id
-    ) AS lecture_count
+                    (
+                        SELECT COUNT(*)
+                        FROM lectures l
+                        WHERE l.course_id = c.id
+                    ) AS lecture_count
 
-FROM courses c
+                FROM courses c
 
-LEFT JOIN categories cat
-ON c.category_id = cat.id
-
-ORDER BY c.id DESC;
-""")
+                ORDER BY c.id DESC
+            """)
         ).fetchall()
+
 
     return render_template(
         "lectures.html",
         courses=courses
-    )
-
-@app.route("/lectures/<slug>")
-def category_lectures(slug):
-
-    with engine.connect() as conn:
-
-        category = conn.execute(
-            text("""
-                SELECT *
-                FROM categories
-                WHERE slug = :slug
-            """),
-            {
-                "slug": slug
-            }
-        ).fetchone()
-
-
-        if not category:
-            return "Category not found", 404
-
-
-        lectures = conn.execute(
-    text("""
-        SELECT
-            id,
-            title,
-            description,
-            youtube_url,
-            video_type,
-            video_file,
-            thumbnail,
-            duration,
-            price,
-            is_free,
-            is_locked,
-            category_id
-
-        FROM lectures
-
-        WHERE category_id = :category_id
-
-        ORDER BY id ASC
-    """),
-    {
-        "category_id": category.id
-    }
-).fetchall()
-
-    return render_template(
-        "category_lectures.html",
-        lectures=lectures,
-        category=category
     )
 
 @app.route("/manage_pdfs")
@@ -1713,19 +1604,21 @@ def delete_pdf(id):
 
 @app.route("/pdfs")
 def pdfs():
+    if "user" not in session:
+        return redirect("/login")
 
     with engine.connect() as conn:
 
         result = conn.execute(
-            text("SELECT * FROM pdfs")
-        )
+        text("SELECT * FROM pdfs")
+                )
 
         pdf_list = result.fetchall()
 
     return render_template(
-        "pdf.html",
-        pdfs=pdf_list
-    )
+                "pdf.html",
+                pdfs=pdf_list
+            )
 
 @app.route("/add_note", methods=["GET", "POST"])
 @admin_required

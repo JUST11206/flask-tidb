@@ -240,24 +240,6 @@ type="file"
 name="thumbnail"
 accept="image/*">
 
-<label>Learning Path</label>
-
-<select name="category_id" required>
-
-    <option value="">Select Learning Path</option>
-
-    {% for category in categories %}
-
-    <option value="{{ category.id }}">
-
-        {{ category.icon }} {{ category.name }}
-
-    </option>
-
-    {% endfor %}
-
-</select>
-
 <label>
 
 Price (₹)

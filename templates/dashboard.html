@@ -172,6 +172,9 @@ href="{{ url_for('static', filename='images/logo.png') }}">
       font-size: 18px;
     }
     .profile {
+      text-decoration:none;
+
+cursor:pointer;
       width: 42px;
       height: 42px;
       background: var(--primary);
@@ -686,6 +689,9 @@ href="{{ url_for('static', filename='images/logo.png') }}">
 
     .profile{
 
+      text-decoration:none;
+
+cursor:pointer;
         width:38px;
 
         height:38px;
@@ -1054,11 +1060,12 @@ href="{{ url_for('static', filename='images/logo.png') }}">
 
 </div>
  <div class="header-right">
-      <div class="search">
-        <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Search courses, notes...">
-      </div>
-      <div class="profile">JD</div>
+  
+  <a href="/profile" class="profile">
+
+    {{ username[0]|upper }}
+
+</a>
     </div>
   </header>
 
@@ -1140,19 +1147,6 @@ href="{{ url_for('static', filename='images/logo.png') }}">
     {% if last_course %}
 
 <section class="continue-section">
-
-  <div class="section-heading">
-
-    <div>
-      <h2>Continue Learning</h2>
-      <p>Resume your purchased course.</p>
-    </div>
-
-    <a href="/lectures" class="view-all">
-      View All →
-    </a>
-
-  </div>
 
 
   <div class="continue-card">
