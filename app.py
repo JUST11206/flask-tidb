@@ -393,10 +393,59 @@ def dashboard():
         print("DASHBOARD DB ERROR:", repr(e))
         print("=" * 60)
 
+# ==========================
+# Notification Count
+# ==========================
 
+    unread_count = 0
+
+
+    if user_id:
+
+        try:
+
+            with engine.connect() as conn:
+
+
+                total_notifications = conn.execute(
+                    text("""
+                        SELECT COUNT(*)
+                        FROM notifications
+                    """)
+                ).scalar() or 0
+
+
+
+                read_notifications = conn.execute(
+                    text("""
+                        SELECT COUNT(*)
+                        FROM notification_reads
+                        WHERE user_id=:user_id
+                    """),
+                    {
+                        "user_id": user_id
+                    }
+                ).scalar() or 0
+
+
+
+                unread_count = (
+                    total_notifications
+                    -
+                    read_notifications
+                )
+
+
+        except Exception as e:
+
+            print(
+                "NOTIFICATION COUNT ERROR:",
+                repr(e)
+            )
     return render_template(
         "dashboard.html",
         username=username,
+        unread_count=unread_count,
         
         
 
@@ -592,47 +641,90 @@ def view_note(note_id):
         note=note
     )
 
-
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
 
     if "user" not in session:
         return redirect("/login")
 
-    if request.method == "POST":
 
-        image = request.files.get("profile_image")
+    user_id = session.get("user_id")
 
-        if image and image.filename:
 
-            filename = secure_filename(image.filename)
+    with engine.connect() as conn:
 
-            image.save(
-                os.path.join(
-                    app.config["UPLOAD_FOLDER"],
-                    filename
-                )
-            )
+        user = conn.execute(
+            text("""
+                SELECT *
+                FROM users
+                WHERE id = :id
+            """),
+            {
+                "id": user_id
+            }
+        ).fetchone()
 
-            session["profile_image"] = filename
-
-        return redirect("/profile")
 
     return render_template(
         "profile.html",
-        username=session["user"],
-        email=session.get("email"),
-        profile_image=session.get("profile_image")
+        user=user,
+        username=user.username ,
+        email=user.email
     )
 
 @app.route("/admin")
+@admin_required
 def admin():
 
-    if not session.get("admin"):
-        return redirect("/admin_login")
 
-    return render_template("admin.html")
+    with engine.connect() as conn:
 
+
+        total_notes = conn.execute(
+            text("""
+                SELECT COUNT(*)
+                FROM notes
+            """)
+        ).scalar()
+
+
+
+        total_lectures = conn.execute(
+            text("""
+                SELECT COUNT(*)
+                FROM lectures
+            """)
+        ).scalar()
+
+
+
+        total_courses = conn.execute(
+            text("""
+                SELECT COUNT(*)
+                FROM courses
+            """)
+        ).scalar()
+
+
+
+        total_users = conn.execute(
+            text("""
+                SELECT COUNT(*)
+                FROM users
+            """)
+        ).scalar()
+
+
+
+    return render_template(
+        "admin.html",
+
+        total_notes=total_notes,
+        total_lectures=total_lectures,
+        total_courses=total_courses,
+        total_users=total_users
+
+    )
 
 
 @app.route("/admin_login", methods=["GET", "POST"])
@@ -771,51 +863,87 @@ def add_course():
 
 
 
-        with engine.connect() as conn:
+    with engine.connect() as conn:
+
+        result = conn.execute(
+
+            text("""
+                INSERT INTO courses
+                (
+                    title,
+                    description,
+                    thumbnail,
+                    price,
+                    is_free
+                )
+
+                VALUES
+                (
+                    :title,
+                    :description,
+                    :thumbnail,
+                    :price,
+                    :is_free
+                )
+
+            """),
+
+            {
+                "title": title,
+                "description": description,
+                "thumbnail": thumbnail,
+                "price": price,
+                "is_free": is_free
+            }
+
+        )
+
+        conn.commit()
 
 
-            conn.execute(
-
-                text("""
-                    INSERT INTO courses
-                    (
-                        title,
-                        description,
-                        thumbnail,
-                        price,
-                        is_free
-                    )
-
-                    VALUES
-                    (
-                        :title,
-                        :description,
-                        :thumbnail,
-                        :price,
-                        :is_free
-                    )
-
-                """),
-
-                {
-
-                    "title":title,
-
-                    "description":description,
-
-                    "thumbnail":thumbnail,
-
-                    "price":price,
-
-                    "is_free":is_free
-
-                }
-
-            )
+        # Get new course id
+        course_id = result.lastrowid
 
 
-            conn.commit()
 
+        # Create Notification
+        conn.execute(
+
+            text("""
+                INSERT INTO notifications
+                (
+                    title,
+                    message,
+                    type,
+                    reference_id
+                )
+
+                VALUES
+                (
+                    :title,
+                    :message,
+                    :type,
+                    :reference_id
+                )
+
+            """),
+
+            {
+
+                "title": "📚 New Course Added",
+
+                "message": title,
+
+                "type": "course",
+
+                "reference_id": course_id
+
+            }
+
+        )
+
+
+        conn.commit()
 
 
         flash(
@@ -2117,6 +2245,203 @@ def reject_payment(id):
     )
 
     return redirect("/manage_payments")
+# ==========================
+# Notifications
+# ==========================
+
+
+@app.route("/notifications")
+def notifications():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+
+    user_id = session["user_id"]
+
+
+    with engine.connect() as conn:
+
+
+        notifications = conn.execute(
+            text("""
+                SELECT *
+                FROM notifications
+                ORDER BY created_at DESC
+            """)
+        ).fetchall()
+
+
+
+        read_data = conn.execute(
+            text("""
+                SELECT notification_id
+                FROM notification_reads
+                WHERE user_id=:user_id
+            """),
+            {
+                "user_id": user_id
+            }
+        ).fetchall()
+
+
+
+    read_ids = {
+        row.notification_id
+        for row in read_data
+    }
+
+
+
+    return render_template(
+        "notification.html",
+        notifications=notifications,
+        read_ids=read_ids
+    )
+
+
+
+# ==========================
+# Mark Notification Read
+# ==========================
+
+
+@app.route("/notification/read/<int:id>")
+def mark_notification_read(id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+
+    user_id = session["user_id"]
+
+
+    with engine.connect() as conn:
+
+
+        exists = conn.execute(
+            text("""
+                SELECT id
+                FROM notification_reads
+                WHERE user_id=:user_id
+                AND notification_id=:notification_id
+            """),
+            {
+                "user_id":user_id,
+                "notification_id":id
+            }
+        ).fetchone()
+
+
+
+        if not exists:
+
+
+            conn.execute(
+                text("""
+                    INSERT INTO notification_reads
+                    (
+                        user_id,
+                        notification_id
+                    )
+
+                    VALUES
+                    (
+                        :user_id,
+                        :notification_id
+                    )
+                """),
+                {
+                    "user_id":user_id,
+                    "notification_id":id
+                }
+            )
+
+
+            conn.commit()
+
+
+
+    return redirect("/notifications")
+
+
+
+# ==========================
+# Mark All Read
+# ==========================
+
+
+@app.route("/notification/read-all")
+def mark_all_notification_read():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+
+    user_id=session["user_id"]
+
+
+
+    with engine.connect() as conn:
+
+
+        notifications = conn.execute(
+            text("""
+                SELECT id
+                FROM notifications
+            """)
+        ).fetchall()
+
+
+
+        for n in notifications:
+
+
+            exists = conn.execute(
+                text("""
+                    SELECT id
+                    FROM notification_reads
+                    WHERE user_id=:user_id
+                    AND notification_id=:notification_id
+                """),
+                {
+                    "user_id":user_id,
+                    "notification_id":n.id
+                }
+            ).fetchone()
+
+
+
+            if not exists:
+
+
+                conn.execute(
+                    text("""
+                        INSERT INTO notification_reads
+                        (
+                            user_id,
+                            notification_id
+                        )
+
+                        VALUES
+                        (
+                            :user_id,
+                            :notification_id
+                        )
+                    """),
+                    {
+                        "user_id":user_id,
+                        "notification_id":n.id
+                    }
+                )
+
+
+
+        conn.commit()
+
+
+
+    return redirect("/notifications")
 
 if __name__ == "__main__":
     app.run(debug=True)

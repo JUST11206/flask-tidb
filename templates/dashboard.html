@@ -7,7 +7,7 @@
 <link rel="icon" 
 type="image/png" 
 href="{{ url_for('static', filename='images/logo.png') }}">
-  <style>
+<style>
     /* ----- reset & base ----- */
     * {
       margin: 0;
@@ -605,6 +605,7 @@ cursor:pointer;
     .mobile-nav {
       display: none;
     }
+
     /* ==========================
    PWA MOBILE DESIGN
 ========================== */
@@ -685,7 +686,26 @@ cursor:pointer;
         padding-left:35px;
 
     }
+/* Simple Offline Bell */
 
+.notification-icon{
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#eef2ff;
+    border-radius:50%;
+
+    font-size:22px;
+}
+
+
+.bell-icon{
+    line-height:1;
+}
 
     .profile{
 
@@ -1027,7 +1047,13 @@ cursor:pointer;
 
     }
 
+    .bell-icon{
+
+font-size:22px;
+
 }
+}
+
   </style>
 </head>
 <body>
@@ -1059,14 +1085,32 @@ cursor:pointer;
   <span>StudyHub</span>
 
 </div>
- <div class="header-right">
-  
+<div class="header-right">
+
+
+  <!-- Notification Bell -->
+  <a href="/notifications" class="notification-icon">
+
+     <span class="bell-icon">🔔</span>
+
+      {% if unread_count > 0 %}
+          <span class="notification-badge">
+              {{ unread_count }}
+          </span>
+      {% endif %}
+
+  </a>
+
+
+  <!-- Profile -->
   <a href="/profile" class="profile">
 
-    {{ username[0]|upper }}
+      {{ username[0]|upper }}
 
-</a>
-    </div>
+  </a>
+
+
+</div>
   </header>
 
   <div class="container">
