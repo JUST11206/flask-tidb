@@ -1,5 +1,6 @@
+
 {
-    "id": "/dashboard",
+    "id": "/",
     "name": "StudyHub",
     "short_name": "StudyHub",
     "description": "Free Notes, PDFs and Video Lectures for Students",
