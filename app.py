@@ -863,96 +863,96 @@ def add_course():
 
 
 
-    with engine.connect() as conn:
+        with engine.connect() as conn:
 
-        result = conn.execute(
+            result = conn.execute(
 
-            text("""
-                INSERT INTO courses
-                (
-                    title,
-                    description,
-                    thumbnail,
-                    price,
-                    is_free
-                )
+                text("""
+                    INSERT INTO courses
+                    (
+                        title,
+                        description,
+                        thumbnail,
+                        price,
+                        is_free
+                    )
 
-                VALUES
-                (
-                    :title,
-                    :description,
-                    :thumbnail,
-                    :price,
-                    :is_free
-                )
+                    VALUES
+                    (
+                        :title,
+                        :description,
+                        :thumbnail,
+                        :price,
+                        :is_free
+                    )
 
-            """),
+                """),
 
-            {
-                "title": title,
-                "description": description,
-                "thumbnail": thumbnail,
-                "price": price,
-                "is_free": is_free
-            }
+                {
+                    "title": title,
+                    "description": description,
+                    "thumbnail": thumbnail,
+                    "price": price,
+                    "is_free": is_free
+                }
 
-        )
+            )
 
-        conn.commit()
-
-
-        # Get new course id
-        course_id = result.lastrowid
+            conn.commit()
 
 
-
-        # Create Notification
-        conn.execute(
-
-            text("""
-                INSERT INTO notifications
-                (
-                    title,
-                    message,
-                    type,
-                    reference_id
-                )
-
-                VALUES
-                (
-                    :title,
-                    :message,
-                    :type,
-                    :reference_id
-                )
-
-            """),
-
-            {
-
-                "title": "📚 New Course Added",
-
-                "message": title,
-
-                "type": "course",
-
-                "reference_id": course_id
-
-            }
-
-        )
+            # Get new course id
+            course_id = result.lastrowid
 
 
-        conn.commit()
+
+            # Create Notification
+            conn.execute(
+
+                text("""
+                    INSERT INTO notifications
+                    (
+                        title,
+                        message,
+                        type,
+                        reference_id
+                    )
+
+                    VALUES
+                    (
+                        :title,
+                        :message,
+                        :type,
+                        :reference_id
+                    )
+
+                """),
+
+                {
+
+                    "title": "📚 New Course Added",
+
+                    "message": title,
+
+                    "type": "course",
+
+                    "reference_id": course_id
+
+                }
+
+            )
 
 
-        flash(
-            "Course Added Successfully!",
-            "success"
-        )
+            conn.commit()
 
 
-        return redirect("/manage_courses")
+            flash(
+                "Course Added Successfully!",
+                "success"
+            )
+
+
+            return redirect("/manage_courses")
 
 
 
